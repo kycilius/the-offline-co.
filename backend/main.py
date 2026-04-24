@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import os
 from uuid import uuid4
 
+import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from ai import answers_to_vector, build_groups, seed_users, vector_score
+from ai import activity_for_score, answers_to_vector, build_groups, vector_score
 from models import GroupRecord, MatchResponse, ResultResponse, SubmitRequest, SubmitResponse, UserRecord
 
 app = FastAPI(title="Social Detox MVP API", version="0.1.0")
@@ -18,15 +20,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# In-memory storage
-users: dict[str, UserRecord] = seed_users()
+# In-memory storage (MVP/hackathon simple setup)
+users: dict[str, UserRecord] = {}
 groups: dict[str, GroupRecord] = {}
 user_to_group: dict[str, str] = {}
 
 
+def build_demo_result(session_id: str) -> ResultResponse:
+    """Return a default demo group when there are fewer than 3 users."""
+    return ResultResponse(
+        group=["Demo User 1", "Demo User 2", "Demo User 3"],
+        score=50.0,
+        group_name="Demo Circle",
+        activity="Quick intro chat and team icebreaker",
+        plan=activity_for_score(50.0)[2],
+    )
+
+
 @app.get("/")
 def health() -> dict[str, str]:
-    return {"status": "ok", "service": "social-detox-backend"}
+    return {"status": "Backend is running"}
 
 
 @app.post("/api/submit", response_model=SubmitResponse)
@@ -51,7 +64,11 @@ def match_users() -> MatchResponse:
     global groups, user_to_group
 
     if len(users) < 3:
-        raise HTTPException(status_code=400, detail="Need at least 3 users to perform matching")
+        return MatchResponse(
+            message="Not enough users yet. Using default demo group.",
+            groups_created=1,
+            users_processed=len(users),
+        )
 
     groups = build_groups(users)
     user_to_group = {}
@@ -69,19 +86,19 @@ def match_users() -> MatchResponse:
 
 @app.get("/api/result/{session_id}", response_model=ResultResponse)
 def get_result(session_id: str) -> ResultResponse:
+    if len(users) < 3:
+        return build_demo_result(session_id)
+
     if session_id not in users:
         raise HTTPException(status_code=404, detail="Session not found")
 
     if not groups:
-        # fallback quick demo group when matching has not run
         demo_members = list(users.keys())[:3]
         if session_id not in demo_members and demo_members:
             demo_members[0] = session_id
 
         demo_records = [users[m] for m in demo_members if m in users]
         avg_score = round(sum(u.score for u in demo_records) / len(demo_records), 2)
-        from ai import activity_for_score
-
         group_name, activity, plan = activity_for_score(avg_score)
 
         return ResultResponse(
@@ -106,3 +123,7 @@ def get_result(session_id: str) -> ResultResponse:
         activity=group.activity,
         plan=group.plan,
     )
+
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=int(os.getenv("PORT", "10000")))
