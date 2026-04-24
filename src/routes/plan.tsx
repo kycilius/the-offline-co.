@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Logo } from "@/components/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const Route = createFileRoute("/plan")({
   head: () => ({
@@ -46,6 +47,7 @@ function Plan() {
     <main className="relative min-h-screen" style={{ background: "var(--gradient-warm)" }}>
       <header className="mx-auto flex max-w-4xl items-center justify-between px-6 py-6">
         <Logo />
+        <ThemeToggle />
       </header>
 
       <section className="mx-auto max-w-2xl px-6 pt-12 pb-24">

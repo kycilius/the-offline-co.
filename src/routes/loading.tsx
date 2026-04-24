@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Logo } from "@/components/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const Route = createFileRoute("/loading")({
   head: () => ({
@@ -19,8 +20,9 @@ function Loading() {
 
   return (
     <main className="relative flex min-h-screen flex-col" style={{ background: "var(--gradient-warm)" }}>
-      <header className="mx-auto w-full max-w-3xl px-6 py-6">
+      <header className="mx-auto flex w-full max-w-3xl items-center justify-between px-6 py-6">
         <Logo />
+        <ThemeToggle />
       </header>
 
       <section className="flex flex-1 flex-col items-center justify-center px-6 text-center">
