@@ -11,9 +11,23 @@ export const Route = createFileRoute("/loading")({
   component: Loading,
 });
 
+type MatchResult = {
+  group?: Array<string | { name?: string }>;
+  score?: number;
+  group_name?: string;
+  activity?: string;
+  plan?: {
+    icebreaker?: string;
+    activity?: string;
+    closing?: string;
+  };
+};
+
 function Loading() {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [result, setResult] = useState<MatchResult | null>(null);
 
   const runMatchFlow = async () => {
     setError(null);
@@ -24,7 +38,7 @@ function Loading() {
         throw new Error("No answers found");
       }
 
-      const answers = JSON.parse(savedAnswers);
+      const answers = JSON.parse(savedAnswers) as number[];
 
       const res = await fetch(`${API_BASE}/api/submit`, {
         method: "POST",
@@ -39,13 +53,14 @@ function Loading() {
       }
 
       const data = await res.json();
-      const session_id = data.session_id;
+      const newSessionId = data.session_id as string | undefined;
 
-      if (!session_id) {
+      if (!newSessionId) {
         throw new Error("Missing session_id");
       }
 
-      sessionStorage.setItem("sessionId", session_id);
+      setSessionId(newSessionId);
+      sessionStorage.setItem("sessionId", newSessionId);
 
       const matchRes = await fetch(`${API_BASE}/api/match`, {
         method: "POST",
@@ -55,24 +70,31 @@ function Loading() {
         throw new Error("Match failed");
       }
 
-      const resultRes = await fetch(`${API_BASE}/api/result/${session_id}`);
+      const resultRes = await fetch(`${API_BASE}/api/result/${newSessionId}`);
+
       if (!resultRes.ok) {
         throw new Error("Result fetch failed");
       }
 
-      const resultData = await resultRes.json();
+      const resultData = (await resultRes.json()) as MatchResult;
+      setResult(resultData);
       sessionStorage.setItem("matchResult", JSON.stringify(resultData));
 
       navigate({ to: "/result" });
-    } catch {
+    } catch (flowError) {
+      console.error(flowError);
       setError("Something went wrong");
     }
   };
 
   useEffect(() => {
+    if (result) {
+      return;
+    }
+
     runMatchFlow();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [result]);
 
   if (error) {
     return (
@@ -128,6 +150,7 @@ function Loading() {
         <p className="mt-6 max-w-md text-base font-light text-muted-foreground animate-[fade-up_1.1s_ease-out]">
           We're creating a meaningful experience just for you.
         </p>
+        {sessionId && <p className="mt-2 text-xs text-muted-foreground/60">Session ready</p>}
       </section>
     </main>
   );
