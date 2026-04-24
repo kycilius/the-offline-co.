@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Logo } from "@/components/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const Route = createFileRoute("/questionnaire")({
   head: () => ({
@@ -65,9 +66,12 @@ function Questionnaire() {
     <main className="relative min-h-screen" style={{ background: "var(--gradient-warm)" }}>
       <header className="mx-auto flex max-w-3xl items-center justify-between px-6 py-6">
         <Logo />
-        <span className="text-xs font-medium text-muted-foreground tabular-nums">
-          {index + 1} <span className="text-muted-foreground/50">/ {QUESTIONS.length}</span>
-        </span>
+        <div className="flex items-center gap-4">
+          <span className="text-xs font-medium text-muted-foreground tabular-nums">
+            {index + 1} <span className="text-muted-foreground/50">/ {QUESTIONS.length}</span>
+          </span>
+          <ThemeToggle />
+        </div>
       </header>
 
       {/* Progress */}

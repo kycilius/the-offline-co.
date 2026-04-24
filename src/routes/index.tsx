@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Logo } from "@/components/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const Route = createFileRoute("/")({
   component: Landing,
@@ -14,7 +15,10 @@ function Landing() {
 
       <header className="relative z-10 mx-auto flex max-w-6xl items-center justify-between px-6 py-8">
         <Logo />
-        <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">Social Detox</span>
+        <div className="flex items-center gap-4">
+          <span className="hidden sm:inline text-xs font-medium tracking-wider text-muted-foreground uppercase">Social Detox</span>
+          <ThemeToggle />
+        </div>
       </header>
 
       <section className="relative z-10 mx-auto flex max-w-3xl flex-col items-center px-6 pt-20 pb-32 text-center md:pt-32">
