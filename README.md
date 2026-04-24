@@ -24,10 +24,16 @@ uvicorn main:app --reload
 Your React frontend should call the backend using:
 
 ```js
-const API_BASE = "https://your-render-url.onrender.com";
+const API_BASE = import.meta.env.VITE_API_BASE;
 ```
 
 Then call:
 - `POST ${API_BASE}/api/submit`
 - `POST ${API_BASE}/api/match`
 - `GET ${API_BASE}/api/result/{session_id}`
+
+Set this environment variable in Vercel:
+
+```bash
+VITE_API_BASE=https://your-render-url.onrender.com
+```
