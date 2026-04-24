@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import logo from "@/assets/logo.jpeg";
+import logo from "@/assets/logo.png";
 
 export function Logo({ className = "" }: { className?: string }) {
   return (
@@ -8,13 +8,11 @@ export function Logo({ className = "" }: { className?: string }) {
       className={`group inline-flex items-center gap-2.5 ${className}`}
       aria-label="TheOfflineCo home"
     >
-      {/* Logo mark — black bg blends in dark mode; screen blend hides it on light */}
       <img
         src={logo}
         alt=""
         aria-hidden="true"
-        className="h-9 w-9 md:h-10 md:w-10 object-contain dark:mix-blend-normal"
-        style={{ mixBlendMode: "screen" }}
+        className="h-9 w-9 md:h-10 md:w-10 object-contain dark:brightness-110"
       />
       <span className="font-display text-lg md:text-xl tracking-tight text-foreground leading-none">
         <span className="font-light">The</span>
