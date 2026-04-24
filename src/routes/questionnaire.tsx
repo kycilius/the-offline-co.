@@ -38,7 +38,7 @@ function Questionnaire() {
   const [answers, setAnswers] = useState<number[]>([]);
   const [transitioning, setTransitioning] = useState(false);
 
-  const progress = ((index) / QUESTIONS.length) * 100;
+  const progress = (index / QUESTIONS.length) * 100;
 
   const handleSelect = (value: number) => {
     if (transitioning) return;
@@ -48,6 +48,9 @@ function Questionnaire() {
 
     setTimeout(() => {
       if (index + 1 >= QUESTIONS.length) {
+        sessionStorage.setItem("answers", JSON.stringify(next));
+        sessionStorage.removeItem("matchResult");
+        sessionStorage.removeItem("sessionId");
         navigate({ to: "/loading" });
       } else {
         setIndex(index + 1);
@@ -74,7 +77,6 @@ function Questionnaire() {
         </div>
       </header>
 
-      {/* Progress */}
       <div className="mx-auto max-w-3xl px-6">
         <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
           <div
@@ -85,23 +87,21 @@ function Questionnaire() {
       </div>
 
       <section className="mx-auto flex max-w-2xl flex-col items-center px-6 pt-20 pb-16 text-center md:pt-32">
-        <div
-          key={index}
-          className="w-full"
-          style={{ animation: "fade-up 0.6s var(--ease-calm)" }}
-        >
-          <p className="mb-6 text-xs font-medium uppercase tracking-[0.2em] text-primary">
-            Question {index + 1}
-          </p>
+        <div key={index} className="w-full" style={{ animation: "fade-up 0.6s var(--ease-calm)" }}>
+          <p className="mb-6 text-xs font-medium uppercase tracking-[0.2em] text-primary">Question {index + 1}</p>
           <h2 className="font-display text-3xl font-light leading-snug text-foreground md:text-4xl">
             {QUESTIONS[index]}
           </h2>
 
-          {/* Scale */}
           <div className="mt-16 flex flex-col items-center gap-6">
             <div className="flex items-center gap-3 md:gap-5">
               {[1, 2, 3, 4, 5].map((n) => {
-                const size = n === 1 || n === 5 ? "h-12 w-12 md:h-14 md:w-14" : n === 3 ? "h-10 w-10 md:h-11 md:w-11" : "h-11 w-11 md:h-12 md:w-12";
+                const size =
+                  n === 1 || n === 5
+                    ? "h-12 w-12 md:h-14 md:w-14"
+                    : n === 3
+                      ? "h-10 w-10 md:h-11 md:w-11"
+                      : "h-11 w-11 md:h-12 md:w-12";
                 return (
                   <button
                     key={n}

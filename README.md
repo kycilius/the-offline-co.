@@ -35,5 +35,5 @@ Then call:
 Set this environment variable in Vercel:
 
 ```bash
-VITE_API_BASE=https://your-render-url.onrender.com
+VITE_API_BASE=https://the-offline-co.onrender.com
 ```
