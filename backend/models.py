@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import List
 
 from pydantic import BaseModel, Field
 
@@ -13,10 +13,17 @@ class SubmitResponse(BaseModel):
     session_id: str
 
 
+class GroupInfo(BaseModel):
+    group_members: List[str]
+    average_score: int
+    group_name: str
+
+
 class MatchResponse(BaseModel):
     message: str
     groups_created: int
     users_processed: int
+    groups: List[GroupInfo]
 
 
 class Plan(BaseModel):
@@ -26,25 +33,8 @@ class Plan(BaseModel):
 
 
 class ResultResponse(BaseModel):
-    group: List[str]
-    score: float
     group_name: str
-    activity: str
-    plan: Plan
-
-
-class UserRecord(BaseModel):
-    session_id: str
-    answers: List[int]
-    vector: List[float]
-    score: float
-    label: Optional[str] = None
-
-
-class GroupRecord(BaseModel):
-    group_id: str
-    members: List[str]
-    average_score: float
-    group_name: str
-    activity: str
-    plan: Plan
+    score: int
+    personality: str
+    group_members: List[str]
+    activity_plan: Plan
