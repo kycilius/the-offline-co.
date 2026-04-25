@@ -72,13 +72,15 @@ function Result() {
   const ctaLabel = score >= 85 ? "Start This Experience" : "Unlock Full Experience — ₹99";
 
   return (
-    <main className="relative min-h-screen" style={{ background: "var(--gradient-warm)" }}>
-      <header className="mx-auto flex max-w-5xl items-center justify-between px-6 py-6">
+    <main className="relative min-h-screen overflow-hidden bg-noise" style={{ background: "var(--gradient-warm)" }}>
+      <div className="pointer-events-none absolute -left-32 top-20 h-96 w-96 rounded-full bg-primary/8 blur-3xl animate-[float_10s_ease-in-out_infinite]" />
+      <div className="pointer-events-none absolute -right-32 bottom-20 h-96 w-96 rounded-full bg-accent/10 blur-3xl animate-[float_12s_ease-in-out_infinite]" />
+      <header className="relative z-10 mx-auto flex max-w-5xl items-center justify-between px-6 py-6">
         <Logo />
         <ThemeToggle />
       </header>
 
-      <section className="mx-auto flex max-w-4xl flex-col px-6 pt-8 pb-20">
+      <section className="relative z-10 mx-auto flex max-w-4xl flex-col px-6 pt-8 pb-20">
         {!result ? (
           <p className="mt-8 text-base text-muted-foreground">Something went wrong.</p>
         ) : (
