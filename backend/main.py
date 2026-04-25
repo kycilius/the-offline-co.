@@ -45,6 +45,20 @@ def compatibility_score(answers1: list[int], answers2: list[int]) -> int:
     return max(0, min(100, int(raw_score)))
 
 
+def adjusted_match_score(user1: dict[str, object], user2: dict[str, object]) -> int:
+    """Keep personality as main factor with small demographic bonus weights."""
+    base_score = compatibility_score(list(user1["answers"]), list(user2["answers"]))
+    bonus = 0
+
+    if str(user1.get("age_group", "unknown")) == str(user2.get("age_group", "unknown")):
+        bonus += 10
+
+    if str(user1.get("gender", "unknown")) == str(user2.get("gender", "unknown")):
+        bonus += 5
+
+    return min(100, base_score + bonus)
+
+
 def choose_group_name(score: int) -> str:
     if score > 80:
         return "Deep Connectors"
@@ -143,7 +157,7 @@ def build_result_for_session(session_id: str) -> ResultResponse:
         if other_id == session_id:
             continue
 
-        score = compatibility_score(current_answers, list(other["answers"]))
+        score = adjusted_match_score(current_user, other)
         comparisons.append((other_id, score))
 
     comparisons.sort(key=lambda item: item[1], reverse=True)
@@ -179,6 +193,8 @@ def submit_answers(payload: SubmitRequest) -> SubmitResponse:
             "user_id": user_id,
             "session_id": session_id,
             "answers": payload.answers,
+            "age_group": payload.age_group,
+            "gender": payload.gender,
         }
     )
 
