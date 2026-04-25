@@ -38,6 +38,19 @@ function Questionnaire() {
   const [answers, setAnswers] = useState<number[]>([]);
   const [transitioning, setTransitioning] = useState(false);
   const [selected, setSelected] = useState<number | null>(null);
+  const [started, setStarted] = useState(false);
+  const [name, setName] = useState("");
+
+  const handleStart = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = name.trim();
+    if (trimmed) {
+      localStorage.setItem("user_name", trimmed);
+    } else {
+      localStorage.removeItem("user_name");
+    }
+    setStarted(true);
+  };
 
   const progress = ((index + (selected ? 1 : 0)) / QUESTIONS.length) * 100;
 
@@ -68,6 +81,54 @@ function Questionnaire() {
     setAnswers(answers.slice(0, -1));
     setSelected(null);
   };
+
+  if (!started) {
+    return (
+      <main className="relative min-h-screen overflow-hidden bg-noise" style={{ background: "var(--gradient-warm)" }}>
+        <div className="pointer-events-none absolute -right-32 top-1/3 h-80 w-80 rounded-full bg-primary-glow/8 blur-3xl" />
+        <header className="relative z-10 mx-auto flex max-w-3xl items-center justify-between px-6 py-6">
+          <Logo />
+          <ThemeToggle />
+        </header>
+        <section className="relative z-10 mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-6 text-center">
+          <form onSubmit={handleStart} className="w-full" style={{ animation: "fade-up 0.6s var(--ease-calm)" }}>
+            <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-primary">Before we begin</p>
+            <h2 className="font-display text-3xl font-light leading-snug text-foreground md:text-4xl">
+              What should we call you?
+            </h2>
+            <p className="mt-3 text-sm text-muted-foreground">Optional — helps us make this feel more like yours.</p>
+
+            <div className="mt-10 flex flex-col items-center gap-5">
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your name"
+                autoFocus
+                maxLength={40}
+                className="w-full max-w-sm rounded-full border border-border/60 bg-background/60 px-6 py-3.5 text-center text-base text-foreground placeholder:text-muted-foreground/60 backdrop-blur-sm transition-all focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
+              />
+              <div className="flex flex-col items-center gap-3">
+                <button
+                  type="submit"
+                  className="rounded-full bg-primary px-8 py-3 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-all hover:scale-[1.02] hover:shadow-[var(--shadow-glow)]"
+                >
+                  Continue
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { localStorage.removeItem("user_name"); setStarted(true); }}
+                  className="text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  Skip
+                </button>
+              </div>
+            </div>
+          </form>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-noise" style={{ background: "var(--gradient-warm)" }}>
