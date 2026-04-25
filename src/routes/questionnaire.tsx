@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -80,10 +80,21 @@ function Questionnaire() {
     setStarted(true);
   };
 
-  const progress = ((index + (selected ? 1 : 0)) / QUESTIONS.length) * 100;
+  const progress = ((index + (selected !== null ? 1 : 0)) / QUESTIONS.length) * 100;
+
+  useEffect(() => {
+    if (transitioning) {
+      const timer = setTimeout(() => {
+        setTransitioning(false);
+      }, 800);
+
+      return () => clearTimeout(timer);
+    }
+  }, [transitioning]);
 
   const handleSelect = (value: number) => {
-    if (transitioning) return;
+    if (transitioning) return; // keep, but now safe due to reset
+    if (selected !== null) return;
     setTransitioning(true);
     setSelected(value);
     const next = [...answers, value];
@@ -96,10 +107,11 @@ function Questionnaire() {
         sessionStorage.removeItem("sessionId");
         navigate({ to: "/loading" });
       } else {
-        setIndex(index + 1);
+        setIndex((prev) => prev + 1);
         setSelected(null);
-        setTransitioning(false);
       }
+
+      setTransitioning(false); // ALWAYS RESET
     }, 480);
   };
 
