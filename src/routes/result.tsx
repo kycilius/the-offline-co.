@@ -59,6 +59,11 @@ function Result() {
     }
   }, []);
 
+  const userName = useMemo(() => {
+    if (typeof window === "undefined") return "";
+    return localStorage.getItem("user_name")?.trim() ?? "";
+  }, []);
+
   const members = result?.group_members ?? [];
   const groupName = result?.group_name ?? "Your Group";
   const score = Math.max(0, Math.min(100, result?.score ?? 0));
