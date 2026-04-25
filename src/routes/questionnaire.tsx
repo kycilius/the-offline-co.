@@ -38,6 +38,19 @@ function Questionnaire() {
   const [answers, setAnswers] = useState<number[]>([]);
   const [transitioning, setTransitioning] = useState(false);
   const [selected, setSelected] = useState<number | null>(null);
+  const [started, setStarted] = useState(false);
+  const [name, setName] = useState("");
+
+  const handleStart = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = name.trim();
+    if (trimmed) {
+      localStorage.setItem("user_name", trimmed);
+    } else {
+      localStorage.removeItem("user_name");
+    }
+    setStarted(true);
+  };
 
   const progress = ((index + (selected ? 1 : 0)) / QUESTIONS.length) * 100;
 
