@@ -7,6 +7,8 @@ from pydantic import BaseModel, Field
 
 class SubmitRequest(BaseModel):
     answers: List[int] = Field(..., min_length=1)
+    age_group: str = "unknown"
+    gender: str = "unknown"
 
 
 class SubmitResponse(BaseModel):
