@@ -53,14 +53,15 @@ function Loading() {
       }
 
       const data = await res.json();
-      const newSessionId = data.session_id as string | undefined;
+      localStorage.setItem("user_id", data.user_id);
+      const session_id = data.session_id as string | undefined;
 
-      if (!newSessionId) {
+      if (!session_id) {
         throw new Error("Missing session_id");
       }
 
-      setSessionId(newSessionId);
-      sessionStorage.setItem("sessionId", newSessionId);
+      setSessionId(session_id);
+      sessionStorage.setItem("sessionId", session_id);
 
       const matchRes = await fetch(`${API_BASE}/api/match`, {
         method: "POST",
@@ -70,7 +71,7 @@ function Loading() {
         throw new Error("Match failed");
       }
 
-      const resultRes = await fetch(`${API_BASE}/api/result/${newSessionId}`);
+      const resultRes = await fetch(`${API_BASE}/api/result/${session_id}`);
 
       if (!resultRes.ok) {
         throw new Error("Result fetch failed");
