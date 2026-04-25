@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from uuid import uuid4
+import uuid
 
 import uvicorn
 from fastapi import FastAPI, HTTPException
@@ -171,10 +171,12 @@ def health() -> dict[str, str]:
 
 @app.post("/api/submit", response_model=SubmitResponse)
 def submit_answers(payload: SubmitRequest) -> SubmitResponse:
-    session_id = str(uuid4())
+    session_id = str(uuid.uuid4())
+    user_id = str(uuid.uuid4())
 
     users.append(
         {
+            "user_id": user_id,
             "session_id": session_id,
             "answers": payload.answers,
         }
@@ -183,7 +185,7 @@ def submit_answers(payload: SubmitRequest) -> SubmitResponse:
     # New submission can affect matching quality, so reset previous computed results.
     results_by_session.clear()
 
-    return SubmitResponse(session_id=session_id)
+    return SubmitResponse(session_id=session_id, user_id=user_id)
 
 
 @app.post("/api/match", response_model=MatchResponse)

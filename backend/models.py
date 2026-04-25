@@ -11,6 +11,7 @@ class SubmitRequest(BaseModel):
 
 class SubmitResponse(BaseModel):
     session_id: str
+    user_id: str
 
 
 class GroupInfo(BaseModel):
