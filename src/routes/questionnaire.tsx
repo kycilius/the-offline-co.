@@ -113,13 +113,12 @@ function Questionnaire() {
   if (!started) {
     return (
       <main className="relative isolate min-h-screen overflow-hidden bg-noise" style={{ background: "var(--gradient-warm)" }}>
-        <div aria-hidden className="pointer-events-none absolute inset-0 z-0" />
-        <div aria-hidden className="pointer-events-none absolute -right-32 top-1/3 z-0 h-80 w-80 rounded-full bg-primary-glow/8 blur-3xl" />
-        <header className="relative z-10 pointer-events-auto mx-auto flex max-w-3xl items-center justify-between px-6 py-6">
+        <header className="relative z-10 mx-auto flex max-w-3xl items-center justify-between px-6 py-6">
           <Logo />
           <ThemeToggle />
         </header>
-        <section className="relative z-10 pointer-events-auto mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-6 text-center">
+        <div aria-hidden className="pointer-events-none absolute -right-32 top-1/3 z-0 h-80 w-80 rounded-full bg-primary-glow/8 blur-3xl" />
+        <section className="relative z-10 mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-6 text-center">
           {step === "name" && (
             <form key="name" onSubmit={handleNameSubmit} className="w-full" style={{ animation: "fade-up 0.6s var(--ease-calm)" }}>
               <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-primary">Before we begin</p>
