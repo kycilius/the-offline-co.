@@ -119,40 +119,110 @@ function Questionnaire() {
           <ThemeToggle />
         </header>
         <section className="relative z-10 mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-6 text-center">
-          <form onSubmit={handleStart} className="w-full" style={{ animation: "fade-up 0.6s var(--ease-calm)" }}>
-            <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-primary">Before we begin</p>
-            <h2 className="font-display text-3xl font-light leading-snug text-foreground md:text-4xl">
-              What should we call you?
-            </h2>
-            <p className="mt-3 text-sm text-muted-foreground">Optional — helps us make this feel more like yours.</p>
+          {step === "name" && (
+            <form key="name" onSubmit={handleNameSubmit} className="w-full" style={{ animation: "fade-up 0.6s var(--ease-calm)" }}>
+              <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-primary">Before we begin</p>
+              <h2 className="font-display text-3xl font-light leading-snug text-foreground md:text-4xl">
+                What should we call you?
+              </h2>
+              <p className="mt-3 text-sm text-muted-foreground">Optional — helps us make this feel more like yours.</p>
 
-            <div className="mt-10 flex flex-col items-center gap-5">
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name"
-                autoFocus
-                maxLength={40}
-                className="w-full max-w-sm rounded-full border border-border/60 bg-background/60 px-6 py-3.5 text-center text-base text-foreground placeholder:text-muted-foreground/60 backdrop-blur-sm transition-all focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-              <div className="flex flex-col items-center gap-3">
-                <button
-                  type="submit"
-                  className="rounded-full bg-primary px-8 py-3 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-all hover:scale-[1.02] hover:shadow-[var(--shadow-glow)]"
-                >
-                  Continue
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { localStorage.removeItem("user_name"); setStarted(true); }}
-                  className="text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  Skip
-                </button>
+              <div className="mt-10 flex flex-col items-center gap-5">
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your name"
+                  autoFocus
+                  maxLength={40}
+                  className="w-full max-w-sm rounded-full border border-border/60 bg-background/60 px-6 py-3.5 text-center text-base text-foreground placeholder:text-muted-foreground/60 backdrop-blur-sm transition-all focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                />
+                <div className="flex flex-col items-center gap-3">
+                  <button
+                    type="submit"
+                    className="rounded-full bg-primary px-8 py-3 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-all hover:scale-[1.02] hover:shadow-[var(--shadow-glow)]"
+                  >
+                    Continue
+                  </button>
+                  <button
+                    type="button"
+                    onClick={skipName}
+                    className="text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    Skip
+                  </button>
+                </div>
+              </div>
+            </form>
+          )}
+
+          {step === "age" && (
+            <div key="age" className="w-full" style={{ animation: "fade-up 0.6s var(--ease-calm)" }}>
+              <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-primary">A little about you</p>
+              <h2 className="font-display text-3xl font-light leading-snug text-foreground md:text-4xl">
+                What's your age range?
+              </h2>
+              <p className="mt-3 text-sm text-muted-foreground">Helps us match you better.</p>
+
+              <div className="mt-10 flex flex-wrap justify-center gap-3">
+                {AGE_OPTIONS.map((opt) => {
+                  const isSelected = ageGroup === opt;
+                  return (
+                    <button
+                      key={opt}
+                      type="button"
+                      onClick={() => handleAgeSelect(opt)}
+                      className={`rounded-full border px-6 py-3 text-sm font-medium transition-all duration-300 hover:scale-[1.03] ${
+                        isSelected
+                          ? "border-primary bg-primary text-primary-foreground shadow-[0_0_24px_color-mix(in_oklab,var(--primary-glow)_60%,transparent)]"
+                          : "border-border/60 bg-background/60 text-foreground backdrop-blur-sm hover:border-primary/50"
+                      }`}
+                    >
+                      {opt}
+                    </button>
+                  );
+                })}
               </div>
             </div>
-          </form>
+          )}
+
+          {step === "gender" && (
+            <div key="gender" className="w-full" style={{ animation: "fade-up 0.6s var(--ease-calm)" }}>
+              <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-primary">One more thing</p>
+              <h2 className="font-display text-3xl font-light leading-snug text-foreground md:text-4xl">
+                What's your gender?
+              </h2>
+              <p className="mt-3 text-sm text-muted-foreground">Optional.</p>
+
+              <div className="mt-10 flex flex-wrap justify-center gap-3">
+                {GENDER_OPTIONS.map((opt) => {
+                  const isSelected = gender === opt;
+                  return (
+                    <button
+                      key={opt}
+                      type="button"
+                      onClick={() => handleGenderSelect(opt)}
+                      className={`rounded-full border px-6 py-3 text-sm font-medium transition-all duration-300 hover:scale-[1.03] ${
+                        isSelected
+                          ? "border-primary bg-primary text-primary-foreground shadow-[0_0_24px_color-mix(in_oklab,var(--primary-glow)_60%,transparent)]"
+                          : "border-border/60 bg-background/60 text-foreground backdrop-blur-sm hover:border-primary/50"
+                      }`}
+                    >
+                      {opt}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                type="button"
+                onClick={skipGender}
+                className="mt-8 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Skip
+              </button>
+            </div>
+          )}
         </section>
       </main>
     );
