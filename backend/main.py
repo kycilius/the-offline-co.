@@ -23,6 +23,12 @@ app.add_middleware(
 users: list[dict[str, object]] = []
 results_by_session: dict[str, ResultResponse] = {}
 
+DEFAULT_ACTIVITY_PLAN = Plan(
+    icebreaker="Share one habit you want to change this week.",
+    activity="Take a short walk together and talk about your daily routines.",
+    closing="Exchange one small commitment and check in tomorrow.",
+)
+
 
 def compatibility_score(answers1: list[int], answers2: list[int]) -> int:
     """Return a compatibility score from 0 to 100."""
@@ -106,6 +112,58 @@ def build_activity_plan(score: int, answers: list[int]) -> Plan:
     )
 
 
+def build_display_name_map() -> dict[str, str]:
+    return {str(user["session_id"]): f"User {index}" for index, user in enumerate(users, start=1)}
+
+
+def build_result_for_session(session_id: str) -> ResultResponse:
+    if len(users) < 2:
+        return ResultResponse(
+            group_name="Explorers",
+            score=50,
+            personality="You're early. More people will join your circle soon.",
+            group_members=["Waiting for more users"],
+            activity_plan=Plan(
+                icebreaker="Think about what kind of people you want to meet.",
+                activity="Take a short offline break today.",
+                closing="Come back later to discover your group.",
+            ),
+        )
+
+    current_user = next((user for user in users if str(user["session_id"]) == session_id), None)
+    if current_user is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    display_names = build_display_name_map()
+    current_answers = list(current_user["answers"])
+
+    comparisons: list[tuple[str, int]] = []
+    for other in users:
+        other_id = str(other["session_id"])
+        if other_id == session_id:
+            continue
+
+        score = compatibility_score(current_answers, list(other["answers"]))
+        comparisons.append((other_id, score))
+
+    comparisons.sort(key=lambda item: item[1], reverse=True)
+    top_matches = comparisons[:4]
+    average_score = int(sum(score for _, score in top_matches) / len(top_matches)) if top_matches else 0
+    group_name = choose_group_name(average_score)
+
+    group_member_names = [display_names.get(session_id, "User"), *[display_names.get(match_id, "User") for match_id, _ in top_matches]]
+    if not group_member_names:
+        group_member_names = ["Waiting for more users to join"]
+
+    return ResultResponse(
+        group_name=group_name,
+        score=average_score,
+        personality=build_personality_summary(current_answers),
+        group_members=group_member_names,
+        activity_plan=DEFAULT_ACTIVITY_PLAN,
+    )
+
+
 @app.get("/")
 def health() -> dict[str, str]:
     return {"status": "Backend is running"}
@@ -141,45 +199,28 @@ def match_users() -> MatchResponse:
     results_by_session.clear()
     groups: list[GroupInfo] = []
 
+    display_names = build_display_name_map()
+
     for user in users:
         current_id = str(user["session_id"])
-        current_answers = list(user["answers"])
-
-        comparisons: list[tuple[str, int]] = []
-        for other in users:
-            other_id = str(other["session_id"])
-            if other_id == current_id:
-                continue
-
-            score = compatibility_score(current_answers, list(other["answers"]))
-            comparisons.append((other_id, score))
-
-        comparisons.sort(key=lambda item: item[1], reverse=True)
-
-        top_matches = comparisons[:4]
-        if len(top_matches) >= 3:
-            top_matches = top_matches[:4]
-
-        matched_ids = [match_id for match_id, _ in top_matches]
-        group_members = [current_id, *matched_ids]
-
-        average_score = int(sum(score for _, score in top_matches) / len(top_matches)) if top_matches else 0
-        group_name = choose_group_name(average_score)
+        computed_result = build_result_for_session(current_id)
+        group_members = computed_result.group_members
 
         groups.append(
             GroupInfo(
                 group_members=group_members,
-                average_score=average_score,
-                group_name=group_name,
+                average_score=computed_result.score,
+                group_name=computed_result.group_name,
             )
         )
 
+        # Ensure readable labels are always returned in pre-computed results.
         results_by_session[current_id] = ResultResponse(
-            group_name=group_name,
-            score=average_score,
-            personality=build_personality_summary(current_answers),
-            group_members=group_members,
-            activity_plan=build_activity_plan(average_score, current_answers),
+            group_name=computed_result.group_name,
+            score=computed_result.score,
+            personality=computed_result.personality,
+            group_members=[display_names.get(str(member), member) for member in group_members],
+            activity_plan=computed_result.activity_plan,
         )
 
     return MatchResponse(
@@ -196,10 +237,10 @@ def get_result(session_id: str) -> ResultResponse:
         raise HTTPException(status_code=404, detail="Session not found")
 
     result = results_by_session.get(session_id)
-    if not result:
-        raise HTTPException(status_code=409, detail="No matching result yet. Run /api/match first.")
+    if result:
+        return result
 
-    return result
+    return build_result_for_session(session_id)
 
 
 if __name__ == "__main__":
