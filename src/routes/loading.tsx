@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { API_BASE } from "../config.js";
+import { API_BASE } from "../config";
 
 export const Route = createFileRoute("/loading")({
   head: () => ({
