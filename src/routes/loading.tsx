@@ -39,13 +39,21 @@ function Loading() {
       }
 
       const answers = JSON.parse(savedAnswers) as number[];
+      const selectedAge = sessionStorage.getItem("selectedAge") ?? "unknown";
+      const selectedGender = sessionStorage.getItem("selectedGender") ?? "unknown";
+      const age_group = selectedAge;
+      const gender = selectedGender;
 
       const res = await fetch(`${API_BASE}/api/submit`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ answers }),
+        body: JSON.stringify({
+          answers,
+          age_group,
+          gender,
+        }),
       });
 
       if (!res.ok) {
