@@ -37,12 +37,14 @@ function Questionnaire() {
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [transitioning, setTransitioning] = useState(false);
+  const [selected, setSelected] = useState<number | null>(null);
 
-  const progress = (index / QUESTIONS.length) * 100;
+  const progress = ((index + (selected ? 1 : 0)) / QUESTIONS.length) * 100;
 
   const handleSelect = (value: number) => {
     if (transitioning) return;
     setTransitioning(true);
+    setSelected(value);
     const next = [...answers, value];
     setAnswers(next);
 
@@ -54,39 +56,42 @@ function Questionnaire() {
         navigate({ to: "/loading" });
       } else {
         setIndex(index + 1);
+        setSelected(null);
         setTransitioning(false);
       }
-    }, 350);
+    }, 480);
   };
 
   const handleBack = () => {
     if (index === 0 || transitioning) return;
     setIndex(index - 1);
     setAnswers(answers.slice(0, -1));
+    setSelected(null);
   };
 
   return (
-    <main className="relative min-h-screen" style={{ background: "var(--gradient-warm)" }}>
-      <header className="mx-auto flex max-w-3xl items-center justify-between px-6 py-6">
+    <main className="relative min-h-screen overflow-hidden bg-noise" style={{ background: "var(--gradient-warm)" }}>
+      <div className="pointer-events-none absolute -right-32 top-1/3 h-80 w-80 rounded-full bg-primary-glow/8 blur-3xl" />
+      <header className="relative z-10 mx-auto flex max-w-3xl items-center justify-between px-6 py-6">
         <Logo />
         <div className="flex items-center gap-4">
-          <span className="text-xs font-medium text-muted-foreground tabular-nums">
-            {index + 1} <span className="text-muted-foreground/50">/ {QUESTIONS.length}</span>
+          <span className="text-xs font-medium text-muted-foreground/70 tabular-nums">
+            {index + 1} <span className="text-muted-foreground/40">/ {QUESTIONS.length}</span>
           </span>
           <ThemeToggle />
         </div>
       </header>
 
-      <div className="mx-auto max-w-3xl px-6">
-        <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
+      <div className="relative z-10 mx-auto max-w-3xl px-6">
+        <div className="h-[3px] w-full overflow-hidden rounded-full bg-muted/60">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-primary to-primary-glow transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+            className="h-full rounded-full bg-gradient-to-r from-primary to-primary-glow shadow-[0_0_8px_color-mix(in_oklab,var(--primary-glow)_60%,transparent)] transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
             style={{ width: `${progress}%` }}
           />
         </div>
       </div>
 
-      <section className="mx-auto flex max-w-2xl flex-col items-center px-6 pt-20 pb-16 text-center md:pt-32">
+      <section className="relative z-10 mx-auto flex max-w-2xl flex-col items-center px-6 pt-20 pb-16 text-center md:pt-32">
         <div key={index} className="w-full" style={{ animation: "fade-up 0.6s var(--ease-calm)" }}>
           <p className="mb-6 text-xs font-medium uppercase tracking-[0.2em] text-primary">Question {index + 1}</p>
           <h2 className="font-display text-3xl font-light leading-snug text-foreground md:text-4xl">
@@ -102,15 +107,20 @@ function Questionnaire() {
                     : n === 3
                       ? "h-10 w-10 md:h-11 md:w-11"
                       : "h-11 w-11 md:h-12 md:w-12";
+                const isSelected = selected === n;
                 return (
                   <button
                     key={n}
                     onClick={() => handleSelect(n)}
                     disabled={transitioning}
                     aria-label={`Rating ${n}`}
-                    className={`${size} group relative rounded-full border-2 border-primary/30 transition-all duration-300 hover:border-primary hover:bg-primary/10 hover:scale-110 active:scale-95 disabled:opacity-50`}
+                    className={`${size} group relative rounded-full border-2 transition-all duration-300 hover:scale-110 active:scale-90 disabled:cursor-not-allowed ${
+                      isSelected
+                        ? "border-primary bg-primary scale-110 shadow-[0_0_24px_color-mix(in_oklab,var(--primary-glow)_70%,transparent)]"
+                        : "border-primary/30 hover:border-primary hover:bg-primary/10"
+                    }`}
                   >
-                    <span className="absolute inset-1.5 rounded-full bg-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                    <span className={`absolute inset-1.5 rounded-full bg-primary transition-opacity duration-300 ${isSelected ? "opacity-0" : "opacity-0 group-hover:opacity-100"}`} />
                   </button>
                 );
               })}
