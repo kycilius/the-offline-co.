@@ -112,13 +112,14 @@ function Questionnaire() {
 
   if (!started) {
     return (
-      <main className="relative min-h-screen overflow-hidden bg-noise" style={{ background: "var(--gradient-warm)" }}>
-        <div className="pointer-events-none absolute -right-32 top-1/3 h-80 w-80 rounded-full bg-primary-glow/8 blur-3xl" />
-        <header className="relative z-10 mx-auto flex max-w-3xl items-center justify-between px-6 py-6">
+      <main className="relative isolate min-h-screen overflow-hidden bg-noise" style={{ background: "var(--gradient-warm)" }}>
+        <div aria-hidden className="pointer-events-none absolute inset-0 z-0" />
+        <div aria-hidden className="pointer-events-none absolute -right-32 top-1/3 z-0 h-80 w-80 rounded-full bg-primary-glow/8 blur-3xl" />
+        <header className="relative z-10 pointer-events-auto mx-auto flex max-w-3xl items-center justify-between px-6 py-6">
           <Logo />
           <ThemeToggle />
         </header>
-        <section className="relative z-10 mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-6 text-center">
+        <section className="relative z-10 pointer-events-auto mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-6 text-center">
           {step === "name" && (
             <form key="name" onSubmit={handleNameSubmit} className="w-full" style={{ animation: "fade-up 0.6s var(--ease-calm)" }}>
               <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-primary">Before we begin</p>
@@ -229,9 +230,10 @@ function Questionnaire() {
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-noise" style={{ background: "var(--gradient-warm)" }}>
-      <div className="pointer-events-none absolute -right-32 top-1/3 h-80 w-80 rounded-full bg-primary-glow/8 blur-3xl" />
-      <header className="relative z-10 mx-auto flex max-w-3xl items-center justify-between px-6 py-6">
+    <main className="relative isolate min-h-screen overflow-hidden bg-noise" style={{ background: "var(--gradient-warm)" }}>
+      <div aria-hidden className="pointer-events-none absolute inset-0 z-0" />
+      <div aria-hidden className="pointer-events-none absolute -right-32 top-1/3 z-0 h-80 w-80 rounded-full bg-primary-glow/8 blur-3xl" />
+      <header className="relative z-10 pointer-events-auto mx-auto flex max-w-3xl items-center justify-between px-6 py-6">
         <Logo />
         <div className="flex items-center gap-4">
           <span className="text-xs font-medium text-muted-foreground/70 tabular-nums">
@@ -241,7 +243,7 @@ function Questionnaire() {
         </div>
       </header>
 
-      <div className="relative z-10 mx-auto max-w-3xl px-6">
+      <div className="relative z-10 pointer-events-auto mx-auto max-w-3xl px-6">
         <div className="h-[3px] w-full overflow-hidden rounded-full bg-muted/60">
           <div
             className="h-full rounded-full bg-gradient-to-r from-primary to-primary-glow shadow-[0_0_8px_color-mix(in_oklab,var(--primary-glow)_60%,transparent)] transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
@@ -250,7 +252,7 @@ function Questionnaire() {
         </div>
       </div>
 
-      <section className="relative z-10 mx-auto flex max-w-2xl flex-col items-center px-6 pt-20 pb-16 text-center md:pt-32">
+      <section className="relative z-10 pointer-events-auto mx-auto flex max-w-2xl flex-col items-center px-6 pt-20 pb-16 text-center md:pt-32">
         <div key={index} className="w-full" style={{ animation: "fade-up 0.6s var(--ease-calm)" }}>
           <p className="mb-6 text-xs font-medium uppercase tracking-[0.2em] text-primary">Question {index + 1}</p>
           <h2 className="font-display text-3xl font-light leading-snug text-foreground md:text-4xl">
