@@ -13,11 +13,11 @@ export const Route = createFileRoute("/result")({
 });
 
 type MatchResult = {
-  group?: Array<string | { name?: string }>;
+  group_members?: string[];
   score?: number;
   group_name?: string;
-  activity?: string;
-  plan?: {
+  personality?: string;
+  activity_plan?: {
     icebreaker?: string;
     activity?: string;
     closing?: string;
@@ -59,10 +59,10 @@ function Result() {
     }
   }, []);
 
-  const members = result?.group ?? [];
+  const members = result?.group_members ?? [];
   const groupName = result?.group_name ?? "Your Group";
   const score = Math.max(0, Math.min(100, result?.score ?? 0));
-  const activity = result?.activity ?? "No activity available yet";
+  const activity = result?.activity_plan?.activity ?? "No activity available yet";
   const memberNames = members.map(getMemberName);
   const avatarNames = memberNames.slice(0, 5);
 
@@ -171,7 +171,7 @@ function Result() {
                     <HeartHandshake className="h-4 w-4" />
                   </div>
                   <h3 className="text-sm font-semibold text-foreground">Icebreaker</h3>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{result.plan?.icebreaker ?? "—"}</p>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{result.activity_plan?.icebreaker ?? "—"}</p>
                 </article>
 
                 <article className="rounded-3xl border border-border/60 bg-card/95 p-5 shadow-[var(--shadow-card)] transition-all duration-500 hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)]">
@@ -179,7 +179,7 @@ function Result() {
                     <PartyPopper className="h-4 w-4" />
                   </div>
                   <h3 className="text-sm font-semibold text-foreground">Activity</h3>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{result.plan?.activity ?? activity}</p>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{result.activity_plan?.activity ?? activity}</p>
                 </article>
 
                 <article className="rounded-3xl border border-border/60 bg-card/95 p-5 shadow-[var(--shadow-card)] transition-all duration-500 hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)]">
@@ -187,7 +187,7 @@ function Result() {
                     <CheckCircle2 className="h-4 w-4" />
                   </div>
                   <h3 className="text-sm font-semibold text-foreground">Closing</h3>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{result.plan?.closing ?? "—"}</p>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{result.activity_plan?.closing ?? "—"}</p>
                 </article>
               </div>
             </section>
