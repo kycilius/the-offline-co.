@@ -91,9 +91,12 @@ function Result() {
         ) : (
           <>
             <div className="animate-[fade-up_650ms_var(--ease-calm)]">
-              <p className="mb-3 text-xs font-medium uppercase tracking-[0.25em] text-primary/85">Your match</p>
+              <p className="mb-3 text-xs font-medium uppercase tracking-[0.25em] text-primary/85">
+                {userName ? `Hello, ${userName}` : "Your match"}
+              </p>
               <h1 className="max-w-3xl font-display text-3xl font-light leading-tight text-foreground md:text-5xl">
                 You belong with the <span className="font-semibold text-primary">'{groupName}'</span>
+                {userName ? <>, <span className="font-semibold text-primary">{userName}</span></> : null}
               </h1>
             </div>
 
