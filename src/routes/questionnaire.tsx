@@ -39,9 +39,15 @@ function Questionnaire() {
   const [transitioning, setTransitioning] = useState(false);
   const [selected, setSelected] = useState<number | null>(null);
   const [started, setStarted] = useState(false);
+  const [step, setStep] = useState<"name" | "age" | "gender">("name");
   const [name, setName] = useState("");
+  const [ageGroup, setAgeGroup] = useState<string>("");
+  const [gender, setGender] = useState<string>("");
 
-  const handleStart = (e: React.FormEvent) => {
+  const AGE_OPTIONS = ["18–22", "23–27", "28–35", "35+"];
+  const GENDER_OPTIONS = ["Male", "Female", "Prefer not to say"];
+
+  const handleNameSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = name.trim();
     if (trimmed) {
@@ -49,6 +55,28 @@ function Questionnaire() {
     } else {
       localStorage.removeItem("user_name");
     }
+    setStep("age");
+  };
+
+  const handleAgeSelect = (value: string) => {
+    setAgeGroup(value);
+    sessionStorage.setItem("selectedAge", value);
+    setTimeout(() => setStep("gender"), 280);
+  };
+
+  const handleGenderSelect = (value: string) => {
+    setGender(value);
+    sessionStorage.setItem("selectedGender", value);
+    setTimeout(() => setStarted(true), 280);
+  };
+
+  const skipName = () => {
+    localStorage.removeItem("user_name");
+    setStep("age");
+  };
+
+  const skipGender = () => {
+    sessionStorage.setItem("selectedGender", "unknown");
     setStarted(true);
   };
 
