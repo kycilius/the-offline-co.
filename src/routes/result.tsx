@@ -269,14 +269,18 @@ function Result() {
           className="mt-10 animate-[fade-up_950ms_var(--ease-calm)]"
           style={{ animationDelay: "420ms", animationFillMode: "both" }}
         >
-          <p className="mb-4 text-sm italic text-muted-foreground">
-            This is where real connection begins.
+          <p className="mb-2 text-base leading-relaxed text-foreground">
+            This is the kind of group where you won't feel like an outsider.
+          </p>
+          <p className="mb-4 text-xs uppercase tracking-[0.2em] text-primary/80">
+            This match won't stay available forever.
           </p>
           <Link
             to="/plan"
-            className="inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-base font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-all duration-500 hover:scale-[1.02] hover:shadow-[var(--shadow-glow)]"
+            className="inline-flex flex-col items-center gap-1 rounded-2xl bg-primary px-8 py-4 text-base font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-all duration-500 hover:scale-[1.02] hover:shadow-[var(--shadow-glow)]"
           >
-            See your full group + start your first meetup
+            <span className="text-base font-semibold">Meet your group</span>
+            <span className="text-xs font-normal text-primary-foreground/80">Start your first experience — ₹99</span>
           </Link>
           <div className="mt-5 rounded-2xl border border-border/60 bg-card/70 p-5">
             <p className="text-sm font-medium text-foreground">You'll unlock:</p>
