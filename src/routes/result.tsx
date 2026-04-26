@@ -98,6 +98,9 @@ function Result() {
                 You belong with the <span className="font-semibold text-primary">'{groupName}'</span>
                 {userName ? <>, <span className="font-semibold text-primary">{userName}</span></> : null}
               </h1>
+              <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
+                This is the kind of group where you won't feel like an outsider.
+              </p>
             </div>
 
             <div
