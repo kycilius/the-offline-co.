@@ -90,6 +90,14 @@ function Result() {
         "You value emotional safety",
         "You listen before speaking",
       ];
+  const matchLabel = result?.match_label?.trim()
+    ? result.match_label
+    : `${score}% match — unusually strong alignment`;
+  const groupLabel = result?.group_label?.trim()
+    ? result.group_label
+    : groupSize > 0
+      ? `${groupSize} ${groupSize === 1 ? "person" : "people"} like you`
+      : "Your circle";
 
   const groupDescription = buildGroupDescription(groupName, score);
 
