@@ -20,6 +20,8 @@ type MatchResult = {
   match_reasons?: string[];
   group_size?: number;
   user_display_name?: string;
+  match_label?: string;
+  group_label?: string;
   activity_plan?: {
     icebreaker?: string;
     activity?: string;
@@ -88,6 +90,14 @@ function Result() {
         "You value emotional safety",
         "You listen before speaking",
       ];
+  const matchLabel = result?.match_label?.trim()
+    ? result.match_label
+    : `${score}% match — unusually strong alignment`;
+  const groupLabel = result?.group_label?.trim()
+    ? result.group_label
+    : groupSize > 0
+      ? `${groupSize} ${groupSize === 1 ? "person" : "people"} like you`
+      : "Your circle";
 
   const groupDescription = buildGroupDescription(groupName, score);
 
@@ -124,7 +134,7 @@ function Result() {
             >
               <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
                 <div>
-                  <p className="text-base font-medium text-foreground">{score}% match — unusually strong alignment</p>
+                  <p className="text-base font-medium text-foreground">{matchLabel}</p>
                   <p className="mt-1 text-sm text-muted-foreground">This level of compatibility is rare.</p>
                 </div>
                 <div className="relative grid h-24 w-24 place-items-center rounded-full border border-primary/25 bg-primary/5 shadow-[var(--shadow-soft)]">
@@ -205,10 +215,10 @@ function Result() {
               className="mt-6 rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] animate-[fade-up_800ms_var(--ease-calm)]"
               style={{ animationDelay: "260ms", animationFillMode: "both" }}
             >
-              <h2 className="text-base font-semibold text-foreground">
-                {groupSize > 0 ? `${groupSize} people like you` : "Your circle"}
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">A small circle matched to your vibe</p>
+              <h2 className="text-base font-semibold text-foreground">{groupLabel}</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                You're matched with people who think and feel like you.
+              </p>
               <div className="relative mt-5 h-48">
                 {avatarNames.map((_, idx) => {
                   const positions = [
@@ -235,7 +245,7 @@ function Result() {
               className="mt-6 animate-[fade-up_900ms_var(--ease-calm)]"
               style={{ animationDelay: "320ms", animationFillMode: "both" }}
             >
-              <h2 className="mb-4 text-base font-semibold text-foreground">Activity plan</h2>
+              <h2 className="mb-4 text-base font-semibold text-foreground">This is how your group connects:</h2>
               <div className="grid gap-4 md:grid-cols-3">
                 <article className="rounded-3xl border border-border/60 bg-card/95 p-5 shadow-[var(--shadow-card)] transition-all duration-500 hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)]">
                   <div className="mb-3 inline-flex rounded-full bg-primary/10 p-2 text-primary">
