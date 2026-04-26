@@ -231,12 +231,30 @@ function Result() {
           className="mt-10 animate-[fade-up_950ms_var(--ease-calm)]"
           style={{ animationDelay: "420ms", animationFillMode: "both" }}
         >
+          <p className="mb-4 text-sm italic text-muted-foreground">
+            This is where real connection begins.
+          </p>
           <Link
             to="/plan"
             className="inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-base font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-all duration-500 hover:scale-[1.02] hover:shadow-[var(--shadow-glow)]"
           >
-            {ctaLabel}
+            See your full group + start your first meetup
           </Link>
+          <div className="mt-5 rounded-2xl border border-border/60 bg-card/70 p-5">
+            <p className="text-sm font-medium text-foreground">You'll unlock:</p>
+            <ul className="mt-3 space-y-2">
+              {[
+                "Your actual group members",
+                "A guided first meetup plan",
+                "Real conversation prompts",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-3 text-sm leading-6 text-muted-foreground">
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </section>
     </main>
