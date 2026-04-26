@@ -89,7 +89,6 @@ function Result() {
         "You listen before speaking",
       ];
 
-  const personalityNarrative = buildPersonalityNarrative(score, groupName, activity);
   const groupDescription = buildGroupDescription(groupName, score);
 
   return (
