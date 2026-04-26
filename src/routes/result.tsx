@@ -215,10 +215,10 @@ function Result() {
               className="mt-6 rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] animate-[fade-up_800ms_var(--ease-calm)]"
               style={{ animationDelay: "260ms", animationFillMode: "both" }}
             >
-              <h2 className="text-base font-semibold text-foreground">
-                {groupSize > 0 ? `${groupSize} people like you` : "Your circle"}
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">A small circle matched to your vibe</p>
+              <h2 className="text-base font-semibold text-foreground">{groupLabel}</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                You're matched with people who think and feel like you.
+              </p>
               <div className="relative mt-5 h-48">
                 {avatarNames.map((_, idx) => {
                   const positions = [
