@@ -41,3 +41,6 @@ class ResultResponse(BaseModel):
     personality: str
     group_members: List[str]
     activity_plan: Plan
+    match_reasons: List[str] = Field(default_factory=list)
+    group_size: int = 0
+    user_display_name: str = "You"

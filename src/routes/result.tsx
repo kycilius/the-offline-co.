@@ -17,6 +17,9 @@ type MatchResult = {
   score?: number;
   group_name?: string;
   personality?: string;
+  match_reasons?: string[];
+  group_size?: number;
+  user_display_name?: string;
   activity_plan?: {
     icebreaker?: string;
     activity?: string;
@@ -70,6 +73,14 @@ function Result() {
   const activity = result?.activity_plan?.activity ?? "No activity available yet";
   const memberNames = members.map(getMemberName);
   const avatarNames = memberNames.slice(0, 5);
+  const groupSize = result?.group_size ?? avatarNames.length;
+  const matchReasons = result?.match_reasons?.length
+    ? result.match_reasons
+    : [
+        "You prefer meaningful conversations",
+        "You value emotional safety",
+        "You listen before speaking",
+      ];
 
   const personalityNarrative = buildPersonalityNarrative(score, groupName, activity);
   const groupDescription = buildGroupDescription(groupName, score);
@@ -90,7 +101,7 @@ function Result() {
           <>
             <div className="animate-[fade-up_650ms_var(--ease-calm)]">
               <p className="mb-3 text-xs font-medium uppercase tracking-[0.25em] text-primary/85">
-                {userName ? `Hello, ${userName}` : "Your match"}
+                {userName ? `Hello, ${userName}` : `Hello, ${result.user_display_name ?? "You"}`}
               </p>
               <h1 className="max-w-3xl font-display text-3xl font-light leading-tight text-foreground md:text-5xl">
                 You belong with the <span className="font-semibold text-primary">'{groupName}'</span>
@@ -127,11 +138,7 @@ function Result() {
                 <h2 className="text-base font-semibold text-foreground">Why this match works for you</h2>
               </div>
               <ul className="space-y-3">
-                {[
-                  "You prefer meaningful conversations over small talk",
-                  "You value emotional safety in groups",
-                  "You naturally create calm, grounded interactions",
-                ].map((reason) => (
+                {matchReasons.map((reason) => (
                   <li key={reason} className="flex items-start gap-3 text-sm leading-6 text-muted-foreground">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                     <span>{reason}</span>
@@ -166,7 +173,7 @@ function Result() {
               style={{ animationDelay: "260ms", animationFillMode: "both" }}
             >
               <h2 className="text-base font-semibold text-foreground">
-                {avatarNames.length > 0 ? `${avatarNames.length} people like you` : "Your circle"}
+                {groupSize > 0 ? `${groupSize} people like you` : "Your circle"}
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">A small circle matched to your vibe</p>
               <div className="relative mt-5 h-48">

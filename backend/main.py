@@ -127,7 +127,47 @@ def build_activity_plan(score: int, answers: list[int]) -> Plan:
 
 
 def build_display_name_map() -> dict[str, str]:
-    return {str(user["session_id"]): f"User {index}" for index, user in enumerate(users, start=1)}
+    descriptors = [
+        "Quiet Listener",
+        "Warm Storyteller",
+        "Thoughtful Explorer",
+        "Calm Optimist",
+        "Gentle Connector",
+        "Curious Reflector",
+    ]
+    return {str(user["session_id"]): descriptors[(index - 1) % len(descriptors)] for index, user in enumerate(users, start=1)}
+
+
+def build_match_reasons(answers: list[int]) -> list[str]:
+    if not answers:
+        return [
+            "You prefer meaningful conversations",
+            "You value emotional safety",
+            "You listen before speaking",
+        ]
+
+    avg = sum(answers) / len(answers)
+    reasons: list[str] = []
+
+    if avg <= 2.8:
+        reasons.append("You prefer meaningful conversations")
+    elif avg >= 3.8:
+        reasons.append("You bring uplifting energy to group moments")
+    else:
+        reasons.append("You balance depth with lighthearted conversation")
+
+    if len([value for value in answers if value <= 2]) >= max(1, len(answers) // 3):
+        reasons.append("You value emotional safety")
+    else:
+        reasons.append("You adapt well to different social comfort levels")
+
+    first_answer = answers[0] if answers else 3
+    if first_answer <= 3:
+        reasons.append("You listen before speaking")
+    else:
+        reasons.append("You initiate conversations with warmth")
+
+    return reasons
 
 
 def build_result_for_session(session_id: str) -> ResultResponse:
@@ -142,6 +182,13 @@ def build_result_for_session(session_id: str) -> ResultResponse:
                 activity="Take a short offline break today.",
                 closing="Come back later to discover your group.",
             ),
+            match_reasons=[
+                "You prefer meaningful conversations",
+                "You value emotional safety",
+                "You listen before speaking",
+            ],
+            group_size=1,
+            user_display_name="You",
         )
 
     current_user = next((user for user in users if str(user["session_id"]) == session_id), None)
@@ -168,6 +215,7 @@ def build_result_for_session(session_id: str) -> ResultResponse:
     group_member_names = [display_names.get(session_id, "User"), *[display_names.get(match_id, "User") for match_id, _ in top_matches]]
     if not group_member_names:
         group_member_names = ["Waiting for more users to join"]
+    group_size = len(group_member_names)
 
     return ResultResponse(
         group_name=group_name,
@@ -175,6 +223,9 @@ def build_result_for_session(session_id: str) -> ResultResponse:
         personality=build_personality_summary(current_answers),
         group_members=group_member_names,
         activity_plan=DEFAULT_ACTIVITY_PLAN,
+        match_reasons=build_match_reasons(current_answers),
+        group_size=group_size,
+        user_display_name=display_names.get(session_id, "You"),
     )
 
 
@@ -237,8 +288,11 @@ def match_users() -> MatchResponse:
             group_name=computed_result.group_name,
             score=computed_result.score,
             personality=computed_result.personality,
-            group_members=[display_names.get(str(member), member) for member in group_members],
+            group_members=group_members,
             activity_plan=computed_result.activity_plan,
+            match_reasons=computed_result.match_reasons,
+            group_size=computed_result.group_size,
+            user_display_name=computed_result.user_display_name,
         )
 
     return MatchResponse(
