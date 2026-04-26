@@ -153,18 +153,45 @@ function Result() {
               </ul>
             </section>
 
-            <div
-              className="mt-6 grid gap-6 md:grid-cols-2 animate-[fade-up_750ms_var(--ease-calm)]"
+            <section
+              className="mt-6 rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] animate-[fade-up_740ms_var(--ease-calm)]"
+              style={{ animationDelay: "180ms", animationFillMode: "both" }}
+            >
+              <div className="mb-4 flex items-center gap-2 text-primary">
+                <Sparkles className="h-4 w-4" />
+                <h2 className="text-base font-semibold text-foreground">Your personality</h2>
+              </div>
+              <ul className="space-y-3">
+                {personalityLines.map((line) => (
+                  <li key={line} className="text-sm leading-7 text-muted-foreground">
+                    {line}
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section
+              className="mt-6 rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] animate-[fade-up_750ms_var(--ease-calm)]"
               style={{ animationDelay: "200ms", animationFillMode: "both" }}
             >
-              <article className="rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] transition-all duration-500 hover:shadow-[var(--shadow-soft)]">
-                <div className="mb-4 flex items-center gap-2 text-primary">
-                  <Sparkles className="h-4 w-4" />
-                  <h2 className="text-base font-semibold text-foreground">Your personality</h2>
-                </div>
-                <p className="text-sm leading-7 text-muted-foreground">{personalityNarrative}</p>
-              </article>
+              <div className="mb-4 flex items-center gap-2 text-primary">
+                <Sparkles className="h-4 w-4" />
+                <h2 className="text-base font-semibold text-foreground">You're different from most people</h2>
+              </div>
+              <ul className="space-y-3">
+                {differenceLines.map((line) => (
+                  <li key={line} className="flex items-start gap-3 text-sm leading-7 text-muted-foreground">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
 
+            <div
+              className="mt-6 animate-[fade-up_760ms_var(--ease-calm)]"
+              style={{ animationDelay: "220ms", animationFillMode: "both" }}
+            >
               <article className="rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] transition-all duration-500 hover:shadow-[var(--shadow-soft)]">
                 <div className="mb-4 flex items-center gap-2 text-primary">
                   <Users className="h-4 w-4" />
