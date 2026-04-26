@@ -40,10 +40,17 @@ function getInitials(name: string) {
     .join("");
 }
 
-function buildPersonalityNarrative(score: number, groupName: string, activity: string) {
-  const warmth = score >= 85 ? "grounded confidence" : score >= 65 ? "quiet curiosity" : "gentle openness";
-  return `You carry a ${warmth} that helps people feel safe around you, and that is exactly why ${groupName} fits so naturally. You tend to notice the small details, listen before speaking, and create calm momentum in shared moments. This plan around ${activity.toLowerCase()} is designed to feel meaningful, not performative.`;
-}
+const personalityLines = [
+  "You don't enjoy surface-level conversations — you look for depth, even in small interactions.",
+  "You notice things others miss, and that makes people feel understood around you.",
+  "You tend to listen first, speak second, and bring calm into group spaces.",
+];
+
+const differenceLines = [
+  "Most people enjoy casual interaction — you look for meaning.",
+  "Others talk to fill silence — you observe before speaking.",
+  "Many seek energy — you seek depth.",
+];
 
 function buildGroupDescription(groupName: string, score: number) {
   const intensity = score >= 80 ? "intentional and warm" : "easygoing and thoughtful";
@@ -82,7 +89,6 @@ function Result() {
         "You listen before speaking",
       ];
 
-  const personalityNarrative = buildPersonalityNarrative(score, groupName, activity);
   const groupDescription = buildGroupDescription(groupName, score);
 
   return (
@@ -118,8 +124,8 @@ function Result() {
             >
               <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
                 <div>
-                  <p className="text-base font-medium text-foreground">{score}% match with your group</p>
-                  <p className="mt-1 text-sm text-muted-foreground">A strong emotional fit based on your reflections.</p>
+                  <p className="text-base font-medium text-foreground">{score}% match — unusually strong alignment</p>
+                  <p className="mt-1 text-sm text-muted-foreground">This level of compatibility is rare.</p>
                 </div>
                 <div className="relative grid h-24 w-24 place-items-center rounded-full border border-primary/25 bg-primary/5 shadow-[var(--shadow-soft)]">
                   <span className="text-xl font-semibold text-primary">{score}%</span>
@@ -147,18 +153,45 @@ function Result() {
               </ul>
             </section>
 
-            <div
-              className="mt-6 grid gap-6 md:grid-cols-2 animate-[fade-up_750ms_var(--ease-calm)]"
+            <section
+              className="mt-6 rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] animate-[fade-up_740ms_var(--ease-calm)]"
+              style={{ animationDelay: "180ms", animationFillMode: "both" }}
+            >
+              <div className="mb-4 flex items-center gap-2 text-primary">
+                <Sparkles className="h-4 w-4" />
+                <h2 className="text-base font-semibold text-foreground">Your personality</h2>
+              </div>
+              <ul className="space-y-3">
+                {personalityLines.map((line) => (
+                  <li key={line} className="text-sm leading-7 text-muted-foreground">
+                    {line}
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section
+              className="mt-6 rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] animate-[fade-up_750ms_var(--ease-calm)]"
               style={{ animationDelay: "200ms", animationFillMode: "both" }}
             >
-              <article className="rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] transition-all duration-500 hover:shadow-[var(--shadow-soft)]">
-                <div className="mb-4 flex items-center gap-2 text-primary">
-                  <Sparkles className="h-4 w-4" />
-                  <h2 className="text-base font-semibold text-foreground">Your personality</h2>
-                </div>
-                <p className="text-sm leading-7 text-muted-foreground">{personalityNarrative}</p>
-              </article>
+              <div className="mb-4 flex items-center gap-2 text-primary">
+                <Sparkles className="h-4 w-4" />
+                <h2 className="text-base font-semibold text-foreground">You're different from most people</h2>
+              </div>
+              <ul className="space-y-3">
+                {differenceLines.map((line) => (
+                  <li key={line} className="flex items-start gap-3 text-sm leading-7 text-muted-foreground">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
 
+            <div
+              className="mt-6 animate-[fade-up_760ms_var(--ease-calm)]"
+              style={{ animationDelay: "220ms", animationFillMode: "both" }}
+            >
               <article className="rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] transition-all duration-500 hover:shadow-[var(--shadow-soft)]">
                 <div className="mb-4 flex items-center gap-2 text-primary">
                   <Users className="h-4 w-4" />
@@ -236,14 +269,18 @@ function Result() {
           className="mt-10 animate-[fade-up_950ms_var(--ease-calm)]"
           style={{ animationDelay: "420ms", animationFillMode: "both" }}
         >
-          <p className="mb-4 text-sm italic text-muted-foreground">
-            This is where real connection begins.
+          <p className="mb-2 text-base leading-relaxed text-foreground">
+            This is the kind of group where you won't feel like an outsider.
+          </p>
+          <p className="mb-4 text-xs uppercase tracking-[0.2em] text-primary/80">
+            This match won't stay available forever.
           </p>
           <Link
             to="/plan"
-            className="inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-base font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-all duration-500 hover:scale-[1.02] hover:shadow-[var(--shadow-glow)]"
+            className="inline-flex flex-col items-center gap-1 rounded-2xl bg-primary px-8 py-4 text-base font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-all duration-500 hover:scale-[1.02] hover:shadow-[var(--shadow-glow)]"
           >
-            See your full group + start your first meetup
+            <span className="text-base font-semibold">Meet your group</span>
+            <span className="text-xs font-normal text-primary-foreground/80">Start your first experience — ₹99</span>
           </Link>
           <div className="mt-5 rounded-2xl border border-border/60 bg-card/70 p-5">
             <p className="text-sm font-medium text-foreground">You'll unlock:</p>
