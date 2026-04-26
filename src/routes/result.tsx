@@ -40,10 +40,17 @@ function getInitials(name: string) {
     .join("");
 }
 
-function buildPersonalityNarrative(score: number, groupName: string, activity: string) {
-  const warmth = score >= 85 ? "grounded confidence" : score >= 65 ? "quiet curiosity" : "gentle openness";
-  return `You carry a ${warmth} that helps people feel safe around you, and that is exactly why ${groupName} fits so naturally. You tend to notice the small details, listen before speaking, and create calm momentum in shared moments. This plan around ${activity.toLowerCase()} is designed to feel meaningful, not performative.`;
-}
+const personalityLines = [
+  "You don't enjoy surface-level conversations — you look for depth, even in small interactions.",
+  "You notice things others miss, and that makes people feel understood around you.",
+  "You tend to listen first, speak second, and bring calm into group spaces.",
+];
+
+const differenceLines = [
+  "Most people enjoy casual interaction — you look for meaning.",
+  "Others talk to fill silence — you observe before speaking.",
+  "Many seek energy — you seek depth.",
+];
 
 function buildGroupDescription(groupName: string, score: number) {
   const intensity = score >= 80 ? "intentional and warm" : "easygoing and thoughtful";
