@@ -124,15 +124,14 @@ function Questionnaire() {
 
   if (!started) {
     return (
-      <main className="relative min-h-screen overflow-hidden bg-noise" style={{ background: "var(--gradient-warm)" }}>
+      <main className="relative min-h-screen" style={{ background: "var(--gradient-warm)" }}>
         <header className="pointer-events-auto relative z-10 mx-auto flex max-w-3xl items-center justify-between px-6 py-6">
           <Logo />
           <ThemeToggle />
         </header>
-      <div aria-hidden className="absolute -right-32 top-1/3 -z-10 h-80 w-80 rounded-full bg-primary-glow/8 blur-3xl" />
         <section className="pointer-events-auto relative z-10 mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-6 text-center">
           {step === "name" && (
-            <form key="name" onSubmit={handleNameSubmit} className="w-full" style={{ animation: "fade-up 0.6s var(--ease-calm)" }}>
+            <form key="name" onSubmit={handleNameSubmit} className="w-full">
               <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-primary">Before we begin</p>
               <h2 className="font-display text-3xl font-light leading-snug text-foreground md:text-4xl">
                 What should we call you?
@@ -169,7 +168,7 @@ function Questionnaire() {
           )}
 
           {step === "age" && (
-            <div key="age" className="w-full" style={{ animation: "fade-up 0.6s var(--ease-calm)" }}>
+            <div key="age" className="w-full">
               <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-primary">A little about you</p>
               <h2 className="font-display text-3xl font-light leading-snug text-foreground md:text-4xl">
                 What's your age range?
@@ -199,7 +198,7 @@ function Questionnaire() {
           )}
 
           {step === "gender" && (
-            <div key="gender" className="w-full" style={{ animation: "fade-up 0.6s var(--ease-calm)" }}>
+            <div key="gender" className="w-full">
               <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-primary">One more thing</p>
               <h2 className="font-display text-3xl font-light leading-snug text-foreground md:text-4xl">
                 What's your gender?
@@ -241,8 +240,7 @@ function Questionnaire() {
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-noise" style={{ background: "var(--gradient-warm)" }}>
-      <div aria-hidden className="absolute -right-32 top-1/3 -z-10 h-80 w-80 rounded-full bg-primary-glow/8 blur-3xl" />
+    <main className="relative min-h-screen" style={{ background: "var(--gradient-warm)" }}>
       <header className="relative z-10 pointer-events-auto mx-auto flex max-w-3xl items-center justify-between px-6 py-6">
         <Logo />
         <div className="flex items-center gap-4">
@@ -263,7 +261,7 @@ function Questionnaire() {
       </div>
 
       <section className="relative z-10 pointer-events-auto mx-auto flex max-w-2xl flex-col items-center px-6 pt-20 pb-16 text-center md:pt-32">
-        <div key={index} className="w-full" style={{ animation: "fade-up 0.6s var(--ease-calm)" }}>
+        <div key={index} className="w-full">
           <p className="mb-6 text-xs font-medium uppercase tracking-[0.2em] text-primary">Question {index + 1}</p>
           <h2 className="font-display text-3xl font-light leading-snug text-foreground md:text-4xl">
             {QUESTIONS[index]}
