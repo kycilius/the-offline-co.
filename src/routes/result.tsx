@@ -74,8 +74,6 @@ function Result() {
   const personalityNarrative = buildPersonalityNarrative(score, groupName, activity);
   const groupDescription = buildGroupDescription(groupName, score);
 
-  const ctaLabel = score >= 85 ? "Start This Experience" : "Unlock Full Experience — ₹99";
-
   return (
     <main className="relative min-h-screen overflow-hidden bg-noise" style={{ background: "var(--gradient-warm)" }}>
       <div className="pointer-events-none absolute -left-32 top-20 h-96 w-96 rounded-full bg-primary/8 blur-3xl animate-[float_10s_ease-in-out_infinite]" />
