@@ -38,6 +38,8 @@ class Plan(BaseModel):
 class ResultResponse(BaseModel):
     group_name: str
     score: int
+    match_label: str = ""
+    group_label: str = ""
     personality: str
     group_members: List[str]
     activity_plan: Plan
