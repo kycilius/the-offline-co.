@@ -74,8 +74,6 @@ function Result() {
   const personalityNarrative = buildPersonalityNarrative(score, groupName, activity);
   const groupDescription = buildGroupDescription(groupName, score);
 
-  const ctaLabel = score >= 85 ? "Start This Experience" : "Unlock Full Experience — ₹99";
-
   return (
     <main className="relative min-h-screen overflow-hidden bg-noise" style={{ background: "var(--gradient-warm)" }}>
       <div className="pointer-events-none absolute -left-32 top-20 h-96 w-96 rounded-full bg-primary/8 blur-3xl animate-[float_10s_ease-in-out_infinite]" />
@@ -98,6 +96,9 @@ function Result() {
                 You belong with the <span className="font-semibold text-primary">'{groupName}'</span>
                 {userName ? <>, <span className="font-semibold text-primary">{userName}</span></> : null}
               </h1>
+              <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
+                This is the kind of group where you won't feel like an outsider.
+              </p>
             </div>
 
             <div
@@ -116,6 +117,28 @@ function Result() {
               </div>
               <Progress className="mt-5 h-2.5 rounded-full bg-primary/15" value={score} />
             </div>
+
+            <section
+              className="mt-6 rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] animate-[fade-up_720ms_var(--ease-calm)]"
+              style={{ animationDelay: "160ms", animationFillMode: "both" }}
+            >
+              <div className="mb-4 flex items-center gap-2 text-primary">
+                <Sparkles className="h-4 w-4" />
+                <h2 className="text-base font-semibold text-foreground">Why this match works for you</h2>
+              </div>
+              <ul className="space-y-3">
+                {[
+                  "You prefer meaningful conversations over small talk",
+                  "You value emotional safety in groups",
+                  "You naturally create calm, grounded interactions",
+                ].map((reason) => (
+                  <li key={reason} className="flex items-start gap-3 text-sm leading-6 text-muted-foreground">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <span>{reason}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
 
             <div
               className="mt-6 grid gap-6 md:grid-cols-2 animate-[fade-up_750ms_var(--ease-calm)]"
@@ -142,9 +165,12 @@ function Result() {
               className="mt-6 rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] animate-[fade-up_800ms_var(--ease-calm)]"
               style={{ animationDelay: "260ms", animationFillMode: "both" }}
             >
-              <h2 className="text-base font-semibold text-foreground">Your circle</h2>
+              <h2 className="text-base font-semibold text-foreground">
+                {avatarNames.length > 0 ? `${avatarNames.length} people like you` : "Your circle"}
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">A small circle matched to your vibe</p>
               <div className="relative mt-5 h-48">
-                {avatarNames.map((name, idx) => {
+                {avatarNames.map((_, idx) => {
                   const positions = [
                     "left-1/2 top-0 -translate-x-1/2",
                     "left-12 top-16",
@@ -155,17 +181,14 @@ function Result() {
 
                   return (
                     <div
-                      key={`${name}-${idx}`}
-                      className={`absolute ${positions[idx]} flex h-16 w-16 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-sm font-semibold text-primary shadow-[var(--shadow-soft)] transition-transform duration-500 hover:scale-105`}
+                      key={idx}
+                      className={`absolute ${positions[idx]} flex h-16 w-16 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-primary shadow-[var(--shadow-soft)] transition-transform duration-500 hover:scale-105`}
                     >
-                      {getInitials(name)}
+                      <Users className="h-5 w-5" />
                     </div>
                   );
                 })}
               </div>
-              {memberNames.length > 0 && (
-                <p className="mt-2 text-center text-sm text-muted-foreground">{memberNames.join(" • ")}</p>
-              )}
             </section>
 
             <section
@@ -206,12 +229,30 @@ function Result() {
           className="mt-10 animate-[fade-up_950ms_var(--ease-calm)]"
           style={{ animationDelay: "420ms", animationFillMode: "both" }}
         >
+          <p className="mb-4 text-sm italic text-muted-foreground">
+            This is where real connection begins.
+          </p>
           <Link
             to="/plan"
             className="inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-base font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-all duration-500 hover:scale-[1.02] hover:shadow-[var(--shadow-glow)]"
           >
-            {ctaLabel}
+            See your full group + start your first meetup
           </Link>
+          <div className="mt-5 rounded-2xl border border-border/60 bg-card/70 p-5">
+            <p className="text-sm font-medium text-foreground">You'll unlock:</p>
+            <ul className="mt-3 space-y-2">
+              {[
+                "Your actual group members",
+                "A guided first meetup plan",
+                "Real conversation prompts",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-3 text-sm leading-6 text-muted-foreground">
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </section>
     </main>
