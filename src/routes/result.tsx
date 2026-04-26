@@ -20,6 +20,8 @@ type MatchResult = {
   match_reasons?: string[];
   group_size?: number;
   user_display_name?: string;
+  match_label?: string;
+  group_label?: string;
   activity_plan?: {
     icebreaker?: string;
     activity?: string;
