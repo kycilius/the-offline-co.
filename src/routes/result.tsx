@@ -275,8 +275,60 @@ function Result() {
           </>
         )}
 
+        <section
+          className="mt-10 animate-[fade-up_920ms_var(--ease-calm)]"
+          style={{ animationDelay: "380ms", animationFillMode: "both" }}
+        >
+          <div className="relative overflow-hidden rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)]">
+            <div className="mb-4 flex items-center gap-2 text-primary">
+              <Lock className="h-4 w-4" />
+              <h2 className="text-base font-semibold text-foreground">Your group (preview)</h2>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              You've been matched with people who align closely with you.
+            </p>
+
+            <div className="relative mt-6">
+              <div className="flex flex-wrap items-center justify-center gap-5 select-none" style={{ filter: "blur(4px)", opacity: 0.75 }}>
+                {["A***", "R***", "K***", "M***"].map((label) => (
+                  <div key={label} className="flex flex-col items-center gap-2">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-primary shadow-[var(--shadow-soft)]">
+                      <Users className="h-5 w-5" />
+                    </div>
+                    <span className="text-xs font-medium text-muted-foreground">{label}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                <div className="flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-4 py-2 text-xs font-medium text-foreground shadow-[var(--shadow-soft)] backdrop-blur-sm">
+                  <Lock className="h-3.5 w-3.5 text-primary" />
+                  <span>Locked — unlock to see your group</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 rounded-2xl border border-border/60 bg-card/70 p-5">
+              <p className="text-sm font-medium text-foreground">You'll unlock:</p>
+              <ul className="mt-3 space-y-2">
+                {[
+                  "Your actual group members",
+                  "Your shared group dynamic",
+                  "A guided first meetup plan",
+                  "Real conversation prompts",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3 text-sm leading-6 text-muted-foreground">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+
         <div
-          className="mt-10 animate-[fade-up_950ms_var(--ease-calm)]"
+          className="mt-8 animate-[fade-up_950ms_var(--ease-calm)]"
           style={{ animationDelay: "420ms", animationFillMode: "both" }}
         >
           <p className="mb-2 text-base leading-relaxed text-foreground">
@@ -292,21 +344,6 @@ function Result() {
             <span className="text-base font-semibold">Meet your group</span>
             <span className="text-xs font-normal text-primary-foreground/80">Start your first experience — ₹99</span>
           </Link>
-          <div className="mt-5 rounded-2xl border border-border/60 bg-card/70 p-5">
-            <p className="text-sm font-medium text-foreground">You'll unlock:</p>
-            <ul className="mt-3 space-y-2">
-              {[
-                "Your actual group members",
-                "A guided first meetup plan",
-                "Real conversation prompts",
-              ].map((item) => (
-                <li key={item} className="flex items-start gap-3 text-sm leading-6 text-muted-foreground">
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
         </div>
       </section>
     </main>
