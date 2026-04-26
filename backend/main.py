@@ -59,12 +59,46 @@ def adjusted_match_score(user1: dict[str, object], user2: dict[str, object]) -> 
     return min(100, base_score + bonus)
 
 
-def choose_group_name(score: int) -> str:
-    if score > 80:
+def infer_personality_type(answers: list[int]) -> str:
+    if not answers:
+        return "reflective"
+
+    avg = sum(answers) / len(answers)
+    if avg <= 2.3:
+        return "deep"
+    if avg <= 3.0:
+        return "calm"
+    if avg <= 3.7:
+        return "reflective"
+    return "explore"
+
+
+def choose_group_name_for_personality(personality_type: str) -> str:
+    if personality_type == "deep":
         return "Deep Connectors"
-    if score > 60:
-        return "Balanced Explorers"
-    return "Casual Circle"
+    if personality_type == "explore":
+        return "Curious Builders"
+    if personality_type == "calm":
+        return "Quiet Thinkers"
+    if personality_type == "reflective":
+        return "Meaning Seekers"
+    return "Thoughtful Circle"
+
+
+def build_match_label(score: int) -> str:
+    if score >= 80:
+        return "unusually strong alignment"
+    if score >= 60:
+        return "strong alignment"
+    if score >= 40:
+        return "moderate alignment"
+    return "early-stage compatibility"
+
+
+def build_group_label(group_size: int) -> str:
+    if group_size == 1:
+        return "1 person like you"
+    return f"{group_size} people like you"
 
 
 def build_personality_summary(answers: list[int]) -> str:
@@ -96,34 +130,36 @@ def build_personality_summary(answers: list[int]) -> str:
     )
 
 
-def build_activity_plan(score: int, answers: list[int]) -> Plan:
-    avg_answer = (sum(answers) / len(answers)) if answers else 3
-
-    if score > 80:
-        if avg_answer >= 3:
-            return Plan(
-                icebreaker="Each person shares one offline moment that felt unexpectedly joyful.",
-                activity="Take a 20-minute neighborhood walk in pairs, then regroup and exchange highlights.",
-                closing="Set one shared intention for staying connected offline this week.",
-            )
+def build_personality_activity_plan(personality_type: str) -> Plan:
+    if personality_type == "deep":
         return Plan(
-            icebreaker="Share one small ritual that helps you slow down after a busy day.",
-            activity="Host a guided reflection round with prompt cards and short partner check-ins.",
-            closing="Name one meaningful conversation you want to have before next weekend.",
+            icebreaker="Share one recent moment that felt meaningful.",
+            activity="Take a quiet walk and share one meaningful thought.",
+            closing="Reflect on one value you want your relationships to protect.",
         )
 
-    if score > 60:
+    if personality_type == "explore":
         return Plan(
-            icebreaker="Introduce yourself with a hobby you'd like to do more often offline.",
-            activity="Do a light collaborative task (board game or mini-creative prompt) followed by discussion.",
-            closing="Each member chooses one practical digital-boundary goal for the next 3 days.",
+            icebreaker="Name one unfamiliar thing you've wanted to try this month.",
+            activity="Try something new together and talk about what you noticed.",
+            closing="Pick one fresh activity to revisit next week.",
         )
 
-    return Plan(
-        icebreaker="Share one thing that helps you feel comfortable in a new group.",
-        activity="Start with short one-on-one chats, then rotate to find shared interests as a full group.",
-        closing="Agree on a low-pressure follow-up activity and pick a tentative time window.",
-    )
+    if personality_type == "calm":
+        return Plan(
+            icebreaker="Share one small habit that helps you reset.",
+            activity="Sit in a calm space and have a slow, honest conversation.",
+            closing="Agree on one gentle ritual you can both practice this week.",
+        )
+
+    if personality_type == "reflective":
+        return Plan(
+            icebreaker="Share one insight you've had about your social energy lately.",
+            activity="Journal for five minutes, then discuss what surprised you.",
+            closing="Choose one intentional boundary you'll carry into next week.",
+        )
+
+    return DEFAULT_ACTIVITY_PLAN
 
 
 def build_display_name_map() -> dict[str, str]:
@@ -173,15 +209,13 @@ def build_match_reasons(answers: list[int]) -> list[str]:
 def build_result_for_session(session_id: str) -> ResultResponse:
     if len(users) < 2:
         return ResultResponse(
-            group_name="Explorers",
+            group_name="Thoughtful Circle",
             score=50,
+            match_label=build_match_label(50),
+            group_label=build_group_label(1),
             personality="You're early. More people will join your circle soon.",
             group_members=["Waiting for more users"],
-            activity_plan=Plan(
-                icebreaker="Think about what kind of people you want to meet.",
-                activity="Take a short offline break today.",
-                closing="Come back later to discover your group.",
-            ),
+            activity_plan=build_personality_activity_plan("reflective"),
             match_reasons=[
                 "You prefer meaningful conversations",
                 "You value emotional safety",
@@ -197,6 +231,7 @@ def build_result_for_session(session_id: str) -> ResultResponse:
 
     display_names = build_display_name_map()
     current_answers = list(current_user["answers"])
+    personality_type = infer_personality_type(current_answers)
 
     comparisons: list[tuple[str, int]] = []
     for other in users:
@@ -210,7 +245,7 @@ def build_result_for_session(session_id: str) -> ResultResponse:
     comparisons.sort(key=lambda item: item[1], reverse=True)
     top_matches = comparisons[:4]
     average_score = int(sum(score for _, score in top_matches) / len(top_matches)) if top_matches else 0
-    group_name = choose_group_name(average_score)
+    group_name = choose_group_name_for_personality(personality_type)
 
     group_member_names = [display_names.get(session_id, "User"), *[display_names.get(match_id, "User") for match_id, _ in top_matches]]
     if not group_member_names:
@@ -220,9 +255,11 @@ def build_result_for_session(session_id: str) -> ResultResponse:
     return ResultResponse(
         group_name=group_name,
         score=average_score,
+        match_label=build_match_label(average_score),
+        group_label=build_group_label(group_size),
         personality=build_personality_summary(current_answers),
         group_members=group_member_names,
-        activity_plan=DEFAULT_ACTIVITY_PLAN,
+        activity_plan=build_personality_activity_plan(personality_type),
         match_reasons=build_match_reasons(current_answers),
         group_size=group_size,
         user_display_name=display_names.get(session_id, "You"),
@@ -287,6 +324,8 @@ def match_users() -> MatchResponse:
         results_by_session[current_id] = ResultResponse(
             group_name=computed_result.group_name,
             score=computed_result.score,
+            match_label=computed_result.match_label,
+            group_label=computed_result.group_label,
             personality=computed_result.personality,
             group_members=group_members,
             activity_plan=computed_result.activity_plan,
