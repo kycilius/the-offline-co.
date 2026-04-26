@@ -167,9 +167,12 @@ function Result() {
               className="mt-6 rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] animate-[fade-up_800ms_var(--ease-calm)]"
               style={{ animationDelay: "260ms", animationFillMode: "both" }}
             >
-              <h2 className="text-base font-semibold text-foreground">Your circle</h2>
+              <h2 className="text-base font-semibold text-foreground">
+                {avatarNames.length > 0 ? `${avatarNames.length} people like you` : "Your circle"}
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">A small circle matched to your vibe</p>
               <div className="relative mt-5 h-48">
-                {avatarNames.map((name, idx) => {
+                {avatarNames.map((_, idx) => {
                   const positions = [
                     "left-1/2 top-0 -translate-x-1/2",
                     "left-12 top-16",
@@ -180,17 +183,14 @@ function Result() {
 
                   return (
                     <div
-                      key={`${name}-${idx}`}
-                      className={`absolute ${positions[idx]} flex h-16 w-16 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-sm font-semibold text-primary shadow-[var(--shadow-soft)] transition-transform duration-500 hover:scale-105`}
+                      key={idx}
+                      className={`absolute ${positions[idx]} flex h-16 w-16 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-primary shadow-[var(--shadow-soft)] transition-transform duration-500 hover:scale-105`}
                     >
-                      {getInitials(name)}
+                      <Users className="h-5 w-5" />
                     </div>
                   );
                 })}
               </div>
-              {memberNames.length > 0 && (
-                <p className="mt-2 text-center text-sm text-muted-foreground">{memberNames.join(" • ")}</p>
-              )}
             </section>
 
             <section
