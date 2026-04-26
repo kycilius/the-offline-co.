@@ -134,7 +134,7 @@ function Result() {
             >
               <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
                 <div>
-                  <p className="text-base font-medium text-foreground">{score}% match — unusually strong alignment</p>
+                  <p className="text-base font-medium text-foreground">{matchLabel}</p>
                   <p className="mt-1 text-sm text-muted-foreground">This level of compatibility is rare.</p>
                 </div>
                 <div className="relative grid h-24 w-24 place-items-center rounded-full border border-primary/25 bg-primary/5 shadow-[var(--shadow-soft)]">
