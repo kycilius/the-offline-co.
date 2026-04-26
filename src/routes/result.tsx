@@ -120,6 +120,28 @@ function Result() {
               <Progress className="mt-5 h-2.5 rounded-full bg-primary/15" value={score} />
             </div>
 
+            <section
+              className="mt-6 rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] animate-[fade-up_720ms_var(--ease-calm)]"
+              style={{ animationDelay: "160ms", animationFillMode: "both" }}
+            >
+              <div className="mb-4 flex items-center gap-2 text-primary">
+                <Sparkles className="h-4 w-4" />
+                <h2 className="text-base font-semibold text-foreground">Why this match works for you</h2>
+              </div>
+              <ul className="space-y-3">
+                {[
+                  "You prefer meaningful conversations over small talk",
+                  "You value emotional safety in groups",
+                  "You naturally create calm, grounded interactions",
+                ].map((reason) => (
+                  <li key={reason} className="flex items-start gap-3 text-sm leading-6 text-muted-foreground">
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <span>{reason}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
             <div
               className="mt-6 grid gap-6 md:grid-cols-2 animate-[fade-up_750ms_var(--ease-calm)]"
               style={{ animationDelay: "200ms", animationFillMode: "both" }}
