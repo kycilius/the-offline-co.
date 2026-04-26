@@ -245,7 +245,7 @@ function Result() {
               className="mt-6 animate-[fade-up_900ms_var(--ease-calm)]"
               style={{ animationDelay: "320ms", animationFillMode: "both" }}
             >
-              <h2 className="mb-4 text-base font-semibold text-foreground">Activity plan</h2>
+              <h2 className="mb-4 text-base font-semibold text-foreground">This is how your group connects:</h2>
               <div className="grid gap-4 md:grid-cols-3">
                 <article className="rounded-3xl border border-border/60 bg-card/95 p-5 shadow-[var(--shadow-card)] transition-all duration-500 hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)]">
                   <div className="mb-3 inline-flex rounded-full bg-primary/10 p-2 text-primary">
