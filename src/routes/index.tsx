@@ -111,6 +111,20 @@ function Landing() {
         </div>
       </section>
 
+      {/* Why this exists */}
+      <section className="relative z-10 mx-auto max-w-3xl px-6 pb-16">
+        <div className="rounded-3xl border border-border/60 bg-card/95 p-8 shadow-[var(--shadow-card)]">
+          <h2 className="font-display text-2xl font-light text-foreground md:text-3xl">
+            Why this exists
+          </h2>
+          <div className="mt-4 space-y-4 text-sm leading-7 text-muted-foreground md:text-base">
+            <p>We've made it easier than ever to connect online — but harder to feel understood.</p>
+            <p>TheOfflineCo is built to change that.</p>
+            <p>We help you find people who think like you, so real conversations can happen — offline.</p>
+          </div>
+        </div>
+      </section>
+
       {/* Viral hook + final CTA */}
       <section className="relative z-10 mx-auto max-w-3xl px-6 pb-20 text-center">
         <div className="rounded-3xl border border-border/60 bg-card/95 p-8 shadow-[var(--shadow-card)]">
@@ -131,8 +145,15 @@ function Landing() {
       </section>
 
       <footer className="relative z-10 mx-auto max-w-6xl px-6 pb-8 text-center text-xs text-muted-foreground/60">
-        A calm escape from digital overload.
+        <p>A calm escape from digital overload.</p>
+        <p className="mt-2">
+          Contact:{" "}
+          <a href="mailto:theofflineco@gmail.com" className="text-primary hover:underline">
+            theofflineco@gmail.com
+          </a>
+        </p>
       </footer>
+
     </main>
   );
 }
