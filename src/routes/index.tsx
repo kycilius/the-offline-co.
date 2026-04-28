@@ -70,13 +70,13 @@ function Landing() {
           A peek at what you'll get
         </p>
         <div className="mx-auto max-w-md rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] backdrop-blur-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-[0.2em] text-primary/80">Your group</p>
-              <h3 className="mt-1 font-display text-2xl font-semibold text-primary">Deep Connectors</h3>
-            </div>
-            <div className="grid h-16 w-16 place-items-center rounded-full border border-primary/25 bg-primary/5">
-              <span className="text-base font-semibold text-primary">82%</span>
+          <p className="font-display text-xl font-light leading-snug text-foreground">
+            You belong with the <span className="font-semibold text-primary">'Deep Connectors'</span>
+          </p>
+          <div className="mt-4 flex items-center justify-between gap-4">
+            <p className="text-sm font-medium text-foreground">82% match — unusually strong alignment</p>
+            <div className="grid h-14 w-14 shrink-0 place-items-center rounded-full border border-primary/25 bg-primary/5">
+              <span className="text-sm font-semibold text-primary">82%</span>
             </div>
           </div>
           <p className="mt-4 text-sm leading-6 text-muted-foreground">
