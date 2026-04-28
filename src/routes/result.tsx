@@ -60,6 +60,8 @@ function buildGroupDescription(groupName: string, score: number) {
 }
 
 function Result() {
+  const [copied, setCopied] = useState(false);
+
   const result = useMemo<MatchResult | null>(() => {
     const raw = sessionStorage.getItem("matchResult");
     if (!raw) return null;
