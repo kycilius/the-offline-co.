@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo } from "react";
-import { Sparkles, Users, HeartHandshake, PartyPopper, CheckCircle2, Lock } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Sparkles, Users, HeartHandshake, PartyPopper, CheckCircle2, Lock, Share2, Check } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Progress } from "@/components/ui/progress";
