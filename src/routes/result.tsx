@@ -329,6 +329,67 @@ function Result() {
           </div>
         </section>
 
+        <section
+          className="mt-6 animate-[fade-up_940ms_var(--ease-calm)]"
+          style={{ animationDelay: "400ms", animationFillMode: "both" }}
+        >
+          <div className="rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)]">
+            <div className="mb-2 flex items-center gap-2 text-primary">
+              <Share2 className="h-4 w-4" />
+              <h2 className="text-base font-semibold text-foreground">See what your friends get</h2>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Everyone gets a different group — compare yours.
+            </p>
+
+            <div className="mt-4 rounded-2xl border border-border/60 bg-card/70 p-4">
+              <p className="text-sm leading-6 text-foreground/90">
+                "I got matched with the '{groupName}' on TheOfflineCo. Curious what you'll get?"
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={async () => {
+                const shareText = `I got matched with the '${groupName}' on TheOfflineCo. Curious what you'll get?`;
+                const shareUrl = typeof window !== "undefined" ? window.location.origin : "";
+                const shareData = { title: "TheOfflineCo", text: shareText, url: shareUrl };
+                try {
+                  if (typeof navigator !== "undefined" && navigator.share) {
+                    await navigator.share(shareData);
+                    return;
+                  }
+                } catch {
+                  // fall through to clipboard
+                }
+                try {
+                  await navigator.clipboard.writeText(`${shareText} ${shareUrl}`.trim());
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                } catch {
+                  // ignore
+                }
+              }}
+              className="mt-4 inline-flex items-center justify-center gap-2 rounded-2xl border border-primary/30 bg-primary/10 px-5 py-3 text-sm font-medium text-primary transition-all duration-300 hover:bg-primary/15"
+            >
+              {copied ? <Check className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
+              <span>{copied ? "Link copied" : "Share your result"}</span>
+            </button>
+
+            <div className="mt-5 space-y-2">
+              <p className="text-sm text-muted-foreground">
+                People like you are already discovering their groups.
+              </p>
+              <p className="text-sm text-foreground/80">
+                Your friends won't get the same result.
+              </p>
+              <p className="text-xs uppercase tracking-[0.2em] text-primary/80">
+                Send this to 3 friends and see how different your groups are.
+              </p>
+            </div>
+          </div>
+        </section>
+
         <div
           className="mt-8 animate-[fade-up_950ms_var(--ease-calm)]"
           style={{ animationDelay: "420ms", animationFillMode: "both" }}
