@@ -344,14 +344,14 @@ function Result() {
 
             <div className="mt-4 rounded-2xl border border-border/60 bg-card/70 p-4">
               <p className="text-sm leading-6 text-foreground/90">
-                "I got matched with the '{groupName}' on TheOfflineCo. Curious what you'll get?"
+                "I just got matched with the '{groupName}' — and this is scarily accurate. Curious what you'll get 👀"
               </p>
             </div>
 
             <button
               type="button"
               onClick={async () => {
-                const shareText = `I got matched with the '${groupName}' on TheOfflineCo. Curious what you'll get?`;
+                const shareText = `I just got matched with the '${groupName}' on TheOfflineCo — and this is scarily accurate. Curious what you'll get 👀`;
                 const shareUrl = typeof window !== "undefined" ? window.location.origin : "";
                 const shareData = { title: "TheOfflineCo", text: shareText, url: shareUrl };
                 try {
@@ -360,7 +360,16 @@ function Result() {
                     return;
                   }
                 } catch {
-                  // fall through to clipboard
+                  // fall through to WhatsApp / clipboard
+                }
+                // WhatsApp fallback for mobile / desktop
+                if (typeof window !== "undefined") {
+                  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent ?? "");
+                  if (isMobile) {
+                    const waUrl = `https://wa.me/?text=${encodeURIComponent(`${shareText} ${shareUrl}`.trim())}`;
+                    window.open(waUrl, "_blank", "noopener,noreferrer");
+                    return;
+                  }
                 }
                 try {
                   await navigator.clipboard.writeText(`${shareText} ${shareUrl}`.trim());
@@ -373,18 +382,18 @@ function Result() {
               className="mt-4 inline-flex items-center justify-center gap-2 rounded-2xl border border-primary/30 bg-primary/10 px-5 py-3 text-sm font-medium text-primary transition-all duration-300 hover:bg-primary/15"
             >
               {copied ? <Check className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
-              <span>{copied ? "Link copied" : "Share your result"}</span>
+              <span>{copied ? "Link copied" : "Compare with friends"}</span>
             </button>
 
             <div className="mt-5 space-y-2">
-              <p className="text-sm text-muted-foreground">
-                People like you are already discovering their groups.
-              </p>
               <p className="text-sm text-foreground/80">
                 Your friends won't get the same result.
               </p>
+              <p className="text-sm text-muted-foreground">
+                People like you are already discovering their groups.
+              </p>
               <p className="text-xs uppercase tracking-[0.2em] text-primary/80">
-                Send this to 3 friends and see how different your groups are.
+                Send this to 3 friends and compare your groups.
               </p>
             </div>
           </div>
