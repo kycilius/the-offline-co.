@@ -148,8 +148,8 @@ function Landing() {
         <p>A calm escape from digital overload.</p>
         <p className="mt-2">
           Contact:{" "}
-          <a href="mailto:theofflineco@gmail.com" className="text-primary hover:underline">
-            theofflineco@gmail.com
+          <a href="mailto:theofflinec@gmail.com" className="text-primary hover:underline">
+            theofflinec@gmail.com
           </a>
         </p>
       </footer>

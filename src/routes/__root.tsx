@@ -30,6 +30,7 @@ export const Route = createRootRoute({
       { title: "TheOfflineCo — Find Your Perfect Social Group" },
       { name: "description", content: "Step away from screens. Step into real connections. An AI-based social detox experience." },
       { name: "author", content: "TheOfflineCo" },
+      { name: "contact", content: "theofflinec@gmail.com" },
       { property: "og:title", content: "TheOfflineCo — Social Detox" },
       { property: "og:description", content: "Step away from screens. Step into real connections." },
       { property: "og:type", content: "website" },
