@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import logging
 import os
 import uuid
 
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from supabase import Client, create_client
 
 from models import GroupInfo, MatchResponse, Plan, ResultResponse, SubmitRequest, SubmitResponse
 
@@ -19,8 +21,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# In-memory storage only.
-users: list[dict[str, object]] = []
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_ANON_KEY")
+
+if not SUPABASE_URL or not SUPABASE_KEY:
+    raise Exception("Missing Supabase environment variables")
+
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+logger = logging.getLogger(__name__)
+
 results_by_session: dict[str, ResultResponse] = {}
 
 DEFAULT_ACTIVITY_PLAN = Plan(
@@ -29,6 +38,18 @@ DEFAULT_ACTIVITY_PLAN = Plan(
     closing="Exchange one small commitment and check in tomorrow.",
 )
 
+
+
+
+def fetch_users() -> list[dict[str, object]]:
+    try:
+        response = supabase.table("users").select("*").execute()
+        users = response.data or []
+        logger.info("Fetched users: %s", users)
+        return users
+    except Exception as e:
+        logger.exception("Error fetching from Supabase: %s", str(e))
+        return []
 
 def compatibility_score(answers1: list[int], answers2: list[int]) -> int:
     """Return a compatibility score from 0 to 100."""
@@ -162,7 +183,7 @@ def build_personality_activity_plan(personality_type: str) -> Plan:
     return DEFAULT_ACTIVITY_PLAN
 
 
-def build_display_name_map() -> dict[str, str]:
+def build_display_name_map(users: list[dict[str, object]]) -> dict[str, str]:
     descriptors = [
         "Quiet Listener",
         "Warm Storyteller",
@@ -206,7 +227,7 @@ def build_match_reasons(answers: list[int]) -> list[str]:
     return reasons
 
 
-def build_result_for_session(session_id: str) -> ResultResponse:
+def build_result_for_session(session_id: str, users: list[dict[str, object]]) -> ResultResponse:
     if len(users) < 2:
         return ResultResponse(
             group_name="Thoughtful Circle",
@@ -229,7 +250,7 @@ def build_result_for_session(session_id: str) -> ResultResponse:
     if current_user is None:
         raise HTTPException(status_code=404, detail="Session not found")
 
-    display_names = build_display_name_map()
+    display_names = build_display_name_map(users)
     current_answers = list(current_user["answers"])
     personality_type = infer_personality_type(current_answers)
 
@@ -276,15 +297,19 @@ def submit_answers(payload: SubmitRequest) -> SubmitResponse:
     session_id = str(uuid.uuid4())
     user_id = str(uuid.uuid4())
 
-    users.append(
-        {
-            "user_id": user_id,
-            "session_id": session_id,
-            "answers": payload.answers,
-            "age_group": payload.age_group,
-            "gender": payload.gender,
-        }
-    )
+    try:
+        response = supabase.table("users").insert(
+            {
+                "user_id": user_id,
+                "session_id": session_id,
+                "answers": payload.answers,
+                "age_group": payload.age_group,
+                "gender": payload.gender,
+            }
+        ).execute()
+        logger.info("Supabase insert response: %s", response)
+    except Exception as e:
+        logger.exception("Error inserting into Supabase: %s", str(e))
 
     # New submission can affect matching quality, so reset previous computed results.
     results_by_session.clear()
@@ -294,6 +319,8 @@ def submit_answers(payload: SubmitRequest) -> SubmitResponse:
 
 @app.post("/api/match", response_model=MatchResponse)
 def match_users() -> MatchResponse:
+    users = fetch_users()
+
     if len(users) < 2:
         return MatchResponse(
             message="Need at least 2 users before matching can run.",
@@ -305,11 +332,11 @@ def match_users() -> MatchResponse:
     results_by_session.clear()
     groups: list[GroupInfo] = []
 
-    display_names = build_display_name_map()
+    display_names = build_display_name_map(users)
 
     for user in users:
         current_id = str(user["session_id"])
-        computed_result = build_result_for_session(current_id)
+        computed_result = build_result_for_session(current_id, users)
         group_members = computed_result.group_members
 
         groups.append(
@@ -344,6 +371,8 @@ def match_users() -> MatchResponse:
 
 @app.get("/api/result/{session_id}", response_model=ResultResponse)
 def get_result(session_id: str) -> ResultResponse:
+    users = fetch_users()
+
     if not any(str(user["session_id"]) == session_id for user in users):
         raise HTTPException(status_code=404, detail="Session not found")
 
@@ -351,7 +380,7 @@ def get_result(session_id: str) -> ResultResponse:
     if result:
         return result
 
-    return build_result_for_session(session_id)
+    return build_result_for_session(session_id, users)
 
 
 if __name__ == "__main__":
