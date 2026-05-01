@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -9,6 +9,9 @@ class SubmitRequest(BaseModel):
     answers: List[int] = Field(..., min_length=1)
     age_group: str = "unknown"
     gender: str = "unknown"
+    session_id: Optional[str] = None
+    user_id: Optional[str] = None
+    name: Optional[str] = None
 
 
 class SubmitResponse(BaseModel):

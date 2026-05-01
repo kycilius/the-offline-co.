@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import os
 import uuid
+from typing import Any
 
 import uvicorn
 from fastapi import FastAPI, HTTPException
@@ -41,10 +42,11 @@ DEFAULT_ACTIVITY_PLAN = Plan(
 
 
 
-def fetch_users() -> list[dict[str, object]]:
+def fetch_users() -> list[dict[str, Any]]:
     try:
         response = supabase.table("users").select("*").execute()
         users = response.data or []
+        users = [user for user in users if user.get("answers")]
         logger.info("Fetched users: %s", users)
         return users
     except Exception as e:
@@ -294,20 +296,22 @@ def health() -> dict[str, str]:
 
 @app.post("/api/submit", response_model=SubmitResponse)
 def submit_answers(payload: SubmitRequest) -> SubmitResponse:
-    session_id = str(uuid.uuid4())
-    user_id = str(uuid.uuid4())
+    session_id = payload.session_id or str(uuid.uuid4())
+    user_id = payload.user_id or str(uuid.uuid4())
 
     try:
-        response = supabase.table("users").insert(
+        response = supabase.table("users").upsert(
             {
                 "user_id": user_id,
                 "session_id": session_id,
+                "name": payload.name,
                 "answers": payload.answers,
                 "age_group": payload.age_group,
                 "gender": payload.gender,
-            }
+            },
+            on_conflict="session_id",
         ).execute()
-        logger.info("Supabase insert response: %s", response)
+        logger.info("Supabase upsert response: %s", response)
     except Exception as e:
         logger.exception("Error inserting into Supabase: %s", str(e))
 
@@ -371,16 +375,33 @@ def match_users() -> MatchResponse:
 
 @app.get("/api/result/{session_id}", response_model=ResultResponse)
 def get_result(session_id: str) -> ResultResponse:
-    users = fetch_users()
+    try:
+        response = supabase.table("users").select("*").eq("session_id", session_id).execute()
+        user = response.data[0] if response.data else None
+    except Exception as e:
+        logger.exception("Error fetching session from Supabase: %s", str(e))
+        raise HTTPException(status_code=500, detail="Failed to fetch session")
 
-    if not any(str(user["session_id"]) == session_id for user in users):
+    if not user:
         raise HTTPException(status_code=404, detail="Session not found")
+
+    existing_result = user.get("result")
+    if existing_result:
+        return ResultResponse(**existing_result)
+
+    users = fetch_users()
 
     result = results_by_session.get(session_id)
     if result:
         return result
 
-    return build_result_for_session(session_id, users)
+    computed_result = build_result_for_session(session_id, users)
+    try:
+        supabase.table("users").update({"result": computed_result.model_dump()}).eq("session_id", session_id).execute()
+    except Exception as e:
+        logger.exception("Error caching result to Supabase: %s", str(e))
+
+    return computed_result
 
 
 if __name__ == "__main__":
