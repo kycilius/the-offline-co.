@@ -11,7 +11,7 @@ function CTA({ label = "Find your group" }: { label?: string }) {
   return (
     <Link
       to="/questionnaire"
-      className="group inline-flex items-center gap-3 rounded-full bg-primary px-8 py-4 text-base font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-all duration-500 hover:scale-[1.04] hover:shadow-[var(--shadow-glow)] hover:bg-primary/95 active:scale-[0.98]"
+      className="group relative inline-flex items-center gap-3 rounded-full bg-primary px-10 py-5 text-base font-medium tracking-wide text-primary-foreground shadow-[var(--shadow-soft)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:scale-[1.03] hover:shadow-[var(--shadow-glow)] hover:bg-primary/95 active:scale-[0.98]"
     >
       {label}
       <svg className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
