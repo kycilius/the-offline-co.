@@ -86,11 +86,11 @@ function Landing() {
       </section>
 
       {/* How it works */}
-      <section className="relative z-10 mx-auto max-w-4xl px-6 pb-20">
-        <h2 className="text-center font-display text-2xl font-light text-foreground md:text-3xl">
+      <section className="relative z-10 mx-auto max-w-4xl px-6 pb-28 md:pb-32">
+        <h2 className="text-center font-display text-3xl font-normal tracking-tight text-foreground md:text-4xl">
           How it works
         </h2>
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
+        <div className="mt-14 grid gap-5 md:grid-cols-3">
           {[
             { icon: Sparkles, title: "Answer a few questions", desc: "Quick, honest, and surprisingly fun." },
             { icon: Users, title: "Get matched with your group", desc: "An AI-guided match based on how you think and feel." },
@@ -98,13 +98,13 @@ function Landing() {
           ].map((step, idx) => {
             const Icon = step.icon;
             return (
-              <article key={step.title} className="rounded-3xl border border-border/60 bg-card/95 p-5 shadow-[var(--shadow-card)] transition-all duration-500 hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)]">
-                <div className="mb-3 flex items-center gap-2">
-                  <span className="grid h-7 w-7 place-items-center rounded-full bg-primary/10 text-xs font-semibold text-primary">{idx + 1}</span>
+              <article key={step.title} className="rounded-3xl border border-border/60 bg-card/95 p-7 shadow-[var(--shadow-card)] backdrop-blur-md transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:scale-[1.01] hover:border-primary/30 hover:shadow-[var(--shadow-soft)]">
+                <div className="mb-4 flex items-center gap-3">
+                  <span className="grid h-8 w-8 place-items-center rounded-full bg-primary/10 text-xs font-semibold text-primary">{idx + 1}</span>
                   <Icon className="h-4 w-4 text-primary" />
                 </div>
-                <h3 className="text-sm font-semibold text-foreground">{step.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{step.desc}</p>
+                <h3 className="font-display text-lg font-medium tracking-tight text-foreground">{step.title}</h3>
+                <p className="mt-3 text-sm leading-7 text-muted-foreground">{step.desc}</p>
               </article>
             );
           })}
@@ -112,41 +112,41 @@ function Landing() {
       </section>
 
       {/* Why this exists */}
-      <section className="relative z-10 mx-auto max-w-3xl px-6 pb-16">
-        <div className="rounded-3xl border border-border/60 bg-card/95 p-8 shadow-[var(--shadow-card)]">
-          <h2 className="font-display text-2xl font-light text-foreground md:text-3xl">
+      <section className="relative z-10 mx-auto max-w-3xl px-6 pb-24 md:pb-28">
+        <div className="rounded-3xl border border-border/60 bg-card/95 p-10 shadow-[var(--shadow-card)] backdrop-blur-md md:p-12">
+          <h2 className="font-display text-3xl font-normal tracking-tight text-foreground md:text-4xl">
             Why this exists
           </h2>
-          <div className="mt-4 space-y-4 text-sm leading-7 text-muted-foreground md:text-base">
-            <p>We've made it easier than ever to connect online — but harder to feel understood.</p>
+          <div className="mt-6 space-y-5 text-base leading-[1.85] text-muted-foreground md:text-lg">
+            <p>We've made it easier than ever to connect online — but harder to <em className="not-italic text-foreground/90">feel understood</em>.</p>
             <p>TheOfflineCo is built to change that.</p>
-            <p>We help you find people who think like you, so real conversations can happen — offline.</p>
+            <p>We help you find people who think like you, so real conversations can happen — <em className="not-italic font-medium text-primary">offline</em>.</p>
           </div>
         </div>
       </section>
 
       {/* Viral hook + final CTA */}
-      <section className="relative z-10 mx-auto max-w-3xl px-6 pb-20 text-center">
-        <div className="rounded-3xl border border-border/60 bg-card/95 p-8 shadow-[var(--shadow-card)]">
-          <div className="mx-auto mb-3 inline-flex items-center gap-2 text-primary">
+      <section className="relative z-10 mx-auto max-w-3xl px-6 pb-28 text-center md:pb-32">
+        <div className="rounded-3xl border border-border/60 bg-card/95 p-10 shadow-[var(--shadow-card)] backdrop-blur-md md:p-12">
+          <div className="mx-auto mb-4 inline-flex items-center gap-2 text-primary">
             <CheckCircle2 className="h-4 w-4" />
-            <span className="text-xs font-medium uppercase tracking-[0.2em]">Compare with friends</span>
+            <span className="text-[11px] font-medium uppercase tracking-[0.3em]">Compare with friends</span>
           </div>
-          <p className="text-base leading-7 text-foreground/90 md:text-lg">
-            Everyone gets a different result. Compare yours with friends.
+          <p className="font-display text-xl font-normal leading-[1.5] text-foreground md:text-2xl">
+            Everyone gets a different result.<br className="hidden sm:inline" /> Compare yours with friends.
           </p>
-          <div className="mt-8">
+          <div className="mt-10">
             <CTA />
           </div>
-          <p className="mt-4 text-xs text-muted-foreground/70">
+          <p className="mt-5 text-xs tracking-wide text-muted-foreground/70">
             Takes 2 minutes. Everyone gets a different result.
           </p>
         </div>
       </section>
 
-      <footer className="relative z-10 mx-auto max-w-6xl px-6 pb-8 text-center text-xs text-muted-foreground/60">
-        <p>A calm escape from digital overload.</p>
-        <p className="mt-2">
+      <footer className="relative z-10 mx-auto max-w-6xl px-6 pb-12 pt-4 text-center text-xs tracking-wide text-muted-foreground/60">
+        <p className="italic">A calm escape from digital overload.</p>
+        <p className="mt-3">
           Contact:{" "}
           <a href="mailto:theofflinec@gmail.com" className="text-primary hover:underline">
             theofflinec@gmail.com
