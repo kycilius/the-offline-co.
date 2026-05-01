@@ -37,49 +37,49 @@ function Landing() {
         </div>
       </header>
 
-      <section className="relative z-10 mx-auto flex max-w-3xl flex-col items-center px-6 pt-20 pb-16 text-center md:pt-28">
-        <span className="mb-8 inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur-sm animate-[fade-in_0.8s_ease-out]">
+      <section className="relative z-10 mx-auto flex max-w-3xl flex-col items-center px-6 pt-24 pb-24 text-center md:pt-36 md:pb-32">
+        <span className="mb-10 inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-1.5 text-[11px] font-medium tracking-[0.18em] uppercase text-muted-foreground backdrop-blur-sm animate-[fade-in_0.8s_ease-out]">
           <span className="h-1.5 w-1.5 rounded-full bg-accent animate-[pulse-soft_2s_ease-in-out_infinite]" />
           AI-guided · Made for humans
         </span>
 
-        <h1 className="font-display text-4xl font-light leading-[1.08] tracking-tight text-foreground md:text-6xl animate-[fade-up_0.9s_ease-out]">
+        <h1 className="font-display text-[2.6rem] font-normal leading-[1.05] tracking-[-0.015em] text-foreground md:text-7xl animate-[fade-up_0.9s_ease-out]">
           Find your people.<br />
-          Not online. <span className="font-semibold text-primary">In real life.</span>
+          <span className="text-muted-foreground/90">Not online.</span> <em className="font-normal italic text-primary">In real life.</em>
         </h1>
 
-        <p className="mt-8 max-w-xl text-lg font-light leading-[1.7] text-muted-foreground/90 md:text-xl animate-[fade-up_1.1s_ease-out]">
+        <p className="mt-10 max-w-xl text-lg font-light leading-[1.8] text-muted-foreground/90 md:text-xl animate-[fade-up_1.1s_ease-out]">
           Answer a few questions and get matched with a group that actually feels like you.
         </p>
 
-        <div className="mt-12 animate-[fade-up_1.3s_ease-out]">
+        <div className="mt-14 animate-[fade-up_1.3s_ease-out]">
           <CTA />
         </div>
 
-        <p className="mt-6 text-sm font-light text-muted-foreground/80 animate-[fade-in_1.6s_ease-out]">
+        <p className="mt-7 text-sm font-light tracking-wide text-muted-foreground/80 animate-[fade-in_1.6s_ease-out]">
           Takes 2 minutes. Everyone gets a different result.
         </p>
-        <p className="mt-2 text-xs text-muted-foreground/60 animate-[fade-in_1.8s_ease-out]">
+        <p className="mt-2 text-xs tracking-wide text-muted-foreground/60 animate-[fade-in_1.8s_ease-out]">
           No sign-up required
         </p>
       </section>
 
       {/* Sample result preview */}
-      <section className="relative z-10 mx-auto max-w-3xl px-6 pb-16">
-        <p className="mb-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-primary/80">
+      <section className="relative z-10 mx-auto max-w-3xl px-6 pb-24 md:pb-28">
+        <p className="mb-5 text-center text-[11px] font-medium uppercase tracking-[0.3em] text-primary/80">
           A peek at what you'll get
         </p>
-        <div className="mx-auto max-w-md rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] backdrop-blur-sm">
-          <p className="font-display text-xl font-light leading-snug text-foreground">
-            You belong with the <span className="font-semibold text-primary">'Deep Connectors'</span>
+        <div className="group/card mx-auto max-w-md rounded-3xl border border-border/60 bg-card/95 p-7 shadow-[var(--shadow-card)] backdrop-blur-md transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:scale-[1.01] hover:border-primary/30 hover:shadow-[var(--shadow-soft)]">
+          <p className="font-display text-2xl font-normal leading-snug tracking-tight text-foreground">
+            You belong with the <em className="not-italic font-medium text-primary">'Deep Connectors'</em>
           </p>
-          <div className="mt-4 flex items-center justify-between gap-4">
-            <p className="text-sm font-medium text-foreground">82% match — unusually strong alignment</p>
-            <div className="grid h-14 w-14 shrink-0 place-items-center rounded-full border border-primary/25 bg-primary/5">
+          <div className="mt-5 flex items-center justify-between gap-4">
+            <p className="text-sm font-medium leading-6 text-foreground/90">82% match — unusually strong alignment</p>
+            <div className="grid h-14 w-14 shrink-0 place-items-center rounded-full border border-primary/25 bg-primary/5 shadow-inner">
               <span className="text-sm font-semibold text-primary">82%</span>
             </div>
           </div>
-          <p className="mt-4 text-sm leading-6 text-muted-foreground">
+          <p className="mt-5 text-sm leading-7 text-muted-foreground italic">
             "You don't enjoy surface-level conversations — you look for depth, even in small interactions."
           </p>
         </div>
