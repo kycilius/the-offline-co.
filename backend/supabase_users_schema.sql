@@ -6,6 +6,14 @@ alter table if exists public.users
     add column if not exists answers jsonb,
     add column if not exists age_group text,
     add column if not exists gender text,
+    add column if not exists group_id text,
     add column if not exists result jsonb;
 
 create unique index if not exists users_session_id_unique_idx on public.users (session_id);
+
+create table if not exists public.groups (
+    id uuid primary key default gen_random_uuid(),
+    group_name text,
+    members jsonb not null default '[]'::jsonb,
+    created_at timestamp with time zone not null default now()
+);
