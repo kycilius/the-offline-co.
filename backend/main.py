@@ -41,7 +41,6 @@ DEFAULT_ACTIVITY_PLAN = Plan(
 
 
 
-
 def fetch_users() -> list[dict[str, Any]]:
     try:
         response = supabase.table("users").select("*").execute()
@@ -52,6 +51,7 @@ def fetch_users() -> list[dict[str, Any]]:
     except Exception as e:
         logger.exception("Error fetching from Supabase: %s", str(e))
         return []
+
 
 def compatibility_score(answers1: list[int], answers2: list[int]) -> int:
     """Return a compatibility score from 0 to 100."""
@@ -289,6 +289,65 @@ def build_result_for_session(session_id: str, users: list[dict[str, object]]) ->
     )
 
 
+def build_result_from_group(user: dict[str, Any], users: list[dict[str, Any]], group: dict[str, Any]) -> ResultResponse:
+    session_id = str(user["session_id"])
+    member_ids = [str(member) for member in (group.get("members") or [])]
+    members = [u for u in users if str(u.get("session_id")) in member_ids]
+    display_names = build_display_name_map(members or [user])
+
+    personality_type = infer_personality_type(list(user.get("answers") or []))
+    comparisons = [adjusted_match_score(user, m) for m in members if str(m.get("session_id")) != session_id]
+    average_score = int(sum(comparisons) / len(comparisons)) if comparisons else 50
+
+    return ResultResponse(
+        group_name=str(group.get("group_name") or choose_group_name_for_personality(personality_type)),
+        score=average_score,
+        match_label=build_match_label(average_score),
+        group_label=build_group_label(len(member_ids) or 1),
+        personality=build_personality_summary(list(user.get("answers") or [])),
+        group_members=[display_names.get(member_id, "User") for member_id in member_ids] or ["Waiting for more users"],
+        activity_plan=build_personality_activity_plan(personality_type),
+        match_reasons=build_match_reasons(list(user.get("answers") or [])),
+        group_size=len(member_ids) or 1,
+        user_display_name=display_names.get(session_id, "You"),
+    )
+
+
+def assign_real_groups(users: list[dict[str, Any]]) -> int:
+    unassigned_users = [user for user in users if not user.get("group_id")]
+    created_groups = 0
+
+    while len(unassigned_users) >= 3:
+        seed = unassigned_users.pop(0)
+        scored_candidates = sorted(
+            unassigned_users,
+            key=lambda candidate: adjusted_match_score(seed, candidate),
+            reverse=True,
+        )
+
+        target_size = min(5, len(unassigned_users) + 1)
+        selected_users = [seed, *scored_candidates[: target_size - 1]]
+        selected_session_ids = {str(user["session_id"]) for user in selected_users}
+        unassigned_users = [user for user in unassigned_users if str(user["session_id"]) not in selected_session_ids]
+
+        avg_answers = [int(sum(values) / len(values)) for values in zip(*[list(user["answers"]) for user in selected_users])]
+        group_name = choose_group_name_for_personality(infer_personality_type(avg_answers))
+        group_payload = {
+            "group_name": group_name,
+            "members": [str(user["session_id"]) for user in selected_users],
+        }
+
+        group_response = supabase.table("groups").insert(group_payload).execute()
+        group_id = str(group_response.data[0]["id"])
+
+        for selected_user in selected_users:
+            supabase.table("users").update({"group_id": group_id}).eq("session_id", selected_user["session_id"]).execute()
+
+        created_groups += 1
+
+    return created_groups
+
+
 @app.get("/")
 def health() -> dict[str, str]:
     return {"status": "Backend is running"}
@@ -315,7 +374,6 @@ def submit_answers(payload: SubmitRequest) -> SubmitResponse:
     except Exception as e:
         logger.exception("Error inserting into Supabase: %s", str(e))
 
-    # New submission can affect matching quality, so reset previous computed results.
     results_by_session.clear()
 
     return SubmitResponse(session_id=session_id, user_id=user_id)
@@ -333,41 +391,28 @@ def match_users() -> MatchResponse:
             groups=[],
         )
 
+    created_groups = assign_real_groups(users)
+    users = fetch_users()
+
     results_by_session.clear()
     groups: list[GroupInfo] = []
-
-    display_names = build_display_name_map(users)
 
     for user in users:
         current_id = str(user["session_id"])
         computed_result = build_result_for_session(current_id, users)
-        group_members = computed_result.group_members
 
         groups.append(
             GroupInfo(
-                group_members=group_members,
+                group_members=computed_result.group_members,
                 average_score=computed_result.score,
                 group_name=computed_result.group_name,
             )
         )
-
-        # Ensure readable labels are always returned in pre-computed results.
-        results_by_session[current_id] = ResultResponse(
-            group_name=computed_result.group_name,
-            score=computed_result.score,
-            match_label=computed_result.match_label,
-            group_label=computed_result.group_label,
-            personality=computed_result.personality,
-            group_members=group_members,
-            activity_plan=computed_result.activity_plan,
-            match_reasons=computed_result.match_reasons,
-            group_size=computed_result.group_size,
-            user_display_name=computed_result.user_display_name,
-        )
+        results_by_session[current_id] = computed_result
 
     return MatchResponse(
         message="Matching complete",
-        groups_created=len(groups),
+        groups_created=created_groups,
         users_processed=len(users),
         groups=groups,
     )
@@ -385,11 +430,21 @@ def get_result(session_id: str) -> ResultResponse:
     if not user:
         raise HTTPException(status_code=404, detail="Session not found")
 
+    users = fetch_users()
+
+    group_id = user.get("group_id")
+    if group_id:
+        try:
+            group_response = supabase.table("groups").select("*").eq("id", group_id).limit(1).execute()
+            group = group_response.data[0] if group_response.data else None
+            if group:
+                return build_result_from_group(user, users, group)
+        except Exception as e:
+            logger.exception("Error fetching group from Supabase: %s", str(e))
+
     existing_result = user.get("result")
     if existing_result:
         return ResultResponse(**existing_result)
-
-    users = fetch_users()
 
     result = results_by_session.get(session_id)
     if result:
