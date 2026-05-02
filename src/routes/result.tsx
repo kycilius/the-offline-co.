@@ -147,35 +147,50 @@ function Result() {
           <p className="mt-8 text-base text-muted-foreground">Something went wrong.</p>
         ) : (
           <>
-            <div className="animate-[fade-up_650ms_var(--ease-calm)]">
-              <p className="mb-3 text-xs font-medium uppercase tracking-[0.25em] text-primary/85">
-                {userName ? `Hello, ${userName}` : `Hello, ${result.user_display_name ?? "You"}`}
-              </p>
+            <div className="min-h-[180px]">
+              {stage >= 1 && (
+                <p className="mb-3 text-xs font-medium uppercase tracking-[0.25em] text-primary/85 animate-[fade-up_650ms_var(--ease-calm)]">
+                  {userName ? `Hello, ${userName}` : `Hello, ${result.user_display_name ?? "You"}`}
+                </p>
+              )}
               <h1 className="max-w-3xl font-display text-3xl font-light leading-tight text-foreground md:text-5xl">
-                You belong with the <span className="font-semibold text-primary">'{groupName}'</span>
-                {userName ? <>, <span className="font-semibold text-primary">{userName}</span></> : null}
+                {stage >= 2 && (
+                  <span className="inline-block animate-[fade-up_650ms_var(--ease-calm)]">
+                    You belong with the
+                  </span>
+                )}
+                {stage >= 3 && (
+                  <>
+                    {" "}
+                    <span className="inline-block font-semibold text-primary animate-[fade-up_700ms_var(--ease-calm)]">
+                      '{groupName}'
+                    </span>
+                  </>
+                )}
               </h1>
-              <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
-                This is the kind of group where you won't feel like an outsider.
-              </p>
+              {stage >= 3 && (
+                <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg animate-[fade-up_700ms_var(--ease-calm)]">
+                  This is the kind of group where you won't feel like an outsider.
+                </p>
+              )}
             </div>
 
-            <div
-              className="mt-8 rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] backdrop-blur-sm animate-[fade-up_700ms_var(--ease-calm)]"
-              style={{ animationDelay: "120ms", animationFillMode: "both" }}
-            >
-              <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-                <div>
-                  <p className="text-base font-medium text-foreground">{matchLabel}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">This level of compatibility is rare.</p>
+            {stage >= 4 && (
+              <div className="mt-8 rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] backdrop-blur-sm animate-[fade-up_700ms_var(--ease-calm)]">
+                <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+                  <div>
+                    <p className="text-base font-medium text-foreground">{animatedScore}% match — unusually strong alignment</p>
+                    <p className="mt-1 text-sm text-muted-foreground">This level of compatibility is rare.</p>
+                  </div>
+                  <div className="relative grid h-24 w-24 place-items-center rounded-full border border-primary/25 bg-primary/5 shadow-[var(--shadow-soft)]">
+                    <span className="text-xl font-semibold text-primary tabular-nums">{animatedScore}%</span>
+                    <span className="absolute inset-0 rounded-full border-4 border-primary/20" />
+                  </div>
                 </div>
-                <div className="relative grid h-24 w-24 place-items-center rounded-full border border-primary/25 bg-primary/5 shadow-[var(--shadow-soft)]">
-                  <span className="text-xl font-semibold text-primary">{score}%</span>
-                  <span className="absolute inset-0 rounded-full border-4 border-primary/20" />
-                </div>
+                <Progress className="mt-5 h-2.5 rounded-full bg-primary/15" value={animatedScore} />
               </div>
-              <Progress className="mt-5 h-2.5 rounded-full bg-primary/15" value={score} />
-            </div>
+            )}
+
 
             <section
               className="mt-6 rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] animate-[fade-up_720ms_var(--ease-calm)]"
