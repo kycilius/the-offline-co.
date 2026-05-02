@@ -61,8 +61,10 @@ function buildGroupDescription(groupName: string, score: number) {
 
 function Result() {
   const [copied, setCopied] = useState(false);
+  // Staggered reveal: 0=nothing, 1=hello, 2=belong-prefix, 3=group-name, 4=score, 5=rest
+  const [stage, setStage] = useState(0);
+  const [animatedScore, setAnimatedScore] = useState(0);
 
-  const result = useMemo<MatchResult | null>(() => {
     const raw = sessionStorage.getItem("matchResult");
     if (!raw) return null;
 
