@@ -416,19 +416,19 @@ function Result() {
           className="mt-8 animate-[fade-up_950ms_var(--ease-calm)]"
           style={{ animationDelay: "420ms", animationFillMode: "both" }}
         >
-          <p className="mb-2 text-base leading-relaxed text-foreground">
-            This is the kind of group where you won't feel like an outsider.
-          </p>
           <p className="mb-4 text-xs uppercase tracking-[0.2em] text-primary/80">
             This match won't stay available forever.
           </p>
           <Link
             to="/plan"
-            className="inline-flex flex-col items-center gap-1 rounded-2xl bg-primary px-8 py-4 text-base font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-all duration-500 hover:scale-[1.02] hover:shadow-[var(--shadow-glow)]"
+            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-[var(--shadow-soft)] transition-all duration-500 hover:scale-[1.02] hover:shadow-[var(--shadow-glow)]"
           >
-            <span className="text-base font-semibold">Meet your group</span>
-            <span className="text-xs font-normal text-primary-foreground/80">Start your first experience — ₹99</span>
+            <Lock className="h-4 w-4" />
+            <span>Meet your group — ₹99</span>
           </Link>
+          <p className="mt-3 text-xs text-muted-foreground">
+            One-time unlock. Reveal your members and full experience.
+          </p>
         </div>
       </section>
     </main>
