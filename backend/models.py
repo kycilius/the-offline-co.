@@ -21,8 +21,10 @@ class SubmitResponse(BaseModel):
 
 class GroupInfo(BaseModel):
     group_members: List[str]
-    average_score: int
+    match_score: int
+    group_members_count: int
     group_name: str
+    vibe_description: str
 
 
 class MatchResponse(BaseModel):
@@ -41,8 +43,11 @@ class Plan(BaseModel):
 class ResultResponse(BaseModel):
     group_name: str
     score: int
+    match_score: int = 0
     match_label: str = ""
     group_label: str = ""
+    group_members_count: int = 0
+    vibe_description: str = ""
     personality: str
     group_members: List[str]
     activity_plan: Plan
