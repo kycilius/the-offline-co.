@@ -65,6 +65,7 @@ function Result() {
   const [stage, setStage] = useState(0);
   const [animatedScore, setAnimatedScore] = useState(0);
 
+  const result = useMemo<MatchResult | null>(() => {
     const raw = sessionStorage.getItem("matchResult");
     if (!raw) return null;
 
