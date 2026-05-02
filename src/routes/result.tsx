@@ -320,6 +320,7 @@ function Result() {
                 </article>
               </div>
             </section>
+            </>)}
           </>
         )}
 
