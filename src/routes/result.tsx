@@ -192,6 +192,7 @@ function Result() {
             )}
 
 
+            {stage >= 5 && (<>
             <section
               className="mt-6 rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] animate-[fade-up_720ms_var(--ease-calm)]"
               style={{ animationDelay: "160ms", animationFillMode: "both" }}
