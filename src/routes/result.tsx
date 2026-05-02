@@ -106,6 +106,33 @@ function Result() {
 
   const groupDescription = buildGroupDescription(groupName, score);
 
+  // Staged reveal timeline
+  useEffect(() => {
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    timers.push(setTimeout(() => setStage(1), 200));   // Hello, [Name]
+    timers.push(setTimeout(() => setStage(2), 1100));  // "You belong with the..."
+    timers.push(setTimeout(() => setStage(3), 2000));  // Group name reveal
+    timers.push(setTimeout(() => setStage(4), 2700));  // Score animation begins
+    timers.push(setTimeout(() => setStage(5), 4200));  // Personality + rest
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  // Animate score 0 → score over ~1.2s once stage 4 reached
+  useEffect(() => {
+    if (stage < 4) return;
+    const duration = 1200;
+    const start = Date.now();
+    const tick = setInterval(() => {
+      const elapsed = Date.now() - start;
+      const pct = Math.min(1, elapsed / duration);
+      // ease-out
+      const eased = 1 - Math.pow(1 - pct, 3);
+      setAnimatedScore(Math.round(score * eased));
+      if (pct >= 1) clearInterval(tick);
+    }, 30);
+    return () => clearInterval(tick);
+  }, [stage, score]);
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-noise" style={{ background: "var(--gradient-warm)" }}>
       <div className="pointer-events-none absolute -left-32 top-20 h-96 w-96 rounded-full bg-primary/8 blur-3xl animate-[float_10s_ease-in-out_infinite]" />
