@@ -82,6 +82,14 @@ def adjusted_match_score(user1: dict[str, object], user2: dict[str, object]) -> 
     return min(100, base_score + bonus)
 
 
+def calculate_similarity(user1: dict[str, object], user2: dict[str, object]) -> int:
+    answers1 = list(user1.get("answers") or [])
+    answers2 = list(user2.get("answers") or [])
+
+    score = sum(1 for a, b in zip(answers1, answers2) if a == b)
+    return score
+
+
 def infer_personality_type(answers: list[int]) -> str:
     if not answers:
         return "reflective"
@@ -106,6 +114,34 @@ def choose_group_name_for_personality(personality_type: str) -> str:
     if personality_type == "reflective":
         return "Meaning Seekers"
     return "Thoughtful Circle"
+
+
+def assign_group_personality(answers_list: list[list[int]]) -> tuple[str, str]:
+    if not answers_list:
+        return "Quiet Circles", "Thoughtful people who prefer low-pressure social moments."
+
+    avg_answers = [sum(values) / len(values) for values in zip(*answers_list)]
+    overall_avg = sum(avg_answers) / len(avg_answers) if avg_answers else 3
+
+    high_emotional = sum(1 for value in avg_answers if value <= 2.4)
+    adventurous = sum(1 for value in avg_answers if value >= 4.1)
+
+    if high_emotional >= max(2, len(avg_answers) // 3):
+        return (
+            "Deep Connectors",
+            "People who value meaningful conversations and emotional depth.",
+        )
+
+    if adventurous >= max(2, len(avg_answers) // 3) or overall_avg >= 3.8:
+        return (
+            "Explorers",
+            "Curious members who enjoy trying new activities and shared momentum.",
+        )
+
+    return (
+        "Quiet Circles",
+        "Calm and social members who prefer steady, supportive connection.",
+    )
 
 
 def build_match_label(score: int) -> str:
@@ -234,8 +270,11 @@ def build_result_for_session(session_id: str, users: list[dict[str, object]]) ->
         return ResultResponse(
             group_name="Thoughtful Circle",
             score=50,
+            match_score=50,
             match_label=build_match_label(50),
             group_label=build_group_label(1),
+            group_members_count=1,
+            vibe_description="A thoughtful starter circle waiting for more meaningful matches.",
             personality="You're early. More people will join your circle soon.",
             group_members=["Waiting for more users"],
             activity_plan=build_personality_activity_plan("reflective"),
@@ -278,8 +317,11 @@ def build_result_for_session(session_id: str, users: list[dict[str, object]]) ->
     return ResultResponse(
         group_name=group_name,
         score=average_score,
+        match_score=average_score,
         match_label=build_match_label(average_score),
         group_label=build_group_label(group_size),
+        group_members_count=group_size,
+        vibe_description=build_personality_summary(current_answers),
         personality=build_personality_summary(current_answers),
         group_members=group_member_names,
         activity_plan=build_personality_activity_plan(personality_type),
@@ -302,8 +344,11 @@ def build_result_from_group(user: dict[str, Any], users: list[dict[str, Any]], g
     return ResultResponse(
         group_name=str(group.get("group_name") or choose_group_name_for_personality(personality_type)),
         score=average_score,
+        match_score=average_score,
         match_label=build_match_label(average_score),
         group_label=build_group_label(len(member_ids) or 1),
+        group_members_count=len(member_ids) or 1,
+        vibe_description=str(group.get("vibe_description") or build_personality_summary(list(user.get("answers") or []))),
         personality=build_personality_summary(list(user.get("answers") or [])),
         group_members=[display_names.get(member_id, "User") for member_id in member_ids] or ["Waiting for more users"],
         activity_plan=build_personality_activity_plan(personality_type),
@@ -321,7 +366,10 @@ def assign_real_groups(users: list[dict[str, Any]]) -> int:
         seed = unassigned_users.pop(0)
         scored_candidates = sorted(
             unassigned_users,
-            key=lambda candidate: adjusted_match_score(seed, candidate),
+            key=lambda candidate: (
+                calculate_similarity(seed, candidate),
+                adjusted_match_score(seed, candidate),
+            ),
             reverse=True,
         )
 
@@ -330,10 +378,18 @@ def assign_real_groups(users: list[dict[str, Any]]) -> int:
         selected_session_ids = {str(user["session_id"]) for user in selected_users}
         unassigned_users = [user for user in unassigned_users if str(user["session_id"]) not in selected_session_ids]
 
-        avg_answers = [int(sum(values) / len(values)) for values in zip(*[list(user["answers"]) for user in selected_users])]
-        group_name = choose_group_name_for_personality(infer_personality_type(avg_answers))
+        answers_list = [list(user["answers"]) for user in selected_users]
+        group_name, vibe_description = assign_group_personality(answers_list)
+        similarity_scores = [
+            calculate_similarity(seed, selected_user)
+            for selected_user in selected_users
+            if str(selected_user["session_id"]) != str(seed["session_id"])
+        ]
+        match_score = int((sum(similarity_scores) / len(similarity_scores)) * 20) if similarity_scores else 0
         group_payload = {
             "group_name": group_name,
+            "vibe_description": vibe_description,
+            "match_score": match_score,
             "members": [str(user["session_id"]) for user in selected_users],
         }
 
@@ -404,8 +460,10 @@ def match_users() -> MatchResponse:
         groups.append(
             GroupInfo(
                 group_members=computed_result.group_members,
-                average_score=computed_result.score,
+                match_score=computed_result.score,
+                group_members_count=computed_result.group_size,
                 group_name=computed_result.group_name,
+                vibe_description=build_personality_summary(list(user.get("answers") or [])),
             )
         )
         results_by_session[current_id] = computed_result
