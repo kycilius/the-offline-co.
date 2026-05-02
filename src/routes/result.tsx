@@ -297,6 +297,32 @@ function Result() {
               </div>
             </div>
 
+            <div className="relative mt-4">
+              <div className="grid gap-3 select-none md:grid-cols-3" style={{ filter: "blur(5px)", opacity: 0.7 }}>
+                {[
+                  { icon: HeartHandshake, title: "Icebreaker" },
+                  { icon: PartyPopper, title: "Activity" },
+                  { icon: CheckCircle2, title: "Closing" },
+                ].map(({ icon: Icon, title }) => (
+                  <div key={title} className="rounded-2xl border border-border/60 bg-card/80 p-4">
+                    <div className="mb-2 inline-flex rounded-full bg-primary/10 p-2 text-primary">
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+                    <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                      ████████ ███ ████ ████████ ██████ ███ ████.
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                <div className="flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-4 py-2 text-xs font-medium text-foreground shadow-[var(--shadow-soft)] backdrop-blur-sm">
+                  <Lock className="h-3.5 w-3.5 text-primary" />
+                  <span>Full experience locked</span>
+                </div>
+              </div>
+            </div>
+
             <div className="mt-6 rounded-2xl border border-border/60 bg-card/70 p-5">
               <p className="text-sm font-medium text-foreground">You'll unlock:</p>
               <ul className="mt-3 space-y-2">
