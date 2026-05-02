@@ -259,67 +259,7 @@ function Result() {
               </article>
             </div>
 
-            <section
-              className="mt-6 rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] animate-[fade-up_800ms_var(--ease-calm)]"
-              style={{ animationDelay: "260ms", animationFillMode: "both" }}
-            >
-              <h2 className="text-base font-semibold text-foreground">{groupLabel}</h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                You're matched with people who think and feel like you.
-              </p>
-              <div className="relative mt-5 h-48">
-                {avatarNames.map((_, idx) => {
-                  const positions = [
-                    "left-1/2 top-0 -translate-x-1/2",
-                    "left-12 top-16",
-                    "right-12 top-16",
-                    "left-20 bottom-0",
-                    "right-20 bottom-0",
-                  ];
-
-                  return (
-                    <div
-                      key={idx}
-                      className={`absolute ${positions[idx]} flex h-16 w-16 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-primary shadow-[var(--shadow-soft)] transition-transform duration-500 hover:scale-105`}
-                    >
-                      <Users className="h-5 w-5" />
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
-
-            <section
-              className="mt-6 animate-[fade-up_900ms_var(--ease-calm)]"
-              style={{ animationDelay: "320ms", animationFillMode: "both" }}
-            >
-              <h2 className="mb-4 text-base font-semibold text-foreground">This is how your group connects:</h2>
-              <div className="grid gap-4 md:grid-cols-3">
-                <article className="rounded-3xl border border-border/60 bg-card/95 p-5 shadow-[var(--shadow-card)] transition-all duration-500 hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)]">
-                  <div className="mb-3 inline-flex rounded-full bg-primary/10 p-2 text-primary">
-                    <HeartHandshake className="h-4 w-4" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-foreground">Icebreaker</h3>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{result.activity_plan?.icebreaker ?? "—"}</p>
-                </article>
-
-                <article className="rounded-3xl border border-border/60 bg-card/95 p-5 shadow-[var(--shadow-card)] transition-all duration-500 hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)]">
-                  <div className="mb-3 inline-flex rounded-full bg-primary/10 p-2 text-primary">
-                    <PartyPopper className="h-4 w-4" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-foreground">Activity</h3>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{result.activity_plan?.activity ?? activity}</p>
-                </article>
-
-                <article className="rounded-3xl border border-border/60 bg-card/95 p-5 shadow-[var(--shadow-card)] transition-all duration-500 hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)]">
-                  <div className="mb-3 inline-flex rounded-full bg-primary/10 p-2 text-primary">
-                    <CheckCircle2 className="h-4 w-4" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-foreground">Closing</h3>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{result.activity_plan?.closing ?? "—"}</p>
-                </article>
-              </div>
-            </section>
+            {/* Group members & full activity plan are locked — shown in the unlock section below */}
             </>)}
           </>
         )}
