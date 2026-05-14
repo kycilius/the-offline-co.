@@ -54,24 +54,24 @@ function Loading() {
       const answers = JSON.parse(savedAnswers) as number[];
       const age_group = sessionStorage.getItem("selectedAge") ?? "unknown";
       const gender = sessionStorage.getItem("selectedGender") ?? "unknown";
+      const name = localStorage.getItem("user_name")?.trim() || null;
 
       const res = await fetch(`${API_BASE}/api/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers, age_group, gender }),
+        body: JSON.stringify({ name, answers, age_group, gender }),
       });
       if (!res.ok) throw new Error("Submit failed");
 
       const data = await res.json();
-      localStorage.setItem("user_id", data.user_id);
-      const session_id = data.session_id as string | undefined;
-      if (!session_id) throw new Error("Missing session_id");
-      sessionStorage.setItem("sessionId", session_id);
+      const groupId = data.group_id as string | undefined;
+      if (!groupId) throw new Error("Missing group_id");
+      sessionStorage.setItem("groupId", groupId);
 
       const matchRes = await fetch(`${API_BASE}/api/match`, { method: "POST" });
       if (!matchRes.ok) throw new Error("Match failed");
 
-      const resultRes = await fetch(`${API_BASE}/api/result/${session_id}`);
+      const resultRes = await fetch(`${API_BASE}/api/result/${groupId}`);
       if (!resultRes.ok) throw new Error("Result fetch failed");
 
       const resultData = (await resultRes.json()) as MatchResult;

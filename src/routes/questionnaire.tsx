@@ -104,7 +104,7 @@ function Questionnaire() {
       if (index + 1 >= QUESTIONS.length) {
         sessionStorage.setItem("answers", JSON.stringify(next));
         sessionStorage.removeItem("matchResult");
-        sessionStorage.removeItem("sessionId");
+        sessionStorage.removeItem("groupId");
         navigate({ to: "/loading" });
       } else {
         setIndex((prev) => prev + 1);

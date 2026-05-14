@@ -9,14 +9,11 @@ class SubmitRequest(BaseModel):
     answers: List[int] = Field(..., min_length=1)
     age_group: str = "unknown"
     gender: str = "unknown"
-    session_id: Optional[str] = None
-    user_id: Optional[str] = None
     name: Optional[str] = None
 
 
 class SubmitResponse(BaseModel):
-    session_id: str
-    user_id: str
+    group_id: str
 
 
 class GroupInfo(BaseModel):
