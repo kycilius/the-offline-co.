@@ -1,15 +1,12 @@
--- Ensure required columns/constraints for users table.
-alter table if exists public.users
-    add column if not exists session_id text,
-    add column if not exists user_id text,
-    add column if not exists name text,
-    add column if not exists answers jsonb,
-    add column if not exists age_group text,
-    add column if not exists gender text,
-    add column if not exists group_id text,
-    add column if not exists result jsonb;
-
-create unique index if not exists users_session_id_unique_idx on public.users (session_id);
+-- Minimal schema for MVP.
+create table if not exists public.users (
+    id uuid primary key default gen_random_uuid(),
+    name text,
+    answers jsonb,
+    age_group text,
+    gender text,
+    created_at timestamp with time zone not null default now()
+);
 
 create table if not exists public.groups (
     id uuid primary key default gen_random_uuid(),
