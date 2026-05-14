@@ -30,7 +30,7 @@ const API_BASE = import.meta.env.VITE_API_BASE;
 Then call:
 - `POST ${API_BASE}/api/submit`
 - `POST ${API_BASE}/api/match`
-- `GET ${API_BASE}/api/result/{session_id}`
+- `GET ${API_BASE}/api/result/{group_id}`
 
 Set this environment variable in Vercel:
 
