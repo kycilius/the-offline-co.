@@ -408,10 +408,13 @@ def submit_answers(payload: SubmitRequest) -> SubmitResponse:
         try:
             update_response = supabase.table("users").update(payload_data).eq("id", existing_id).execute()
             logger.info("Supabase update response: %s", update_response)
-            if update_response.data:
-                return SubmitResponse(session_id=existing_id, user_id=existing_id)
         except Exception as e:
             logger.exception("Error updating Supabase user: %s", str(e))
+            raise HTTPException(status_code=500, detail="Failed to update user") from e
+
+        if update_response.data:
+            return SubmitResponse(session_id=existing_id, user_id=existing_id)
+        raise HTTPException(status_code=404, detail="User not found")
 
     try:
         response = supabase.table("users").insert(payload_data).execute()
