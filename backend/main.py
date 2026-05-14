@@ -510,7 +510,7 @@ def get_result(user_id: str) -> ResultResponse:
         response = supabase.table("users").select(USER_COLUMNS).eq("id", user_id).limit(1).execute()
         user = response.data[0] if response.data else None
     except Exception as e:
-        logger.exception("Error fetching session from Supabase: %s", str(e))
+        logger.exception("Error fetching user from Supabase: %s", str(e))
         raise HTTPException(status_code=500, detail="Failed to fetch user")
 
     if not user:
