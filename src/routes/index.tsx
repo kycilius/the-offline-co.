@@ -1,156 +1,442 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { Sparkles, Users, MapPin, ArrowRight } from "lucide-react";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { Logo } from "@/components/Logo";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { ArrowUpRight, ArrowDown, Phone, Flame, Mountain, Users, BookOpen, MapPin } from "lucide-react";
+import type { ReactNode } from "react";
+import Reveal from "@/components/site/Reveal";
+import Nav from "@/components/site/Nav";
+import Footer from "@/components/site/Footer";
+
+const HERO_IMG = "https://static.prod-images.emergentagent.com/jobs/8233dccd-e10a-45ac-93c0-5e1ff12eeb81/images/a442b8b5c46dd5c0aba75a7f85fe0c41e8bcc4d39a1b435c00a324223d2b7479.png";
+const PHONE_RITUAL = "https://static.prod-images.emergentagent.com/jobs/8233dccd-e10a-45ac-93c0-5e1ff12eeb81/images/4b65994cf91868d468e35ac4e28e488f09dff70c4c7489de85745a1102237673.png";
+const CABIN_DINNER = "https://static.prod-images.emergentagent.com/jobs/8233dccd-e10a-45ac-93c0-5e1ff12eeb81/images/ad52708b4197fa2c641d5ec311ef1555a5b05fc0692a51bf181899fb1e1927ba.png";
+const CAMPFIRE = "https://images.pexels.com/photos/36729452/pexels-photo-36729452.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=900&w=1400";
+const NATURE_DAWN = "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1600&q=80";
+const HANDS = "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=1600&q=80";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "TheOfflineCo — Find your people. Not online. In real life." },
-      { name: "description", content: "Answer a few questions and get matched with a group that actually feels like you." },
-      { property: "og:title", content: "TheOfflineCo — Find your people" },
-      { property: "og:description", content: "Answer a few questions and get matched with a group that actually feels like you." },
+      { title: "The Ofline Co. — Log out. Show up." },
+      { name: "description", content: "A weekend in the red-earth villages of Bengal and the quiet hills of Odisha — where strangers become real, and life feels like it used to." },
+      { property: "og:title", content: "The Ofline Co. — Log out. Show up." },
+      { property: "og:description", content: "48 hours offline. 12 seats. Application only." },
+      { property: "og:image", content: HERO_IMG },
     ],
   }),
   component: Landing,
 });
 
+const testimonials = [
+  { id: 1, quote: "I didn't realize how numb I had become until this weekend.", attribution: "Founder, 34" },
+  { id: 2, quote: "I came for a break. I left with perspective.", attribution: "Designer, 29" },
+  { id: 3, quote: "It felt like I met myself again after years.", attribution: "Doctor, 41" },
+];
+
 function Landing() {
-  const navigate = useNavigate();
-  const start = () => navigate({ to: "/questionnaire" });
+  const { scrollY } = useScroll();
+  const heroY = useTransform(scrollY, [0, 600], [0, 140]);
+  const heroOpacity = useTransform(scrollY, [0, 500], [1, 0.3]);
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      {/* Nav */}
-      <nav className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-5">
-        <Logo />
-        <ThemeToggle />
-      </nav>
+    <div className="relative bg-ink text-paper min-h-screen">
+      <Nav />
 
       {/* HERO */}
-      <section className="relative mx-auto w-full max-w-3xl px-6 pb-20 pt-10 text-center md:pt-20">
-        <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-          <Sparkles className="h-3 w-3 text-accent" />
-          Group matching · 2 min quiz
+      <section className="relative min-h-screen w-full overflow-hidden flex items-end pt-32 pb-20 md:pb-32">
+        <motion.div className="absolute inset-0" style={{ y: heroY, opacity: heroOpacity }}>
+          <img src={HERO_IMG} alt="Misty forest at dawn" className="w-full h-full object-cover" loading="eager" />
+          <div className="absolute inset-0 bg-gradient-to-b from-ink/20 via-ink/30 to-ink" />
+          <div className="absolute inset-0 vignette" />
+        </motion.div>
+
+        <div className="relative container-page w-full">
+          <Reveal>
+            <p className="overline mb-6">
+              <span className="inline-block w-8 h-px bg-ember align-middle mr-3" />
+              48 hours offline · Bengal & Odisha
+            </p>
+          </Reveal>
+          <Reveal delay={0.15}>
+            <h1 className="font-serif text-5xl sm:text-6xl md:text-8xl lg:text-9xl leading-[0.95] tracking-tight text-paper kerned text-balance">
+              Log out.<br />
+              <span className="italic text-paper/95">Show up.</span>
+            </h1>
+          </Reveal>
+          <Reveal delay={0.3}>
+            <p className="mt-8 max-w-xl text-lg md:text-xl text-paper/80 leading-relaxed">
+              A weekend in the red-earth villages of Bengal and the quiet hills of Odisha — where strangers become real, and life feels like it used to. No screens. No feeds. No performance.
+            </p>
+          </Reveal>
+          <Reveal delay={0.45}>
+            <div className="mt-10 flex flex-wrap items-center gap-4">
+              <Link to="/questionnaire" className="ember-button">
+                Apply for the next experience
+                <ArrowUpRight size={16} />
+              </Link>
+              <a href="#concept" className="ghost-button">
+                What this is
+                <ArrowDown size={14} />
+              </a>
+            </div>
+          </Reveal>
+
+          <div className="mt-20 md:mt-28 flex items-end justify-between gap-6 flex-wrap">
+            <div className="text-paper/45 text-xs tracking-[0.28em] uppercase">
+              Cohort 03 · 12 seats · Application only
+            </div>
+            <div className="hidden md:block text-paper/40 text-xs tracking-[0.28em] uppercase">
+              Scroll, slowly ↓
+            </div>
+          </div>
         </div>
-        <h1 className="mt-6 font-display text-[2.4rem] font-medium leading-[1.05] tracking-tight md:text-[3.6rem]">
-          Find your people.
-          <br />
-          <span className="italic text-accent">Not online. In real life.</span>
-        </h1>
-        <p className="mx-auto mt-5 max-w-xl text-[15px] leading-[1.7] text-muted-foreground md:text-base">
-          Answer a few questions and get matched with a group that actually feels like you.
-        </p>
-        <div className="mt-8 flex flex-col items-center gap-3">
-          <button
-            onClick={start}
-            className="group inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-medium text-primary-foreground shadow-soft transition-all hover:opacity-90"
-          >
-            Start your experience
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </button>
-          <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-            Free · Takes 2 minutes
-          </p>
+      </section>
+
+      {/* PROBLEM */}
+      <section className="relative py-32 md:py-44">
+        <div className="container-page grid grid-cols-1 md:grid-cols-12 gap-10">
+          <div className="md:col-span-4">
+            <p className="overline">01 — The quiet ache</p>
+          </div>
+          <div className="md:col-span-8">
+            <Reveal>
+              <h2 className="font-serif text-4xl md:text-6xl text-paper leading-[1.05] kerned text-balance">
+                The most connected generation feels the most alone.
+              </h2>
+            </Reveal>
+            <Reveal delay={0.15}>
+              <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 text-paper/70 text-lg leading-relaxed">
+                <p>You scroll more than you speak.</p>
+                <p>You document more than you experience.</p>
+                <p>You're always reachable — but rarely known.</p>
+                <p>You have everything — except the feeling that it matters.</p>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      <div className="container-page hairline" />
+
+      {/* CONCEPT REVEAL */}
+      <section id="concept" className="relative py-32 md:py-44">
+        <div className="container-page grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 items-center">
+          <Reveal className="md:col-span-6 order-2 md:order-1">
+            <p className="overline">02 — The ritual</p>
+            <h2 className="font-serif text-4xl md:text-6xl mt-4 leading-[1.05] kerned text-balance">
+              It begins with a simple exchange.
+            </h2>
+            <div className="mt-8 space-y-5 text-paper/75 text-lg leading-relaxed">
+              <p>You hand over your smartphone.</p>
+              <p>You receive a button phone.</p>
+              <p className="text-paper">From that moment, something shifts.</p>
+              <p>Attention returns. Conversations deepen. Time slows down.</p>
+            </div>
+            <div className="mt-10 flex items-center gap-4 text-paper/55">
+              <Phone size={18} className="text-ember" />
+              <span className="text-xs tracking-[0.24em] uppercase">One ritual. Two days. A different person.</span>
+            </div>
+          </Reveal>
+          <Reveal delay={0.2} className="md:col-span-6 order-1 md:order-2">
+            <div className="relative aspect-[4/5] overflow-hidden">
+              <img src={PHONE_RITUAL} alt="Smartphone being exchanged for a button phone" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
+              <div className="absolute bottom-6 left-6 text-paper/85">
+                <p className="overline mb-2">The exchange</p>
+                <p className="font-serif text-2xl">Glass for plastic. Noise for silence.</p>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* EXPERIENCE POINTS */}
+      <section id="experiences" className="relative py-32 md:py-44">
+        <div className="container-page">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-16 md:mb-24">
+            <div className="md:col-span-4">
+              <p className="overline">03 — When nothing competes</p>
+            </div>
+            <div className="md:col-span-8">
+              <Reveal>
+                <h2 className="font-serif text-4xl md:text-6xl leading-[1.05] kerned text-balance">
+                  What happens when nothing is competing for your attention?
+                </h2>
+              </Reveal>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+            <ExpCard className="md:col-span-7 aspect-[16/10]" img={CABIN_DINNER} icon={<Users size={18} />} title="Cook with strangers who become friends." caption="A long table. A slow flame. Someone's grandmother's recipe." />
+            <ExpCard className="md:col-span-5 aspect-[4/5]" img={NATURE_DAWN} icon={<Mountain size={18} />} title="Wake to nature, not notifications." caption="Birds before alarms. Mist before the inbox." />
+            <ExpCard className="md:col-span-5 aspect-[4/5]" img={CAMPFIRE} icon={<Flame size={18} />} title="Share stories without documenting them." caption="The kind of stories that only get told once." />
+            <ExpCard className="md:col-span-7 aspect-[16/10]" img={HANDS} icon={<BookOpen size={18} />} title="Learn from people who live differently." caption="A potter. A farmer. A grandfather. Each carries an answer." />
+          </div>
+        </div>
+      </section>
+
+      {/* WHERE WE GO */}
+      <section id="where" className="relative py-32 md:py-44 border-t border-paper/10">
+        <div className="container-page">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-16">
+            <div className="md:col-span-4">
+              <p className="overline">04 — Where we go</p>
+            </div>
+            <div className="md:col-span-8">
+              <Reveal>
+                <h2 className="font-serif text-4xl md:text-6xl leading-[1.05] kerned text-balance">
+                  Two states. Four villages. <span className="italic text-paper/80">Zero signal.</span>
+                </h2>
+              </Reveal>
+              <Reveal delay={0.15}>
+                <p className="mt-8 text-paper/65 max-w-2xl text-lg leading-relaxed">
+                  We work only in places we've walked ourselves — partnered with the families, the singers, the boatmen, the potters who already live the unhurried life. No resorts. No staged authenticity.
+                </p>
+              </Reveal>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-2 border-t border-paper/10">
+            {[
+              { region: "Birbhum, West Bengal", place: "Shantiniketan & the Khoai", note: "Red earth, Baul singers, mud-floor suppers." },
+              { region: "Jalpaiguri, North Bengal", place: "The Dooars, near Gorumara", note: "Sal forests, tea-garden silence, Lepcha kitchens." },
+              { region: "Kandhamal, Odisha", place: "Daringbadi pine country", note: "Pine smoke, coffee estates, Kondh folk song." },
+              { region: "Angul, Odisha", place: "Satkosia gorge, Mahanadi", note: "Dugout boats, gorge shadows, stars without lamps." },
+            ].map((row, i) => (
+              <Reveal key={row.place} delay={i * 0.06}>
+                <div className="flex items-baseline gap-6 md:gap-8 border-b border-paper/10 py-7 md:py-8">
+                  <span className="num-display text-ember text-sm pt-1 w-10 shrink-0">/0{i + 1}</span>
+                  <div className="flex-1">
+                    <p className="overline text-paper/50">{row.region}</p>
+                    <h3 className="font-serif text-2xl md:text-3xl mt-2 text-paper text-balance">{row.place}</h3>
+                    <p className="mt-2 text-paper/60 text-sm md:text-base leading-relaxed">{row.note}</p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+
+          <Reveal delay={0.2}>
+            <p className="mt-10 text-xs tracking-[0.28em] uppercase text-paper/40 max-w-xl leading-relaxed">
+              Specific villages and addresses are sealed until 24 hours before your weekend begins. The waiting is part of the weekend.
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* TESTIMONIALS */}
+      <section className="relative py-32 md:py-48">
+        <div className="container-page max-w-4xl text-center">
+          <Reveal>
+            <p className="overline mb-10">05 — What people leave with</p>
+          </Reveal>
+          <div className="space-y-20 md:space-y-28">
+            {testimonials.map((t, i) => (
+              <Reveal key={t.id} delay={i * 0.05}>
+                <blockquote className="font-serif italic text-3xl md:text-5xl leading-[1.15] text-paper text-balance">
+                  &ldquo;{t.quote}&rdquo;
+                </blockquote>
+                <p className="mt-6 text-xs tracking-[0.28em] uppercase text-paper/45">— {t.attribution}</p>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* DIFFERENTIATION */}
+      <section className="relative py-32 md:py-44 border-t border-paper/10">
+        <div className="container-page grid grid-cols-1 md:grid-cols-12 gap-10">
+          <div className="md:col-span-5">
+            <p className="overline">06 — What this isn't</p>
+            <h2 className="font-serif text-4xl md:text-6xl mt-4 leading-[1.05] kerned text-balance">
+              This is not a retreat.
+            </h2>
+            <p className="mt-6 text-paper/65 max-w-md leading-relaxed">
+              We don't sell silence. We don't promise transformation. We hand you a different kind of weekend — and let it do its work.
+            </p>
+          </div>
+          <div className="md:col-span-7 space-y-6">
+            {[
+              ["Not passive.", "Fully immersive."],
+              ["Not solitary.", "Deeply social."],
+              ["Not curated for comfort.", "Curated for connection."],
+              ["Not consumption.", "Participation."],
+            ].map(([no, yes], i) => (
+              <Reveal key={i} delay={i * 0.05}>
+                <div className="flex items-baseline gap-6 md:gap-10 border-b border-paper/10 pb-5">
+                  <span className="num-display text-paper/30 text-sm md:text-base w-8">0{i + 1}</span>
+                  <span className="font-serif text-xl md:text-2xl text-paper/40 line-through decoration-paper/30">{no}</span>
+                  <span className="font-serif italic text-2xl md:text-3xl text-paper">{yes}</span>
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="mx-auto w-full max-w-5xl px-6 py-16">
-        <div className="text-center">
-          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-accent">How it works</p>
-          <h2 className="mt-3 font-display text-3xl font-medium md:text-4xl">Three simple steps</h2>
-        </div>
-        <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-3">
-          {[
-            { icon: Sparkles, title: "Answer a few questions", desc: "A short, honest quiz. Two minutes, fourteen questions." },
-            { icon: Users, title: "Get matched with your group", desc: "We find the people who think and feel like you." },
-            { icon: MapPin, title: "Experience it offline", desc: "Meet your group in real life. No screens. Just presence." },
-          ].map((s, i) => (
-            <div key={s.title} className="group relative rounded-2xl border border-border bg-card p-6 transition-all hover:shadow-soft">
-              <div className="flex items-center gap-3">
-                <div className="grid h-10 w-10 place-items-center rounded-full bg-primary/10 text-primary">
-                  <s.icon className="h-5 w-5" />
-                </div>
-                <span className="font-display text-2xl text-muted-foreground/60">0{i + 1}</span>
-              </div>
-              <h3 className="mt-4 font-display text-xl font-medium">{s.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
+      <section id="how-it-works" className="relative py-32 md:py-44">
+        <div className="container-page">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-16">
+            <div className="md:col-span-4">
+              <p className="overline">07 — The arc</p>
             </div>
-          ))}
+            <div className="md:col-span-8">
+              <h2 className="font-serif text-4xl md:text-6xl leading-[1.05] kerned text-balance">
+                Five steps. Most of them, you don't decide.
+              </h2>
+            </div>
+          </div>
+          <ol className="grid grid-cols-1 md:grid-cols-5 gap-0 border-t border-paper/10">
+            {[
+              { t: "Apply anonymously", d: "An honest paragraph. No résumé." },
+              { t: "Get selected", d: "We curate the cohort like a dinner party." },
+              { t: "Location reveal", d: "Address arrives 24 hours before." },
+              { t: "Phone swap", d: "Glass for plastic at the meetpoint." },
+              { t: "48 hours of real", d: "What happens, stays unphotographed." },
+            ].map((s, i) => (
+              <Reveal key={i} delay={i * 0.06}>
+                <li className="border-b md:border-b-0 md:border-r border-paper/10 last:border-r-0 p-6 md:p-8 h-full">
+                  <span className="num-display text-ember text-sm tracking-[0.18em]">/0{i + 1}</span>
+                  <h3 className="font-serif text-2xl md:text-[1.7rem] mt-4 leading-tight text-balance">{s.t}</h3>
+                  <p className="mt-3 text-paper/55 text-sm leading-relaxed">{s.d}</p>
+                </li>
+              </Reveal>
+            ))}
+          </ol>
         </div>
       </section>
 
-      {/* SAMPLE RESULT */}
-      <section className="mx-auto w-full max-w-3xl px-6 py-16">
-        <div className="text-center">
-          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-accent">A peek inside</p>
-          <h2 className="mt-3 font-display text-3xl font-medium md:text-4xl">Here's what a result looks like</h2>
+      {/* PRICING */}
+      <section id="pricing" className="relative py-32 md:py-44 border-t border-paper/10">
+        <div className="container-page grid grid-cols-1 md:grid-cols-12 gap-10">
+          <div className="md:col-span-5">
+            <p className="overline">08 — Pricing</p>
+            <h2 className="font-serif text-4xl md:text-6xl mt-4 leading-[1.05] kerned text-balance">
+              Premium by design — because intention matters.
+            </h2>
+          </div>
+          <div className="md:col-span-7">
+            <Reveal>
+              <div className="num-display text-7xl md:text-9xl text-paper kerned">
+                ₹12<span className="text-paper/40">k</span>
+                <span className="text-paper/30 mx-3">—</span>
+                ₹18<span className="text-paper/40">k</span>
+              </div>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <p className="mt-8 text-paper/70 text-lg max-w-lg leading-relaxed">
+                Twelve seats per cohort. Curated experiences. Local partnerships. A weekend you'll think about for years.
+              </p>
+            </Reveal>
+            <Reveal delay={0.15}>
+              <ul className="mt-8 space-y-3 text-paper/70">
+                {[
+                  "All accommodation, food, and travel within the experience",
+                  "A button phone for 48 hours (yours to keep)",
+                  "Hand-written letter from a fellow participant",
+                  "Locally-led workshop — Baul song, dokra craft, or river cooking",
+                ].map((x, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <span className="num-display text-ember text-sm pt-1">+</span>
+                    <span>{x}</span>
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+            <Reveal delay={0.2}>
+              <div className="mt-10 flex flex-wrap items-center gap-4">
+                <Link to="/questionnaire" className="ember-button">
+                  Apply for the next experience
+                  <ArrowUpRight size={16} />
+                </Link>
+                <span className="text-xs text-paper/40 tracking-[0.22em] uppercase">No deposit until you're selected.</span>
+              </div>
+            </Reveal>
+          </div>
         </div>
+      </section>
 
-        <div className="mt-10 overflow-hidden rounded-3xl border border-border bg-card shadow-card">
-          <div className="bg-gradient-to-br from-primary/10 via-card to-accent/5 px-7 py-8 md:px-10 md:py-10">
-            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground">Your group</p>
-            <h3 className="mt-2 font-display text-3xl font-medium md:text-4xl">
-              The <span className="italic text-accent">Deep Connectors</span>
-            </h3>
-
-            <div className="mt-6 flex items-end gap-4">
-              <div>
-                <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Match score</p>
-                <p className="font-display text-5xl font-medium text-primary md:text-6xl">82%</p>
-              </div>
-              <div className="mb-2 flex-1">
-                <div className="h-2 w-full overflow-hidden rounded-full bg-primary/15">
-                  <div className="h-full rounded-full bg-primary" style={{ width: "82%" }} />
-                </div>
-              </div>
-            </div>
-
-            <p className="mt-6 text-[14px] leading-[1.75] text-foreground/80">
-              You don't enjoy surface-level conversations — you look for depth, even in small interactions. You notice things others miss, and that makes people feel understood around you.
+      {/* COUNTDOWN strip */}
+      <section className="relative py-24 md:py-32 border-y border-paper/10">
+        <div
+          className="absolute inset-0 opacity-20"
+          style={{ backgroundImage: `url(${NATURE_DAWN})`, backgroundSize: "cover", backgroundPosition: "center" }}
+        />
+        <div className="absolute inset-0 bg-ink/85" />
+        <div className="relative container-page grid grid-cols-1 md:grid-cols-12 gap-10 items-end">
+          <div className="md:col-span-7">
+            <p className="overline mb-5">Next reveal</p>
+            <h2 className="font-serif text-3xl md:text-5xl leading-[1.1] text-balance">
+              The location is sealed until 24 hours before.
+            </h2>
+            <p className="mt-5 text-paper/65 max-w-md leading-relaxed">
+              When the clock hits zero, twelve people receive the address. Until then, all you have is the wait — and the wait is part of it.
             </p>
           </div>
-          <div className="border-t border-border bg-background/50 px-7 py-4 text-center text-[11px] uppercase tracking-[0.2em] text-muted-foreground md:px-10">
-            Sample preview · Yours will be different
+          <div className="md:col-span-5 flex items-center gap-3 text-paper/55 text-xs tracking-[0.22em] uppercase">
+            <MapPin size={14} className="text-ember" />
+            <span>Location revealed 24h before</span>
+            <span className="ml-auto">12 seats remaining</span>
           </div>
-        </div>
-      </section>
-
-      {/* VIRAL HOOK */}
-      <section className="mx-auto w-full max-w-3xl px-6 py-16 text-center">
-        <div className="rounded-3xl border border-dashed border-accent/40 bg-accent/5 px-6 py-10 md:px-12 md:py-14">
-          <p className="font-display text-2xl italic leading-snug md:text-3xl">
-            "Everyone gets a different result.
-            <br />
-            <span className="text-accent">Compare yours with friends.</span>"
-          </p>
         </div>
       </section>
 
       {/* FINAL CTA */}
-      <section className="mx-auto w-full max-w-3xl px-6 pb-24 pt-10 text-center">
-        <h2 className="font-display text-3xl font-medium md:text-4xl">Ready to meet your people?</h2>
-        <p className="mx-auto mt-3 max-w-md text-[14px] leading-[1.7] text-muted-foreground">
-          Two minutes. Fourteen questions. One group that feels like home.
-        </p>
-        <button
-          onClick={start}
-          className="group mt-7 inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-medium text-primary-foreground shadow-soft transition-all hover:opacity-90"
-        >
-          Start your experience
-          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-        </button>
+      <section className="relative py-32 md:py-48 overflow-hidden">
+        <div className="absolute inset-0 opacity-40" style={{ backgroundImage: `url(${CAMPFIRE})`, backgroundSize: "cover", backgroundPosition: "center" }} />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/80 to-ink/40" />
+        <div className="relative container-page max-w-4xl text-center">
+          <Reveal>
+            <h2 className="font-serif text-5xl md:text-7xl leading-[1.05] text-balance kerned">
+              You don't need another app.
+            </h2>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <p className="mt-6 text-2xl md:text-3xl font-serif italic text-paper/80">
+              You need a different experience.
+            </p>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-5">
+              <Link to="/questionnaire" className="ember-button">
+                Reserve your spot
+                <ArrowUpRight size={16} />
+              </Link>
+              <span className="text-xs text-paper/45 tracking-[0.22em] uppercase">12 seats. One weekend. No second chances this round.</span>
+            </div>
+          </Reveal>
+        </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border">
-        <div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-between gap-3 px-6 py-6 text-[12px] text-muted-foreground sm:flex-row">
-          <Logo />
-          <p>© {new Date().getFullYear()} TheOfflineCo · Find your people.</p>
-          <Link to="/questionnaire" className="hover:text-foreground">Take the quiz →</Link>
+      <Footer />
+    </div>
+  );
+}
+
+function ExpCard({
+  img,
+  icon,
+  title,
+  caption,
+  className = "",
+}: {
+  img: string;
+  icon: ReactNode;
+  title: string;
+  caption: string;
+  className?: string;
+}) {
+  return (
+    <Reveal className={className}>
+      <div className="group relative w-full h-full overflow-hidden border border-paper/5">
+        <img src={img} alt="" className="w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.04]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/10" />
+        <div className="absolute inset-0 p-6 md:p-10 flex flex-col justify-end">
+          <span className="text-ember mb-3 inline-flex">{icon}</span>
+          <h3 className="font-serif text-2xl md:text-3xl text-paper leading-tight text-balance">{title}</h3>
+          <p className="mt-3 text-paper/65 text-sm md:text-base max-w-md">{caption}</p>
         </div>
-      </footer>
-    </main>
+      </div>
+    </Reveal>
   );
 }

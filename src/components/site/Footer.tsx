@@ -1,9 +1,8 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
 
 export default function Footer() {
   return (
-    <footer className="relative border-t border-paper/10 mt-12" data-testid="site-footer">
+    <footer className="relative border-t border-paper/10 mt-12">
       <div className="container-page py-16 md:py-24 grid grid-cols-1 md:grid-cols-12 gap-10">
         <div className="md:col-span-5">
           <p className="overline">A premium offline experience</p>
@@ -16,10 +15,10 @@ export default function Footer() {
         <div className="md:col-span-3">
           <p className="editorial-label mb-4">Wander</p>
           <ul className="space-y-3 text-paper/70 text-sm">
-            <li><a href="/#concept" className="hover:text-ember">The Ritual</a></li>
-            <li><a href="/#experiences" className="hover:text-ember">Experiences</a></li>
-            <li><a href="/#how-it-works" className="hover:text-ember">How It Works</a></li>
-            <li><a href="/#pricing" className="hover:text-ember">Pricing</a></li>
+            <li><a href="#concept" className="hover:text-ember">The Ritual</a></li>
+            <li><a href="#experiences" className="hover:text-ember">Experiences</a></li>
+            <li><a href="#how-it-works" className="hover:text-ember">How It Works</a></li>
+            <li><a href="#pricing" className="hover:text-ember">Pricing</a></li>
           </ul>
         </div>
         <div className="md:col-span-4">
@@ -28,7 +27,7 @@ export default function Footer() {
             Locations are not announced. Cohorts are not advertised.<br />
             If you're meant to be there, the email will find you.
           </p>
-          <Link to="/apply" className="ember-button mt-6" data-testid="footer-apply-btn">Apply for the next experience</Link>
+          <Link to="/questionnaire" className="ember-button mt-6">Apply for the next experience</Link>
         </div>
       </div>
       <div className="container-page py-6 border-t border-paper/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-2 text-xs text-paper/40">

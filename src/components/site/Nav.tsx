@@ -1,19 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
 const links = [
-  { to: "/#concept", label: "The Ritual" },
-  { to: "/#experiences", label: "Experiences" },
-  { to: "/#how-it-works", label: "How It Works" },
-  { to: "/#pricing", label: "Pricing" },
+  { to: "#concept", label: "The Ritual" },
+  { to: "#experiences", label: "Experiences" },
+  { to: "#how-it-works", label: "How It Works" },
+  { to: "#pricing", label: "Pricing" },
 ];
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const location = useLocation();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -22,15 +21,12 @@ export default function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => { setOpen(false); }, [location.pathname]);
-
   return (
     <header
-      data-testid="site-nav"
       className={`fixed top-0 inset-x-0 z-50 transition-colors duration-500 ${scrolled ? "glass" : ""}`}
     >
       <div className="container-page flex items-center justify-between py-5 md:py-6">
-        <Link to="/" data-testid="nav-logo" className="flex items-baseline gap-2 group">
+        <Link to="/" className="flex items-baseline gap-2 group">
           <span className="font-serif text-xl md:text-2xl text-paper">The Ofline Co.</span>
           <span className="hidden md:inline overline">Est. 2025</span>
         </Link>
@@ -40,7 +36,6 @@ export default function Nav() {
             <a
               key={l.to}
               href={l.to}
-              data-testid={`nav-link-${l.label.toLowerCase().replace(/\s+/g, "-")}`}
               className="text-[0.8rem] tracking-[0.18em] uppercase text-paper/70 hover:text-ember transition-colors"
             >
               {l.label}
@@ -49,14 +44,13 @@ export default function Nav() {
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
-          <Link to="/apply" className="ghost-button" data-testid="nav-apply-btn">Apply</Link>
+          <Link to="/questionnaire" className="ghost-button">Apply</Link>
         </div>
 
         <button
           className="md:hidden text-paper p-2"
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
-          data-testid="nav-mobile-toggle"
         >
           {open ? <X size={20} /> : <Menu size={20} />}
         </button>
@@ -76,13 +70,19 @@ export default function Nav() {
                 <a
                   key={l.to}
                   href={l.to}
+                  onClick={() => setOpen(false)}
                   className="text-sm tracking-[0.18em] uppercase text-paper/80"
-                  data-testid={`nav-mobile-link-${l.label.toLowerCase().replace(/\s+/g, "-")}`}
                 >
                   {l.label}
                 </a>
               ))}
-              <Link to="/apply" className="ember-button mt-2 self-start" data-testid="nav-mobile-apply">Apply</Link>
+              <Link
+                to="/questionnaire"
+                onClick={() => setOpen(false)}
+                className="ember-button mt-2 self-start"
+              >
+                Apply
+              </Link>
             </div>
           </motion.div>
         )}
