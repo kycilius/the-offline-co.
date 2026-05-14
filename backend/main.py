@@ -29,6 +29,8 @@ if not SUPABASE_URL or not SUPABASE_KEY:
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 logger = logging.getLogger(__name__)
+USER_FIELDS = "id,name,answers,age_group,gender,created_at"
+GROUP_FIELDS = "id,group_name,members,created_at"
 
 DEFAULT_ACTIVITY_PLAN = Plan(
     icebreaker="Share one habit you want to change this week.",
@@ -40,10 +42,10 @@ DEFAULT_ACTIVITY_PLAN = Plan(
 
 def fetch_users() -> list[dict[str, Any]]:
     try:
-        response = supabase.table("users").select("id,name,answers,age_group,gender,created_at").execute()
+        response = supabase.table("users").select(USER_FIELDS).execute()
         users = response.data or []
         users = [user for user in users if user.get("answers")]
-        logger.info("Fetched users: %s", users)
+        logger.info("Fetched %s users with answers", len(users))
         return users
     except Exception as e:
         logger.exception("Error fetching from Supabase: %s", str(e))
@@ -407,7 +409,7 @@ def submit_answers(payload: SubmitRequest) -> SubmitResponse:
     if existing_id:
         try:
             update_response = supabase.table("users").update(payload_data).eq("id", existing_id).execute()
-            logger.info("Supabase update response: %s", update_response)
+            logger.info("Supabase update rows: %s", len(update_response.data or []))
         except Exception as e:
             logger.exception("Error updating Supabase user: %s", str(e))
             raise HTTPException(status_code=500, detail="Failed to update user in Supabase") from e
@@ -419,7 +421,7 @@ def submit_answers(payload: SubmitRequest) -> SubmitResponse:
 
     try:
         response = supabase.table("users").insert(payload_data).execute()
-        logger.info("Supabase insert response: %s", response)
+        logger.info("Supabase insert rows: %s", len(response.data or []))
     except Exception as e:
         logger.exception("Error inserting into Supabase: %s", str(e))
         raise HTTPException(status_code=500, detail="Failed to create user") from e
@@ -476,7 +478,7 @@ def match_users() -> MatchResponse:
 def get_result(session_id: str) -> ResultResponse:
     user_id = session_id
     try:
-        response = supabase.table("users").select("id,name,answers,age_group,gender,created_at").eq("id", user_id).execute()
+        response = supabase.table("users").select(USER_FIELDS).eq("id", user_id).execute()
         user = response.data[0] if response.data else None
     except Exception as e:
         logger.exception("Error fetching session from Supabase: %s", str(e))
@@ -490,7 +492,7 @@ def get_result(session_id: str) -> ResultResponse:
     try:
         group_response = (
             supabase.table("groups")
-            .select("id,group_name,members,created_at")
+            .select(GROUP_FIELDS)
             .contains("members", [user_id])
             .order("created_at", desc=True)
             .limit(1)
