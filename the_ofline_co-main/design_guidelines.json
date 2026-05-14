@@ -1,0 +1,88 @@
+{
+  "project_name": "The Ofline Co.",
+  "theme": {
+    "mode": "dark",
+    "archetype": "Archetype 5 (Jewel & Luxury) + Archetype 1 (Organic & Earthy)",
+    "description": "Dark, cinematic, and philosophical. A premium dark mode utilizing the requested deep navy (#0F172A) as the void, warm off-white (#F5F5F4) for clarity, and amber (#D97706) as the spark of connection.",
+    "colors": {
+      "background": "#0F172A",
+      "surface": "#131C31",
+      "surface_elevated": "#1E293B",
+      "text_primary": "#F5F5F4",
+      "text_secondary": "rgba(245, 245, 244, 0.7)",
+      "text_muted": "rgba(245, 245, 244, 0.4)",
+      "accent": "#D97706",
+      "accent_hover": "#B45309",
+      "border": "rgba(245, 245, 244, 0.1)"
+    },
+    "typography": {
+      "fonts": {
+        "headings": "'Playfair Display', serif",
+        "body": "'Inter', sans-serif"
+      },
+      "hierarchy": {
+        "h1": "font-serif text-5xl md:text-6xl lg:text-7xl font-normal tracking-tight leading-tight",
+        "h2": "font-serif text-4xl md:text-5xl font-normal tracking-tight leading-snug",
+        "h3": "font-serif text-2xl md:text-3xl font-normal",
+        "body_large": "font-sans text-lg md:text-xl leading-relaxed text-[#F5F5F4]/80",
+        "body": "font-sans text-base leading-relaxed text-[#F5F5F4]/70",
+        "overline": "font-sans text-xs tracking-[0.2em] uppercase text-[#D97706]"
+      }
+    }
+  },
+  "layout_spacing": {
+    "section": "py-24 md:py-32",
+    "container": "max-w-7xl mx-auto px-6 md:px-12",
+    "container_narrow": "max-w-2xl mx-auto px-6 text-center",
+    "grid_bento": "grid grid-cols-1 md:grid-cols-12 gap-8"
+  },
+  "visual_effects": {
+    "grain_overlay": "Implement a fixed overlay using 'cinematic_grain_texture' (pointer-events-none, mix-blend-overlay, opacity-20) covering the entire viewport to give a 35mm film aesthetic.",
+    "custom_cursor": "Implement using framer-motion: hide default cursor. Render an amber dot (#D97706, 8px) that follows mouse exactly, and a slightly larger ring (border 1px #D97706, 32px) that trails behind with spring physics.",
+    "glassmorphism": "backdrop-blur-xl bg-[#0F172A]/60 border border-[#F5F5F4]/10",
+    "image_treatment": "Images should feel dark and moody. Always use an overlay gradient (e.g., bg-gradient-to-t from-[#0F172A] to-transparent) so they blend seamlessly into the background."
+  },
+  "media": {
+    "hero_cinematic": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/8233dccd-e10a-45ac-93c0-5e1ff12eeb81/images/a442b8b5c46dd5c0aba75a7f85fe0c41e8bcc4d39a1b435c00a324223d2b7479.png",
+      "description": "Hero full bleed image - Misty forest dawn"
+    },
+    "phone_ritual": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/8233dccd-e10a-45ac-93c0-5e1ff12eeb81/images/4b65994cf91868d468e35ac4e28e488f09dff70c4c7489de85745a1102237673.png",
+      "description": "Concept reveal - exchaning smartphone for button phone"
+    },
+    "cabin_dinner": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/8233dccd-e10a-45ac-93c0-5e1ff12eeb81/images/ad52708b4197fa2c641d5ec311ef1555a5b05fc0692a51bf181899fb1e1927ba.png",
+      "description": "Experience point - Cooking with strangers"
+    },
+    "cinematic_grain_texture": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/8233dccd-e10a-45ac-93c0-5e1ff12eeb81/images/fc5574d7eee23858b072f8d722a5e152dbffead5263abdcd1c9d9dfe2aed6505.png",
+      "description": "Grain overlay texture to be applied globally"
+    },
+    "campfire_night": {
+      "url": "https://images.pexels.com/photos/36729452/pexels-photo-36729452.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "Experience point - Waking to nature / night contrast"
+    }
+  },
+  "component_guidelines": {
+    "buttons": "Strictly minimal. No rounded corners (rounded-none). Background #D97706, text white. Hover states should darken to #B45309. Add a subtle tracking-wide and uppercase to button text.",
+    "cards": "For Experience Cards: Use large image backgrounds with gradients falling off to #0F172A at the bottom. The text sits at the bottom over the gradient. No borders or shadows—let the imagery dictate the edge.",
+    "navigation": "Fixed to top. Glassmorphism effect. Minimal links. Logo in Playfair Display.",
+    "testimonials": "No avatars. Just the quote in Playfair Display (text-2xl or 3xl, italicized) and a subtle attribute line below. Keep it center-aligned in a narrow container for readability.",
+    "countdown_timer": "Use a monospace or minimal sans-serif numeral display (Inter) for the digits. Large text (e.g., text-5xl md:text-7xl), separated by colons. Placed over a dark, textured background.",
+    "forms": "Anonymous Application form: Use Shadcn components but override styles. Background transparent, border-b only for inputs (border-[#F5F5F4]/30), no bounding box. Very editorial/typeform style.",
+    "admin_dashboard": "Strict, structured, functional. Use Inter everywhere. Solid dark gray backgrounds (#131C31). Standard Shadcn data tables and forms for CRUD operations. Keep it utilitarian."
+  },
+  "instructions_to_main_agent": [
+    "Ensure Playfair Display and Inter fonts are loaded via Google Fonts in index.html.",
+    "Do NOT use 'Inter' for headings. Only use Playfair Display for headings (h1, h2, h3).",
+    "Apply `bg-[#0F172A]` and `text-[#F5F5F4]` to the root `body` element.",
+    "Implement the cinematic scroll using framer-motion: sections should fade in and translate slightly upward as they enter the viewport.",
+    "Use standard HTML/Tailwind for marketing layout. Use Shadcn components for the Application Form and the entire Admin Dashboard.",
+    "Implement a globally available 'grain' overlay div with pointer-events-none.",
+    "Implement the custom cursor. Provide a fallback if user is on mobile/touch device.",
+    "All interactive elements MUST have a data-testid attribute in kebab-case (e.g., data-testid='apply-cta-button').",
+    "Never use generic placeholder images. Use the exact URLs provided in the media section.",
+    "Avoid generic tech/corporate language. Follow the 'short sentences. Evokes feeling over explanation' brand voice."
+  ]
+}
