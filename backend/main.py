@@ -396,15 +396,25 @@ def health() -> dict[str, str]:
 
 @app.post("/api/submit", response_model=SubmitResponse)
 def submit_answers(payload: SubmitRequest) -> SubmitResponse:
+    payload_data = {
+        "name": payload.name,
+        "answers": payload.answers,
+        "age_group": payload.age_group,
+        "gender": payload.gender,
+    }
+    existing_id = payload.session_id or payload.user_id
+
+    if existing_id:
+        try:
+            update_response = supabase.table("users").update(payload_data).eq("id", existing_id).execute()
+            logger.info("Supabase update response: %s", update_response)
+            if update_response.data:
+                return SubmitResponse(session_id=existing_id, user_id=existing_id)
+        except Exception as e:
+            logger.exception("Error updating Supabase user: %s", str(e))
+
     try:
-        response = supabase.table("users").insert(
-            {
-                "name": payload.name,
-                "answers": payload.answers,
-                "age_group": payload.age_group,
-                "gender": payload.gender,
-            }
-        ).execute()
+        response = supabase.table("users").insert(payload_data).execute()
         logger.info("Supabase insert response: %s", response)
     except Exception as e:
         logger.exception("Error inserting into Supabase: %s", str(e))
@@ -473,16 +483,15 @@ def get_result(session_id: str) -> ResultResponse:
     users = fetch_users()
 
     try:
-        group_response = supabase.table("groups").select("id,group_name,members,created_at").execute()
-        groups = group_response.data or []
-        group = next(
-            (
-                group
-                for group in groups
-                if user_id in [str(member) for member in (group.get("members") or [])]
-            ),
-            None,
+        group_response = (
+            supabase.table("groups")
+            .select("id,group_name,members,created_at")
+            .contains("members", [user_id])
+            .order("created_at", desc=True)
+            .limit(1)
+            .execute()
         )
+        group = group_response.data[0] if group_response.data else None
         if group:
             return build_result_from_group(user, users, group)
     except Exception as e:
