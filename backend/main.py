@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import os
 from typing import Any
 
@@ -28,8 +27,6 @@ if not SUPABASE_URL or not SUPABASE_KEY:
     raise Exception("Missing Supabase environment variables")
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-logger = logging.getLogger(__name__)
-
 USER_COLUMNS = "id,name,answers,age_group,gender,created_at"
 GROUP_COLUMNS = "id,group_name,members,created_at"
 
@@ -46,8 +43,8 @@ def fetch_users() -> list[dict[str, Any]]:
         users = response.data or []
         return [user for user in users if user.get("id") and user.get("answers")]
     except Exception as e:
-        logger.exception("Error fetching users from Supabase: %s", str(e))
-        return []
+        print("Supabase users fetch failed:", e)
+        raise HTTPException(status_code=500, detail="Failed to fetch users") from e
 
 
 def fetch_groups() -> list[dict[str, Any]]:
@@ -55,8 +52,14 @@ def fetch_groups() -> list[dict[str, Any]]:
         response = supabase.table("groups").select(GROUP_COLUMNS).execute()
         return response.data or []
     except Exception as e:
-        logger.exception("Error fetching groups from Supabase: %s", str(e))
-        return []
+        print("Supabase groups fetch failed:", e)
+        raise HTTPException(status_code=500, detail="Failed to fetch groups") from e
+
+
+def submit_request_data(payload: SubmitRequest) -> dict[str, Any]:
+    if hasattr(payload, "model_dump"):
+        return payload.model_dump()
+    return payload.dict()
 
 
 def record_id(user: dict[str, Any]) -> str:
@@ -306,36 +309,48 @@ def health() -> dict[str, str]:
 
 @app.post("/api/submit", response_model=SubmitResponse)
 def submit_answers(payload: SubmitRequest) -> SubmitResponse:
-    user_payload = {
-        "name": payload.name,
-        "answers": payload.answers,
-        "age_group": payload.age_group,
-        "gender": payload.gender,
-    }
+    data = submit_request_data(payload)
 
     try:
-        user_response = supabase.table("users").insert(user_payload).execute()
+        print("Submitting user to Supabase")
+        user_response = (
+            supabase.table("users")
+            .insert({
+                "name": data.get("name"),
+                "answers": data.get("answers"),
+                "age_group": data.get("age_group"),
+                "gender": data.get("gender"),
+            })
+            .execute()
+        )
+        print("Supabase response:", user_response)
     except Exception as e:
-        logger.exception("Error inserting user into Supabase: %s", str(e))
-        raise HTTPException(status_code=500, detail="Failed to save answers")
+        print("Supabase insert failed:", e)
+        raise HTTPException(status_code=500, detail="Failed to save answers") from e
 
     user = (user_response.data or [None])[0]
     if not user or not user.get("id"):
         raise HTTPException(status_code=500, detail="Failed to save answers")
 
     users = fetch_users()
-    group_members = select_group_members(user, users)
+    members = select_group_members(user, users)
     personality_type = infer_personality_type(user_answers(user))
-    group_payload = {
-        "group_name": choose_group_name_for_personality(personality_type),
-        "members": group_members,
-    }
+    group_name = choose_group_name_for_personality(personality_type)
 
     try:
-        group_response = supabase.table("groups").insert(group_payload).execute()
+        print("Submitting group to Supabase")
+        group_response = (
+            supabase.table("groups")
+            .insert({
+                "group_name": group_name,
+                "members": members,
+            })
+            .execute()
+        )
+        print("Supabase response:", group_response)
     except Exception as e:
-        logger.exception("Error inserting group into Supabase: %s", str(e))
-        raise HTTPException(status_code=500, detail="Failed to create group")
+        print("Supabase insert failed:", e)
+        raise HTTPException(status_code=500, detail="Failed to create group") from e
 
     group = (group_response.data or [None])[0]
     if not group or not group.get("id"):
@@ -375,10 +390,16 @@ def match_users() -> MatchResponse:
 @app.get("/api/result/{group_id}", response_model=ResultResponse)
 def get_result(group_id: str) -> ResultResponse:
     try:
-        group_response = supabase.table("groups").select(GROUP_COLUMNS).eq("id", group_id).limit(1).execute()
+        group_response = (
+            supabase.table("groups")
+            .select(GROUP_COLUMNS)
+            .eq("id", group_id)
+            .limit(1)
+            .execute()
+        )
     except Exception as e:
-        logger.exception("Error fetching group from Supabase: %s", str(e))
-        raise HTTPException(status_code=500, detail="Failed to fetch group")
+        print("Supabase group fetch failed:", e)
+        raise HTTPException(status_code=500, detail="Failed to fetch group") from e
 
     group = (group_response.data or [None])[0]
     if not group:
