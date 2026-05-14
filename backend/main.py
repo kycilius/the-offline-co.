@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 import os
-import uuid
 from typing import Any
 
 import uvicorn
@@ -31,8 +30,6 @@ if not SUPABASE_URL or not SUPABASE_KEY:
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 logger = logging.getLogger(__name__)
 
-results_by_session: dict[str, ResultResponse] = {}
-
 DEFAULT_ACTIVITY_PLAN = Plan(
     icebreaker="Share one habit you want to change this week.",
     activity="Take a short walk together and talk about your daily routines.",
@@ -43,7 +40,7 @@ DEFAULT_ACTIVITY_PLAN = Plan(
 
 def fetch_users() -> list[dict[str, Any]]:
     try:
-        response = supabase.table("users").select("*").execute()
+        response = supabase.table("users").select("id,name,answers,age_group,gender,created_at").execute()
         users = response.data or []
         users = [user for user in users if user.get("answers")]
         logger.info("Fetched users: %s", users)
@@ -230,7 +227,7 @@ def build_display_name_map(users: list[dict[str, object]]) -> dict[str, str]:
         "Gentle Connector",
         "Curious Reflector",
     ]
-    return {str(user["session_id"]): descriptors[(index - 1) % len(descriptors)] for index, user in enumerate(users, start=1)}
+    return {str(user["id"]): descriptors[(index - 1) % len(descriptors)] for index, user in enumerate(users, start=1)}
 
 
 def build_match_reasons(answers: list[int]) -> list[str]:
@@ -265,7 +262,7 @@ def build_match_reasons(answers: list[int]) -> list[str]:
     return reasons
 
 
-def build_result_for_session(session_id: str, users: list[dict[str, object]]) -> ResultResponse:
+def build_result_for_session(user_id: str, users: list[dict[str, object]]) -> ResultResponse:
     if len(users) < 2:
         return ResultResponse(
             group_name="Thoughtful Circle",
@@ -287,7 +284,7 @@ def build_result_for_session(session_id: str, users: list[dict[str, object]]) ->
             user_display_name="You",
         )
 
-    current_user = next((user for user in users if str(user["session_id"]) == session_id), None)
+    current_user = next((user for user in users if str(user["id"]) == user_id), None)
     if current_user is None:
         raise HTTPException(status_code=404, detail="Session not found")
 
@@ -297,8 +294,8 @@ def build_result_for_session(session_id: str, users: list[dict[str, object]]) ->
 
     comparisons: list[tuple[str, int]] = []
     for other in users:
-        other_id = str(other["session_id"])
-        if other_id == session_id:
+        other_id = str(other["id"])
+        if other_id == user_id:
             continue
 
         score = adjusted_match_score(current_user, other)
@@ -309,7 +306,7 @@ def build_result_for_session(session_id: str, users: list[dict[str, object]]) ->
     average_score = int(sum(score for _, score in top_matches) / len(top_matches)) if top_matches else 0
     group_name = choose_group_name_for_personality(personality_type)
 
-    group_member_names = [display_names.get(session_id, "User"), *[display_names.get(match_id, "User") for match_id, _ in top_matches]]
+    group_member_names = [display_names.get(user_id, "User"), *[display_names.get(match_id, "User") for match_id, _ in top_matches]]
     if not group_member_names:
         group_member_names = ["Waiting for more users to join"]
     group_size = len(group_member_names)
@@ -327,18 +324,18 @@ def build_result_for_session(session_id: str, users: list[dict[str, object]]) ->
         activity_plan=build_personality_activity_plan(personality_type),
         match_reasons=build_match_reasons(current_answers),
         group_size=group_size,
-        user_display_name=display_names.get(session_id, "You"),
+        user_display_name=display_names.get(user_id, "You"),
     )
 
 
 def build_result_from_group(user: dict[str, Any], users: list[dict[str, Any]], group: dict[str, Any]) -> ResultResponse:
-    session_id = str(user["session_id"])
+    user_id = str(user["id"])
     member_ids = [str(member) for member in (group.get("members") or [])]
-    members = [u for u in users if str(u.get("session_id")) in member_ids]
+    members = [u for u in users if str(u.get("id")) in member_ids]
     display_names = build_display_name_map(members or [user])
 
     personality_type = infer_personality_type(list(user.get("answers") or []))
-    comparisons = [adjusted_match_score(user, m) for m in members if str(m.get("session_id")) != session_id]
+    comparisons = [adjusted_match_score(user, m) for m in members if str(m.get("id")) != user_id]
     average_score = int(sum(comparisons) / len(comparisons)) if comparisons else 50
 
     return ResultResponse(
@@ -348,18 +345,18 @@ def build_result_from_group(user: dict[str, Any], users: list[dict[str, Any]], g
         match_label=build_match_label(average_score),
         group_label=build_group_label(len(member_ids) or 1),
         group_members_count=len(member_ids) or 1,
-        vibe_description=str(group.get("vibe_description") or build_personality_summary(list(user.get("answers") or []))),
+        vibe_description=build_personality_summary(list(user.get("answers") or [])),
         personality=build_personality_summary(list(user.get("answers") or [])),
         group_members=[display_names.get(member_id, "User") for member_id in member_ids] or ["Waiting for more users"],
         activity_plan=build_personality_activity_plan(personality_type),
         match_reasons=build_match_reasons(list(user.get("answers") or [])),
         group_size=len(member_ids) or 1,
-        user_display_name=display_names.get(session_id, "You"),
+        user_display_name=display_names.get(user_id, "You"),
     )
 
 
 def assign_real_groups(users: list[dict[str, Any]]) -> int:
-    unassigned_users = [user for user in users if not user.get("group_id")]
+    unassigned_users = list(users)
     created_groups = 0
 
     while len(unassigned_users) >= 3:
@@ -375,29 +372,17 @@ def assign_real_groups(users: list[dict[str, Any]]) -> int:
 
         target_size = min(5, len(unassigned_users) + 1)
         selected_users = [seed, *scored_candidates[: target_size - 1]]
-        selected_session_ids = {str(user["session_id"]) for user in selected_users}
-        unassigned_users = [user for user in unassigned_users if str(user["session_id"]) not in selected_session_ids]
+        selected_user_ids = {str(user["id"]) for user in selected_users}
+        unassigned_users = [user for user in unassigned_users if str(user["id"]) not in selected_user_ids]
 
         answers_list = [list(user["answers"]) for user in selected_users]
-        group_name, vibe_description = assign_group_personality(answers_list)
-        similarity_scores = [
-            calculate_similarity(seed, selected_user)
-            for selected_user in selected_users
-            if str(selected_user["session_id"]) != str(seed["session_id"])
-        ]
-        match_score = int((sum(similarity_scores) / len(similarity_scores)) * 20) if similarity_scores else 0
+        group_name, _ = assign_group_personality(answers_list)
         group_payload = {
             "group_name": group_name,
-            "vibe_description": vibe_description,
-            "match_score": match_score,
-            "members": [str(user["session_id"]) for user in selected_users],
+            "members": [str(user["id"]) for user in selected_users],
         }
 
-        group_response = supabase.table("groups").insert(group_payload).execute()
-        group_id = str(group_response.data[0]["id"])
-
-        for selected_user in selected_users:
-            supabase.table("users").update({"group_id": group_id}).eq("session_id", selected_user["session_id"]).execute()
+        supabase.table("groups").insert(group_payload).execute()
 
         created_groups += 1
 
@@ -411,28 +396,27 @@ def health() -> dict[str, str]:
 
 @app.post("/api/submit", response_model=SubmitResponse)
 def submit_answers(payload: SubmitRequest) -> SubmitResponse:
-    session_id = payload.session_id or str(uuid.uuid4())
-    user_id = payload.user_id or str(uuid.uuid4())
-
     try:
-        response = supabase.table("users").upsert(
+        response = supabase.table("users").insert(
             {
-                "user_id": user_id,
-                "session_id": session_id,
                 "name": payload.name,
                 "answers": payload.answers,
                 "age_group": payload.age_group,
                 "gender": payload.gender,
-            },
-            on_conflict="session_id",
+            }
         ).execute()
-        logger.info("Supabase upsert response: %s", response)
+        logger.info("Supabase insert response: %s", response)
     except Exception as e:
         logger.exception("Error inserting into Supabase: %s", str(e))
+        raise HTTPException(status_code=500, detail="Failed to create user") from e
 
-    results_by_session.clear()
+    created_user = response.data[0] if response.data else None
+    if not created_user:
+        raise HTTPException(status_code=500, detail="Failed to create user")
 
-    return SubmitResponse(session_id=session_id, user_id=user_id)
+    user_id = str(created_user["id"])
+
+    return SubmitResponse(session_id=user_id, user_id=user_id)
 
 
 @app.post("/api/match", response_model=MatchResponse)
@@ -449,12 +433,10 @@ def match_users() -> MatchResponse:
 
     created_groups = assign_real_groups(users)
     users = fetch_users()
-
-    results_by_session.clear()
     groups: list[GroupInfo] = []
 
     for user in users:
-        current_id = str(user["session_id"])
+        current_id = str(user["id"])
         computed_result = build_result_for_session(current_id, users)
 
         groups.append(
@@ -466,7 +448,6 @@ def match_users() -> MatchResponse:
                 vibe_description=build_personality_summary(list(user.get("answers") or [])),
             )
         )
-        results_by_session[current_id] = computed_result
 
     return MatchResponse(
         message="Matching complete",
@@ -478,8 +459,9 @@ def match_users() -> MatchResponse:
 
 @app.get("/api/result/{session_id}", response_model=ResultResponse)
 def get_result(session_id: str) -> ResultResponse:
+    user_id = session_id
     try:
-        response = supabase.table("users").select("*").eq("session_id", session_id).execute()
+        response = supabase.table("users").select("id,name,answers,age_group,gender,created_at").eq("id", user_id).execute()
         user = response.data[0] if response.data else None
     except Exception as e:
         logger.exception("Error fetching session from Supabase: %s", str(e))
@@ -490,31 +472,23 @@ def get_result(session_id: str) -> ResultResponse:
 
     users = fetch_users()
 
-    group_id = user.get("group_id")
-    if group_id:
-        try:
-            group_response = supabase.table("groups").select("*").eq("id", group_id).limit(1).execute()
-            group = group_response.data[0] if group_response.data else None
-            if group:
-                return build_result_from_group(user, users, group)
-        except Exception as e:
-            logger.exception("Error fetching group from Supabase: %s", str(e))
-
-    existing_result = user.get("result")
-    if existing_result:
-        return ResultResponse(**existing_result)
-
-    result = results_by_session.get(session_id)
-    if result:
-        return result
-
-    computed_result = build_result_for_session(session_id, users)
     try:
-        supabase.table("users").update({"result": computed_result.model_dump()}).eq("session_id", session_id).execute()
+        group_response = supabase.table("groups").select("id,group_name,members,created_at").execute()
+        groups = group_response.data or []
+        group = next(
+            (
+                group
+                for group in groups
+                if user_id in [str(member) for member in (group.get("members") or [])]
+            ),
+            None,
+        )
+        if group:
+            return build_result_from_group(user, users, group)
     except Exception as e:
-        logger.exception("Error caching result to Supabase: %s", str(e))
+        logger.exception("Error fetching groups from Supabase: %s", str(e))
 
-    return computed_result
+    return build_result_for_session(user_id, users)
 
 
 if __name__ == "__main__":
