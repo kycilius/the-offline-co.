@@ -412,7 +412,12 @@ def submit_answers(payload: SubmitRequest) -> SubmitResponse:
             logger.exception("Error updating Supabase user: %s", str(e))
             raise HTTPException(status_code=500, detail="Failed to update user") from e
 
-        if update_response.data:
+        updated_rows = update_response.data or []
+        if updated_rows:
+            return SubmitResponse(session_id=existing_id, user_id=existing_id)
+
+        check_response = supabase.table("users").select("id").eq("id", existing_id).limit(1).execute()
+        if check_response.data:
             return SubmitResponse(session_id=existing_id, user_id=existing_id)
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -425,6 +430,7 @@ def submit_answers(payload: SubmitRequest) -> SubmitResponse:
 
     created_user = response.data[0] if response.data else None
     if not created_user:
+        logger.error("Supabase insert returned empty data for new user.")
         raise HTTPException(status_code=500, detail="Failed to create user")
 
     user_id = str(created_user["id"])

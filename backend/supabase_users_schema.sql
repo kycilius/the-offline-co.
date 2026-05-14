@@ -4,7 +4,7 @@ alter table if exists public.users
     add column if not exists answers jsonb,
     add column if not exists age_group text,
     add column if not exists gender text,
-    add column if not exists created_at timestamp with time zone not null default now();
+    add column if not exists created_at timestamp with time zone default now();
 
 create table if not exists public.groups (
     id uuid primary key default gen_random_uuid(),
