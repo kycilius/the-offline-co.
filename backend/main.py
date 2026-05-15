@@ -27,8 +27,11 @@ if not SUPABASE_URL or not SUPABASE_KEY:
     raise Exception("Missing Supabase environment variables")
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-USER_COLUMNS = "id,name,answers,age_group,gender,created_at"
+USER_COLUMNS = "id,name,answers,age_group,gender,preferred_destination,created_at"
+LEGACY_USER_COLUMNS = "id,name,answers,age_group,gender,created_at"
 GROUP_COLUMNS = "id,group_name,members,created_at"
+TARGET_COHORT_SIZE = 7
+OPEN_DESTINATION = "open"
 
 DEFAULT_ACTIVITY_PLAN = Plan(
     icebreaker="Share one habit you want to change this week.",
@@ -37,14 +40,88 @@ DEFAULT_ACTIVITY_PLAN = Plan(
 )
 
 
+DESTINATION_PROFILES: dict[str, dict[str, str]] = {
+    "birbhum": {
+        "name": "Birbhum, West Bengal",
+        "place": "Shantiniketan & the Khoai",
+        "cohort_name": "Birbhum Red Earth Cohort",
+        "image": "Warm red earth paths, wide skies, baul songs, and the quiet creative pulse of Khoai.",
+        "theme": "Slow creativity and grounded conversation",
+        "atmosphere": "Earthy, artistic, unhurried, and made for people who soften into honest dialogue.",
+    },
+    "dooars": {
+        "name": "Jalpaiguri, North Bengal",
+        "place": "The Dooars, near Gorumara",
+        "cohort_name": "The Dooars Cohort",
+        "image": "Tea-green edges, forest roads, river mist, and the hush around Gorumara.",
+        "theme": "Forest calm and open-hearted discovery",
+        "atmosphere": "Fresh, spacious, quietly adventurous, and held by the rhythm of the wild north.",
+    },
+    "kandhamal": {
+        "name": "Kandhamal, Odisha",
+        "place": "Daringbadi pine country",
+        "cohort_name": "Daringbadi Pine Cohort",
+        "image": "Pine shade, cool hill air, coffee blooms, and soft mornings in Daringbadi.",
+        "theme": "Gentle reflection and hill-country stillness",
+        "atmosphere": "Soft, reflective, restorative, and suited to people who want a quieter kind of closeness.",
+    },
+    "satkosia": {
+        "name": "Angul, Odisha",
+        "place": "Satkosia gorge, Mahanadi",
+        "cohort_name": "Satkosia River Cohort",
+        "image": "A deep river gorge, stone bends, evening light, and the patient flow of the Mahanadi.",
+        "theme": "River depth and meaningful presence",
+        "atmosphere": "Deep, steady, intimate, and shaped for conversations that move at river pace.",
+    },
+    "open": {
+        "name": "Open landscape",
+        "place": "Wherever feels right",
+        "cohort_name": "Open Horizon Cohort",
+        "image": "An open path chosen by fit, timing, and the atmosphere your cohort needs most.",
+        "theme": "Trusting the right shared atmosphere",
+        "atmosphere": "Flexible, receptive, and curated around the group that feels most emotionally coherent.",
+    },
+}
+
+DESTINATION_ALIASES = {
+    "angul": "satkosia",
+    "daringbadi": "kandhamal",
+    "jalpaiguri": "dooars",
+}
+
+
+def normalize_destination(value: Any) -> str:
+    destination = str(value or OPEN_DESTINATION).strip().lower()
+    destination = DESTINATION_ALIASES.get(destination, destination)
+    if destination not in DESTINATION_PROFILES:
+        return OPEN_DESTINATION
+    return destination
+
+
+def destination_profile(destination: Any) -> dict[str, str]:
+    return DESTINATION_PROFILES[normalize_destination(destination)]
+
+
 def fetch_users() -> list[dict[str, Any]]:
     try:
         response = supabase.table("users").select(USER_COLUMNS).execute()
         users = response.data or []
-        return [user for user in users if user.get("id") and user.get("answers")]
     except Exception as e:
-        print("Supabase users fetch failed:", e)
-        raise HTTPException(status_code=500, detail="Failed to fetch users") from e
+        # Keep older Supabase projects stable until the safe migration is applied.
+        print("Supabase preferred_destination fetch failed, retrying legacy columns:", e)
+        try:
+            response = supabase.table("users").select(LEGACY_USER_COLUMNS).execute()
+            users = response.data or []
+        except Exception as legacy_error:
+            print("Supabase users fetch failed:", legacy_error)
+            raise HTTPException(status_code=500, detail="Failed to fetch users") from legacy_error
+
+    normalized_users = []
+    for user in users:
+        if user.get("id") and user.get("answers"):
+            user["preferred_destination"] = normalize_destination(user.get("preferred_destination"))
+            normalized_users.append(user)
+    return normalized_users
 
 
 def fetch_groups() -> list[dict[str, Any]]:
@@ -252,10 +329,109 @@ def build_match_reasons(answers: list[int]) -> list[str]:
     return reasons
 
 
-def select_group_members(current_user: dict[str, Any], users: list[dict[str, Any]], max_group_size: int = 5) -> list[str]:
-    others = [user for user in users if record_id(user) != record_id(current_user)]
-    ranked = sorted(others, key=lambda candidate: adjusted_match_score(current_user, candidate), reverse=True)
-    return [record_id(current_user), *[record_id(user) for user in ranked[: max_group_size - 1]]]
+def cohort_candidate_score(current_user: dict[str, Any], candidate: dict[str, Any], selected: list[dict[str, Any]]) -> int:
+    score = adjusted_match_score(current_user, candidate)
+
+    selected_age_groups = {str(user.get("age_group", "unknown")) for user in selected}
+    selected_genders = {str(user.get("gender", "unknown")) for user in selected}
+
+    if str(candidate.get("age_group", "unknown")) not in selected_age_groups:
+        score += 4
+    if str(candidate.get("gender", "unknown")) not in selected_genders:
+        score += 3
+
+    return score
+
+
+def choose_open_user_destination(current_user: dict[str, Any], users: list[dict[str, Any]]) -> str:
+    destination_scores: dict[str, int] = {}
+    for user in users:
+        destination = normalize_destination(user.get("preferred_destination"))
+        if destination == OPEN_DESTINATION or record_id(user) == record_id(current_user):
+            continue
+        destination_scores[destination] = destination_scores.get(destination, 0) + adjusted_match_score(current_user, user)
+
+    if not destination_scores:
+        return OPEN_DESTINATION
+
+    return max(destination_scores, key=destination_scores.get)
+
+
+def select_group_members(current_user: dict[str, Any], users: list[dict[str, Any]], target_group_size: int = TARGET_COHORT_SIZE) -> list[str]:
+    current_destination = normalize_destination(current_user.get("preferred_destination"))
+    anchor_destination = (
+        choose_open_user_destination(current_user, users)
+        if current_destination == OPEN_DESTINATION
+        else current_destination
+    )
+
+    selected = [current_user]
+    selected_ids = {record_id(current_user)}
+
+    def add_ranked(candidates: list[dict[str, Any]]) -> None:
+        while len(selected) < target_group_size:
+            remaining = [candidate for candidate in candidates if record_id(candidate) not in selected_ids]
+            if not remaining:
+                return
+            next_user = max(remaining, key=lambda candidate: cohort_candidate_score(current_user, candidate, selected))
+            selected.append(next_user)
+            selected_ids.add(record_id(next_user))
+
+    destination_candidates = [
+        user
+        for user in users
+        if record_id(user) != record_id(current_user)
+        and normalize_destination(user.get("preferred_destination")) == anchor_destination
+    ]
+    add_ranked(destination_candidates)
+
+    if anchor_destination != OPEN_DESTINATION:
+        open_candidates = [
+            user
+            for user in users
+            if record_id(user) != record_id(current_user)
+            and normalize_destination(user.get("preferred_destination")) == OPEN_DESTINATION
+        ]
+        add_ranked(open_candidates)
+
+    # MVP fallback: create a smaller pilot cohort instead of randomly mixing destinations.
+    return [record_id(user) for user in selected]
+
+
+def choose_group_name_for_destination(destination: Any) -> str:
+    return destination_profile(destination)["cohort_name"]
+
+def choose_group_destination(current_user: dict[str, Any], member_ids: list[str], users: list[dict[str, Any]]) -> str:
+    current_destination = normalize_destination(current_user.get("preferred_destination"))
+    if current_destination != OPEN_DESTINATION:
+        return current_destination
+
+    users_by_id = {record_id(user): user for user in users}
+    destination_counts: dict[str, int] = {}
+    for member_id in member_ids:
+        member = users_by_id.get(member_id)
+        if not member:
+            continue
+        destination = normalize_destination(member.get("preferred_destination"))
+        if destination != OPEN_DESTINATION:
+            destination_counts[destination] = destination_counts.get(destination, 0) + 1
+
+    if not destination_counts:
+        return OPEN_DESTINATION
+
+    return max(destination_counts, key=destination_counts.get)
+
+
+def build_destination_summary(destination: Any) -> dict[str, str]:
+    profile = destination_profile(destination)
+    return {
+        "preferred_destination": normalize_destination(destination),
+        "destination_name": profile["name"],
+        "destination_place": profile["place"],
+        "destination_image": profile["image"],
+        "emotional_theme": profile["theme"],
+        "cohort_atmosphere": profile["atmosphere"],
+    }
 
 
 def build_result_from_group(group: dict[str, Any], users: list[dict[str, Any]]) -> ResultResponse:
@@ -269,25 +445,36 @@ def build_result_from_group(group: dict[str, Any], users: list[dict[str, Any]]) 
 
     current_answers = user_answers(current_user)
     personality_type = infer_personality_type(current_answers)
+    current_destination = normalize_destination(current_user.get("preferred_destination"))
+    if current_destination == OPEN_DESTINATION:
+        destination_counts: dict[str, int] = {}
+        for member in members:
+            member_destination = normalize_destination(member.get("preferred_destination"))
+            if member_destination != OPEN_DESTINATION:
+                destination_counts[member_destination] = destination_counts.get(member_destination, 0) + 1
+        if destination_counts:
+            current_destination = max(destination_counts, key=destination_counts.get)
+    destination_summary = build_destination_summary(current_destination)
     display_names = build_display_name_map(members)
     comparisons = [adjusted_match_score(current_user, member) for member in members[1:]]
     average_score = int(sum(comparisons) / len(comparisons)) if comparisons else 50
     group_size = len(member_ids) or 1
 
     return ResultResponse(
-        group_name=str(group.get("group_name") or choose_group_name_for_personality(personality_type)),
+        group_name=str(group.get("group_name") or choose_group_name_for_destination(current_destination)),
         score=average_score,
         match_score=average_score,
         match_label=build_match_label(average_score),
         group_label=build_group_label(group_size),
         group_members_count=group_size,
-        vibe_description=build_personality_summary(current_answers),
+        vibe_description=destination_summary["cohort_atmosphere"],
         personality=build_personality_summary(current_answers),
         group_members=[display_names.get(member, "User") for member in member_ids] or ["Waiting for more users"],
         activity_plan=build_personality_activity_plan(personality_type),
         match_reasons=build_match_reasons(current_answers),
         group_size=group_size,
         user_display_name=display_names.get(record_id(current_user), "You"),
+        **destination_summary,
     )
 
 
@@ -299,6 +486,11 @@ def build_group_info(group: dict[str, Any], users: list[dict[str, Any]]) -> Grou
         group_members_count=result.group_size,
         group_name=result.group_name,
         vibe_description=result.vibe_description,
+        preferred_destination=result.preferred_destination,
+        destination_name=result.destination_name,
+        destination_place=result.destination_place,
+        emotional_theme=result.emotional_theme,
+        cohort_atmosphere=result.cohort_atmosphere,
     )
 
 
@@ -310,19 +502,25 @@ def health() -> dict[str, str]:
 @app.post("/api/submit", response_model=SubmitResponse)
 def submit_answers(payload: SubmitRequest) -> SubmitResponse:
     data = submit_request_data(payload)
+    preferred_destination = normalize_destination(data.get("preferred_destination") or data.get("landscape"))
+    insert_payload = {
+        "name": data.get("name"),
+        "answers": data.get("answers"),
+        "age_group": data.get("age_group"),
+        "gender": data.get("gender"),
+        "preferred_destination": preferred_destination,
+    }
 
     try:
         print("Submitting user to Supabase")
-        user_response = (
-            supabase.table("users")
-            .insert({
-                "name": data.get("name"),
-                "answers": data.get("answers"),
-                "age_group": data.get("age_group"),
-                "gender": data.get("gender"),
-            })
-            .execute()
-        )
+        try:
+            user_response = supabase.table("users").insert(insert_payload).execute()
+        except Exception as insert_error:
+            # Stability fallback for projects that have not applied the safe migration yet.
+            print("Supabase preferred_destination insert failed, retrying legacy payload:", insert_error)
+            legacy_payload = dict(insert_payload)
+            legacy_payload.pop("preferred_destination", None)
+            user_response = supabase.table("users").insert(legacy_payload).execute()
         print("Supabase response:", user_response)
     except Exception as e:
         print("Supabase insert failed:", e)
@@ -332,10 +530,13 @@ def submit_answers(payload: SubmitRequest) -> SubmitResponse:
     if not user or not user.get("id"):
         raise HTTPException(status_code=500, detail="Failed to save answers")
 
+    user["preferred_destination"] = preferred_destination
     users = fetch_users()
+    if not any(record_id(existing_user) == record_id(user) for existing_user in users):
+        users.append(user)
     members = select_group_members(user, users)
-    personality_type = infer_personality_type(user_answers(user))
-    group_name = choose_group_name_for_personality(personality_type)
+    group_destination = choose_group_destination(user, members, users)
+    group_name = choose_group_name_for_destination(group_destination)
 
     try:
         print("Submitting group to Supabase")

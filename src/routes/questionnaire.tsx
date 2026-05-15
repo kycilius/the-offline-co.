@@ -36,7 +36,7 @@ const LANDSCAPES = [
   { slug: "birbhum",   region: "Birbhum, West Bengal",     place: "Shantiniketan & the Khoai" },
   { slug: "dooars",    region: "Jalpaiguri, North Bengal", place: "The Dooars, near Gorumara" },
   { slug: "kandhamal", region: "Kandhamal, Odisha",        place: "Daringbadi pine country"   },
-  { slug: "angul",     region: "Angul, Odisha",            place: "Satkosia gorge, Mahanadi"  },
+  { slug: "satkosia",  region: "Angul, Odisha",            place: "Satkosia gorge, Mahanadi"  },
   { slug: "open",      region: "Anywhere",                 place: "I'm open to wherever feels right" },
 ];
 
@@ -60,9 +60,10 @@ function Questionnaire() {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
     const ls = params.get("landscape");
-    if (ls && LANDSCAPES.some((l) => l.slug === ls)) {
-      sessionStorage.setItem("selectedLandscape", ls);
-      setLandscape(ls);
+    const normalizedLandscape = ls === "angul" ? "satkosia" : ls;
+    if (normalizedLandscape && LANDSCAPES.some((l) => l.slug === normalizedLandscape)) {
+      sessionStorage.setItem("selectedLandscape", normalizedLandscape);
+      setLandscape(normalizedLandscape);
     }
   }, []);
 
