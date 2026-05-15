@@ -15,23 +15,23 @@ export const Route = createFileRoute("/result")({
 
 const LANDSCAPE_COPY: Record<string, { title: string; copy: string; theme: string }> = {
   dooars: {
-    title: "🌲 Forest Silence",
-    copy: "Quiet trails, misty mornings, slow conversations.",
+    title: "🌿 Wild Silence",
+    copy: "Gorumara, North Bengal — forest immersion, elephant safari, tribal wisdom, and no signal zones.",
     theme: "Landscape Preference → Emotional Compatibility → Curated Cohort",
   },
   kandhamal: {
-    title: "⛰️ Mountains",
-    copy: "Cold air, sunrise stillness, emotional reset.",
+    title: "🏔️ First Light",
+    copy: "Lower Himalayas — mountain sunrise, tea estate walks, campfire folk music, and birds before alarms.",
     theme: "Landscape Preference → Emotional Compatibility → Curated Cohort",
   },
   birbhum: {
-    title: "🌊 Coastline",
-    copy: "Long-table dinners, sea air, slower time.",
+    title: "🌊 Salt & Stillness",
+    copy: "Odisha Coast — the sea at 5am, fishing villages, someone’s grandmother’s recipe, and tide as your only notification.",
     theme: "Landscape Preference → Emotional Compatibility → Curated Cohort",
   },
   satkosia: {
-    title: "🛶 Rivers & Wilderness",
-    copy: "Boat lanterns, dark skies, deep presence.",
+    title: "🐘 The Unhurried Wild",
+    copy: "Central India Safari — dawn without a feed, forest sounds, and a naturalist who reads animals better than algorithms.",
     theme: "Landscape Preference → Emotional Compatibility → Curated Cohort",
   },
   open: {
