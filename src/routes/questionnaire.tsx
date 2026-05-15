@@ -32,6 +32,14 @@ const QUESTIONS = [
 
 const SCALE = ["Disagree", "", "Neutral", "", "Agree"];
 
+const LANDSCAPES = [
+  { slug: "birbhum",   region: "Birbhum, West Bengal",     place: "Shantiniketan & the Khoai" },
+  { slug: "dooars",    region: "Jalpaiguri, North Bengal", place: "The Dooars, near Gorumara" },
+  { slug: "kandhamal", region: "Kandhamal, Odisha",        place: "Daringbadi pine country"   },
+  { slug: "angul",     region: "Angul, Odisha",            place: "Satkosia gorge, Mahanadi"  },
+  { slug: "open",      region: "Anywhere",                 place: "I'm open to wherever feels right" },
+];
+
 function Questionnaire() {
   const navigate = useNavigate();
   const [index, setIndex] = useState(0);
@@ -39,22 +47,30 @@ function Questionnaire() {
   const [transitioning, setTransitioning] = useState(false);
   const [selected, setSelected] = useState<number | null>(null);
   const [started, setStarted] = useState(false);
-  const [step, setStep] = useState<"name" | "age" | "gender">("name");
+  const [step, setStep] = useState<"name" | "age" | "gender" | "landscape">("name");
   const [name, setName] = useState("");
   const [ageGroup, setAgeGroup] = useState<string>("");
   const [gender, setGender] = useState<string>("");
+  const [landscape, setLandscape] = useState<string>("");
 
   const AGE_OPTIONS = ["18–22", "23–27", "28–35", "35+"];
   const GENDER_OPTIONS = ["Male", "Female", "Prefer not to say"];
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const ls = params.get("landscape");
+    if (ls && LANDSCAPES.some((l) => l.slug === ls)) {
+      sessionStorage.setItem("selectedLandscape", ls);
+      setLandscape(ls);
+    }
+  }, []);
+
   const handleNameSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = name.trim();
-    if (trimmed) {
-      localStorage.setItem("user_name", trimmed);
-    } else {
-      localStorage.removeItem("user_name");
-    }
+    if (trimmed) localStorage.setItem("user_name", trimmed);
+    else localStorage.removeItem("user_name");
     setStep("age");
   };
 
@@ -67,7 +83,13 @@ function Questionnaire() {
   const handleGenderSelect = (value: string) => {
     setGender(value);
     sessionStorage.setItem("selectedGender", value);
-    setTimeout(() => setStarted(true), 280);
+    setTimeout(() => setStep("landscape"), 280);
+  };
+
+  const handleLandscapeSelect = (slug: string) => {
+    setLandscape(slug);
+    sessionStorage.setItem("selectedLandscape", slug);
+    setTimeout(() => setStarted(true), 320);
   };
 
   const skipName = () => {
@@ -77,6 +99,11 @@ function Questionnaire() {
 
   const skipGender = () => {
     sessionStorage.setItem("selectedGender", "unknown");
+    setStep("landscape");
+  };
+
+  const skipLandscape = () => {
+    sessionStorage.setItem("selectedLandscape", "open");
     setStarted(true);
   };
 
