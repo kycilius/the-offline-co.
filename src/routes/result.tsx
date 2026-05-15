@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Sparkles, Users, HeartHandshake, PartyPopper, CheckCircle2, Lock, Share2, Check, MapPin } from "lucide-react";
+import { Sparkles, Users, HeartHandshake, PartyPopper, CheckCircle2, Share2, Check, MapPin, Clock } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Progress } from "@/components/ui/progress";
@@ -11,6 +11,35 @@ export const Route = createFileRoute("/result")({
   }),
   component: Result,
 });
+
+
+const LANDSCAPE_COPY: Record<string, { title: string; copy: string; theme: string }> = {
+  dooars: {
+    title: "🌲 Forest Silence",
+    copy: "Quiet trails, misty mornings, slow conversations.",
+    theme: "Landscape Preference → Emotional Compatibility → Curated Cohort",
+  },
+  kandhamal: {
+    title: "⛰️ Mountains",
+    copy: "Cold air, sunrise stillness, emotional reset.",
+    theme: "Landscape Preference → Emotional Compatibility → Curated Cohort",
+  },
+  birbhum: {
+    title: "🌊 Coastline",
+    copy: "Long-table dinners, sea air, slower time.",
+    theme: "Landscape Preference → Emotional Compatibility → Curated Cohort",
+  },
+  satkosia: {
+    title: "🛶 Rivers & Wilderness",
+    copy: "Boat lanterns, dark skies, deep presence.",
+    theme: "Landscape Preference → Emotional Compatibility → Curated Cohort",
+  },
+  open: {
+    title: "🌾 Open to Wherever Feels Right",
+    copy: "Let the experience choose you.",
+    theme: "Landscape Preference → Emotional Compatibility → Curated Cohort",
+  },
+};
 
 type MatchResult = {
   group_members?: string[];
@@ -91,9 +120,8 @@ function Result() {
   const score = Math.max(0, Math.min(100, result?.score ?? 0));
   const memberNames = members.map(getMemberName);
   const groupSize = result?.group_size ?? memberNames.length;
-  const destinationName = result?.destination_name ?? "Open landscape";
-  const destinationPlace = result?.destination_place ?? "Wherever feels right";
-  const destinationImage = result?.destination_image ?? "A landscape chosen around fit, timing, and the atmosphere your cohort needs most.";
+  const preferredDestination = result?.preferred_destination ?? "open";
+  const landscapeCopy = LANDSCAPE_COPY[preferredDestination] ?? LANDSCAPE_COPY.open;
   const emotionalTheme = result?.emotional_theme ?? "An intentional shared atmosphere";
   const cohortAtmosphere = result?.cohort_atmosphere ?? "A small circle shaped around presence, ease, and genuine conversation.";
   const matchReasons = result?.match_reasons?.length
@@ -188,7 +216,7 @@ function Result() {
                 <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
                   <div>
                     <p className="text-base font-medium text-foreground">{matchLabel}</p>
-                    <p className="mt-1 text-sm text-muted-foreground">A curated read on shared pace, openness, and emotional fit.</p>
+                    <p className="mt-1 text-sm text-muted-foreground">Landscape Preference → Emotional Compatibility → Curated Cohort.</p>
                   </div>
                   <div className="relative grid h-24 w-24 place-items-center rounded-full border border-primary/25 bg-primary/5 shadow-[var(--shadow-soft)]">
                     <span className="text-xl font-semibold text-primary tabular-nums">{animatedScore}%</span>
@@ -208,16 +236,16 @@ function Result() {
               <div className="bg-gradient-to-br from-primary/12 via-accent/10 to-card p-6">
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-background/50 px-3 py-1.5 text-xs font-medium text-primary backdrop-blur-sm">
                   <MapPin className="h-3.5 w-3.5" />
-                  <span>Selected landscape</span>
+                  <span>Landscape preference</span>
                 </div>
-                <h2 className="font-display text-2xl font-light text-foreground md:text-3xl">{destinationPlace}</h2>
-                <p className="mt-2 text-sm uppercase tracking-[0.18em] text-primary/80">{destinationName}</p>
-                <p className="mt-5 max-w-2xl text-sm leading-7 text-muted-foreground">{destinationImage}</p>
+                <h2 className="font-display text-2xl font-light text-foreground md:text-3xl">{landscapeCopy.title}</h2>
+                <p className="mt-2 text-sm uppercase tracking-[0.18em] text-primary/80">Exact destination revealed after booking</p>
+                <p className="mt-5 max-w-2xl text-sm leading-7 text-muted-foreground">{landscapeCopy.copy}</p>
               </div>
               <div className="grid gap-3 p-6 md:grid-cols-2">
                 <div className="rounded-2xl border border-border/60 bg-card/80 p-4">
                   <p className="text-xs uppercase tracking-[0.2em] text-primary/80">Emotional theme</p>
-                  <p className="mt-2 text-sm leading-6 text-foreground/90">{emotionalTheme}</p>
+                  <p className="mt-2 text-sm leading-6 text-foreground/90">{landscapeCopy.theme}</p>
                 </div>
                 <div className="rounded-2xl border border-border/60 bg-card/80 p-4">
                   <p className="text-xs uppercase tracking-[0.2em] text-primary/80">Cohort atmosphere</p>
@@ -292,7 +320,7 @@ function Result() {
               </article>
             </div>
 
-            {/* Group members & full activity plan are locked — shown in the unlock section below */}
+            {/* Group members and detailed logistics are reserved for the booking flow below. */}
             </>)}
           </>
         )}
@@ -303,7 +331,7 @@ function Result() {
         >
           <div className="relative overflow-hidden rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)]">
             <div className="mb-4 flex items-center gap-2 text-primary">
-              <Lock className="h-4 w-4" />
+              <Clock className="h-4 w-4" />
               <h2 className="text-base font-semibold text-foreground">Your group (preview)</h2>
             </div>
             <p className="text-sm text-muted-foreground">
@@ -324,8 +352,8 @@ function Result() {
 
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                 <div className="flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-4 py-2 text-xs font-medium text-foreground shadow-[var(--shadow-soft)] backdrop-blur-sm">
-                  <Lock className="h-3.5 w-3.5 text-primary" />
-                  <span>Locked — unlock to see your group</span>
+                  <Clock className="h-3.5 w-3.5 text-primary" />
+                  <span>Names shared after you reserve</span>
                 </div>
               </div>
             </div>
@@ -350,20 +378,20 @@ function Result() {
               </div>
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                 <div className="flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-4 py-2 text-xs font-medium text-foreground shadow-[var(--shadow-soft)] backdrop-blur-sm">
-                  <Lock className="h-3.5 w-3.5 text-primary" />
-                  <span>Full experience locked</span>
+                  <Clock className="h-3.5 w-3.5 text-primary" />
+                  <span>Detailed itinerary follows the reveal window</span>
                 </div>
               </div>
             </div>
 
             <div className="mt-6 rounded-2xl border border-border/60 bg-card/70 p-5">
-              <p className="text-sm font-medium text-foreground">You'll unlock:</p>
+              <p className="text-sm font-medium text-foreground">After you reserve:</p>
               <ul className="mt-3 space-y-2">
                 {[
-                  "Your actual group members",
-                  "Your shared destination atmosphere",
-                  "Your shared group dynamic",
-                  "A guided first meetup plan",
+                  "Your seat is held in the curated cohort",
+                  "A countdown begins for the destination reveal",
+                  "Exact destination appears 24 hours before departure",
+                  "Detailed stay, weather, packing, and schedule follow the reveal",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3 text-sm leading-6 text-muted-foreground">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
@@ -390,14 +418,14 @@ function Result() {
 
             <div className="mt-4 rounded-2xl border border-border/60 bg-card/70 p-4">
               <p className="text-sm leading-6 text-foreground/90">
-                I just found my '{groupName}' — a small cohort shaped around {destinationPlace}. Curious where you'll land 👀
+                I just found my '{groupName}' — a small cohort shaped around {landscapeCopy.title}. Curious where you'll land.
               </p>
             </div>
 
             <button
               type="button"
               onClick={async () => {
-                const shareText = `I just found my '${groupName}' on TheOfflineCo — a small cohort shaped around ${destinationPlace}. Curious where you'll land 👀`;
+                const shareText = `I just found my '${groupName}' on TheOfflineCo — a small cohort shaped around ${landscapeCopy.title}. Curious where you'll land.`;
                 const shareUrl = typeof window !== "undefined" ? window.location.origin : "";
                 const shareData = { title: "TheOfflineCo", text: shareText, url: shareUrl };
                 try {
@@ -439,7 +467,7 @@ function Result() {
                 People like you are already discovering their groups.
               </p>
               <p className="text-xs uppercase tracking-[0.2em] text-primary/80">
-                Send this to 3 friends and compare your groups.
+                Send this to friends and compare your atmospheres.
               </p>
             </div>
           </div>
@@ -450,23 +478,22 @@ function Result() {
           style={{ animationDelay: "420ms", animationFillMode: "both" }}
         >
           <div className="rounded-3xl border border-primary/25 bg-gradient-to-br from-primary/8 via-card/95 to-accent/10 p-7 shadow-[var(--shadow-card)]">
-            <p className="text-xs uppercase tracking-[0.22em] text-primary/85">— A small intentional step</p>
+            <p className="text-xs uppercase tracking-[0.22em] text-primary/85">— Reserve your seat</p>
             <h3 className="mt-3 font-display text-2xl font-light text-foreground md:text-3xl">
-              We found a potential cohort for you.
+              Apply → Match → Reserve Seat → ₹14K booking.
             </h3>
             <p className="mt-3 max-w-lg text-sm leading-relaxed text-muted-foreground">
-              To keep each experience intentional and intimate, we ask for a small commitment
-              before revealing your cohort and available dates.
+              If this match feels right, continue to choose a weekend and hold your seat. The exact destination is revealed 24 hours before departure.
             </p>
             <Link
               to="/plan"
               className="mt-6 inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-soft)] transition-all duration-500 hover:scale-[1.015] hover:shadow-[var(--shadow-glow)]"
             >
-              <Lock className="h-4 w-4" />
-              <span>Continue with ₹99</span>
+              <CheckCircle2 className="h-4 w-4" />
+              <span>Reserve seat</span>
             </Link>
             <p className="mt-3 text-[11px] uppercase tracking-[0.2em] text-muted-foreground/70">
-              This match won't stay available forever.
+              Full booking is ₹14,000 per seat once payment integration is connected.
             </p>
           </div>
         </div>

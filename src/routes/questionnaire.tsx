@@ -33,11 +33,71 @@ const QUESTIONS = [
 const SCALE = ["Disagree", "", "Neutral", "", "Agree"];
 
 const LANDSCAPES = [
-  { slug: "birbhum",   region: "Birbhum, West Bengal",     place: "Shantiniketan & the Khoai" },
-  { slug: "dooars",    region: "Jalpaiguri, North Bengal", place: "The Dooars, near Gorumara" },
-  { slug: "kandhamal", region: "Kandhamal, Odisha",        place: "Daringbadi pine country"   },
-  { slug: "satkosia",  region: "Angul, Odisha",            place: "Satkosia gorge, Mahanadi"  },
-  { slug: "open",      region: "Anywhere",                 place: "I'm open to wherever feels right" },
+  {
+    slug: "forest-silence",
+    destination: "dooars",
+    icon: "🌲",
+    title: "Forest Silence",
+    description: "Quiet trails, misty mornings, slow conversations.",
+    transitionTitle: "forests",
+    transitionLines: [
+      "Maybe you’re looking for quiet.",
+      "Maybe you’re looking for distance from noise.",
+      "Maybe you just want to slow down.",
+    ],
+  },
+  {
+    slug: "mountains",
+    destination: "kandhamal",
+    icon: "⛰️",
+    title: "Mountains",
+    description: "Cold air, sunrise stillness, emotional reset.",
+    transitionTitle: "mountains",
+    transitionLines: [
+      "Maybe you’re looking for a higher kind of quiet.",
+      "Maybe the cold air feels like a reset.",
+      "Maybe stillness is what your body remembers needing.",
+    ],
+  },
+  {
+    slug: "coastline",
+    destination: "birbhum",
+    icon: "🌊",
+    title: "Coastline",
+    description: "Long-table dinners, sea air, slower time.",
+    transitionTitle: "coastlines",
+    transitionLines: [
+      "Maybe you’re drawn to softness.",
+      "Maybe you want meals that stretch into stories.",
+      "Maybe slower time is the luxury you miss most.",
+    ],
+  },
+  {
+    slug: "rivers-wilderness",
+    destination: "satkosia",
+    icon: "🛶",
+    title: "Rivers & Wilderness",
+    description: "Boat lanterns, dark skies, deep presence.",
+    transitionTitle: "rivers",
+    transitionLines: [
+      "Maybe you want to feel small in the best way.",
+      "Maybe dark skies make it easier to be honest.",
+      "Maybe presence feels different beside moving water.",
+    ],
+  },
+  {
+    slug: "open",
+    destination: "open",
+    icon: "🌾",
+    title: "Open to Wherever Feels Right",
+    description: "Let the experience choose you.",
+    transitionTitle: "openness",
+    transitionLines: [
+      "Maybe you’re practicing trust.",
+      "Maybe you don’t need to know the shape yet.",
+      "Maybe the right atmosphere can find you.",
+    ],
+  },
 ];
 
 function Questionnaire() {
@@ -47,11 +107,11 @@ function Questionnaire() {
   const [transitioning, setTransitioning] = useState(false);
   const [selected, setSelected] = useState<number | null>(null);
   const [started, setStarted] = useState(false);
-  const [step, setStep] = useState<"name" | "age" | "gender" | "landscape">("name");
+  const [step, setStep] = useState<"landscape" | "transition" | "name" | "age" | "gender">("landscape");
   const [name, setName] = useState("");
   const [ageGroup, setAgeGroup] = useState<string>("");
   const [gender, setGender] = useState<string>("");
-  const [landscape, setLandscape] = useState<string>("");
+  const [atmosphere, setAtmosphere] = useState<string>("");
 
   const AGE_OPTIONS = ["18–22", "23–27", "28–35", "35+"];
   const GENDER_OPTIONS = ["Male", "Female", "Prefer not to say"];
@@ -59,11 +119,15 @@ function Questionnaire() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
-    const ls = params.get("landscape");
-    const normalizedLandscape = ls === "angul" ? "satkosia" : ls;
-    if (normalizedLandscape && LANDSCAPES.some((l) => l.slug === normalizedLandscape)) {
-      sessionStorage.setItem("selectedLandscape", normalizedLandscape);
-      setLandscape(normalizedLandscape);
+    const ls = params.get("landscape") ?? params.get("atmosphere");
+    const aliases: Record<string, string> = { angul: "satkosia", dooars: "forest-silence", kandhamal: "mountains", birbhum: "coastline", satkosia: "rivers-wilderness" };
+    const normalizedAtmosphere = aliases[ls ?? ""] ?? ls;
+    const selectedOption = LANDSCAPES.find((l) => l.slug === normalizedAtmosphere);
+    if (selectedOption) {
+      sessionStorage.setItem("selectedAtmosphere", selectedOption.slug);
+      sessionStorage.setItem("selectedLandscape", selectedOption.destination);
+      setAtmosphere(selectedOption.slug);
+      setStep("transition");
     }
   }, []);
 
@@ -84,13 +148,15 @@ function Questionnaire() {
   const handleGenderSelect = (value: string) => {
     setGender(value);
     sessionStorage.setItem("selectedGender", value);
-    setTimeout(() => setStep("landscape"), 280);
+    setTimeout(() => setStarted(true), 280);
   };
 
   const handleLandscapeSelect = (slug: string) => {
-    setLandscape(slug);
-    sessionStorage.setItem("selectedLandscape", slug);
-    setTimeout(() => setStarted(true), 320);
+    const selectedOption = LANDSCAPES.find((item) => item.slug === slug) ?? LANDSCAPES[LANDSCAPES.length - 1];
+    setAtmosphere(selectedOption.slug);
+    sessionStorage.setItem("selectedAtmosphere", selectedOption.slug);
+    sessionStorage.setItem("selectedLandscape", selectedOption.destination);
+    setTimeout(() => setStep("transition"), 320);
   };
 
   const skipName = () => {
@@ -100,13 +166,14 @@ function Questionnaire() {
 
   const skipGender = () => {
     sessionStorage.setItem("selectedGender", "unknown");
-    setStep("landscape");
+    setStarted(true);
   };
 
   const skipLandscape = () => {
-    sessionStorage.setItem("selectedLandscape", "open");
-    setStarted(true);
+    handleLandscapeSelect("open");
   };
+
+  const selectedAtmosphere = LANDSCAPES.find((item) => item.slug === atmosphere) ?? LANDSCAPES[LANDSCAPES.length - 1];
 
   const progress = ((index + (selected !== null ? 1 : 0)) / QUESTIONS.length) * 100;
 
@@ -265,17 +332,17 @@ function Questionnaire() {
 
           {step === "landscape" && (
             <div key="landscape" className="w-full animate-[fade-up_700ms_var(--ease-calm)]">
-              <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-primary">Your atmosphere</p>
+              <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-primary">First, the atmosphere</p>
               <h2 className="font-display text-3xl font-light leading-snug text-foreground md:text-4xl">
-                Which experience calls to you most?
+                Choose the atmosphere you’re drawn to.
               </h2>
               <p className="mt-3 text-sm text-muted-foreground">
-                Choose the landscape that quietly pulls you in.
+                We’ll use this quietly to shape where you may belong.
               </p>
 
               <div className="mt-10 grid grid-cols-1 gap-3 text-left">
                 {LANDSCAPES.map((opt) => {
-                  const isSelected = landscape === opt.slug;
+                  const isSelected = atmosphere === opt.slug;
                   return (
                     <button
                       key={opt.slug}
@@ -287,12 +354,15 @@ function Questionnaire() {
                           : "border-border/60 bg-background/40 hover:border-primary/50 hover:bg-background/60"
                       }`}
                     >
-                      <div className="flex items-baseline justify-between gap-4">
-                        <div>
-                          <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary/80">{opt.region}</p>
-                          <p className="mt-1 font-display text-lg text-foreground">{opt.place}</p>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex items-start gap-4">
+                          <span className="text-2xl" aria-hidden="true">{opt.icon}</span>
+                          <div>
+                            <p className="font-display text-lg text-foreground">{opt.title}</p>
+                            <p className="mt-1 text-sm leading-6 text-muted-foreground">{opt.description}</p>
+                          </div>
                         </div>
-                        <span className={`text-xs transition-opacity ${isSelected ? "opacity-100 text-primary" : "opacity-40"}`}>→</span>
+                        <span className={`pt-1 text-xs transition-opacity ${isSelected ? "opacity-100 text-primary" : "opacity-40"}`}>→</span>
                       </div>
                     </button>
                   );
@@ -304,7 +374,28 @@ function Questionnaire() {
                 onClick={skipLandscape}
                 className="mt-8 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
-                Skip
+                I’m open
+              </button>
+            </div>
+          )}
+
+          {step === "transition" && (
+            <div key="transition" className="w-full animate-[fade-up_900ms_var(--ease-calm)]">
+              <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-primary">You chose {selectedAtmosphere.transitionTitle}</p>
+              <h2 className="font-display text-3xl font-light leading-snug text-foreground md:text-4xl">
+                Let’s understand you a little better.
+              </h2>
+              <div className="mx-auto mt-8 max-w-md space-y-4 text-sm leading-7 text-muted-foreground md:text-base">
+                {selectedAtmosphere.transitionLines.map((line) => (
+                  <p key={line}>{line}</p>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => setStep("name")}
+                className="mt-10 rounded-full bg-primary px-8 py-3 text-sm font-medium text-primary-foreground shadow-[var(--shadow-soft)] transition-all hover:scale-[1.02] hover:shadow-[var(--shadow-glow)]"
+              >
+                Continue
               </button>
             </div>
           )}
