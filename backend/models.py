@@ -10,6 +10,9 @@ class SubmitRequest(BaseModel):
     age_group: str = "unknown"
     gender: str = "unknown"
     name: Optional[str] = None
+    preferred_destination: str = "open"
+    # Backwards-compatible alias for the existing frontend/session naming.
+    landscape: Optional[str] = None
 
 
 class SubmitResponse(BaseModel):
@@ -22,6 +25,11 @@ class GroupInfo(BaseModel):
     group_members_count: int
     group_name: str
     vibe_description: str
+    preferred_destination: str = "open"
+    destination_name: str = "Open landscape"
+    destination_place: str = "Wherever feels right"
+    emotional_theme: str = "An intentional shared atmosphere"
+    cohort_atmosphere: str = "A small circle shaped around presence, ease, and genuine conversation."
 
 
 class MatchResponse(BaseModel):
@@ -51,3 +59,9 @@ class ResultResponse(BaseModel):
     match_reasons: List[str] = Field(default_factory=list)
     group_size: int = 0
     user_display_name: str = "You"
+    preferred_destination: str = "open"
+    destination_name: str = "Open landscape"
+    destination_place: str = "Wherever feels right"
+    destination_image: str = ""
+    emotional_theme: str = "An intentional shared atmosphere"
+    cohort_atmosphere: str = "A small circle shaped around presence, ease, and genuine conversation."

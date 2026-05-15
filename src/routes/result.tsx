@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Sparkles, Users, HeartHandshake, PartyPopper, CheckCircle2, Lock, Share2, Check } from "lucide-react";
+import { Sparkles, Users, HeartHandshake, PartyPopper, CheckCircle2, Lock, Share2, Check, MapPin } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Progress } from "@/components/ui/progress";
@@ -22,6 +22,12 @@ type MatchResult = {
   user_display_name?: string;
   match_label?: string;
   group_label?: string;
+  preferred_destination?: string;
+  destination_name?: string;
+  destination_place?: string;
+  destination_image?: string;
+  emotional_theme?: string;
+  cohort_atmosphere?: string;
   activity_plan?: {
     icebreaker?: string;
     activity?: string;
@@ -54,9 +60,8 @@ const differenceLines = [
   "Many seek energy — you seek depth.",
 ];
 
-function buildGroupDescription(groupName: string, score: number) {
-  const intensity = score >= 80 ? "intentional and warm" : "easygoing and thoughtful";
-  return `${groupName} is a ${intensity} circle of people who value real conversations, emotional safety, and memorable moments over noise.`;
+function buildGroupDescription(groupName: string, atmosphere: string) {
+  return `${groupName} is ${atmosphere.toLowerCase()} It is designed to feel less like a match result and more like a shared atmosphere you can step into.`;
 }
 
 function Result() {
@@ -84,10 +89,13 @@ function Result() {
   const members = result?.group_members ?? [];
   const groupName = result?.group_name ?? "Your Group";
   const score = Math.max(0, Math.min(100, result?.score ?? 0));
-  const activity = result?.activity_plan?.activity ?? "No activity available yet";
   const memberNames = members.map(getMemberName);
-  const avatarNames = memberNames.slice(0, 5);
-  const groupSize = result?.group_size ?? avatarNames.length;
+  const groupSize = result?.group_size ?? memberNames.length;
+  const destinationName = result?.destination_name ?? "Open landscape";
+  const destinationPlace = result?.destination_place ?? "Wherever feels right";
+  const destinationImage = result?.destination_image ?? "A landscape chosen around fit, timing, and the atmosphere your cohort needs most.";
+  const emotionalTheme = result?.emotional_theme ?? "An intentional shared atmosphere";
+  const cohortAtmosphere = result?.cohort_atmosphere ?? "A small circle shaped around presence, ease, and genuine conversation.";
   const matchReasons = result?.match_reasons?.length
     ? result.match_reasons
     : [
@@ -104,7 +112,7 @@ function Result() {
       ? `${groupSize} ${groupSize === 1 ? "person" : "people"} like you`
       : "Your circle";
 
-  const groupDescription = buildGroupDescription(groupName, score);
+  const groupDescription = buildGroupDescription(groupName, cohortAtmosphere);
 
   // Staged reveal timeline
   useEffect(() => {
@@ -179,8 +187,8 @@ function Result() {
               <div className="mt-8 rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] backdrop-blur-sm animate-[fade-up_700ms_var(--ease-calm)]">
                 <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
                   <div>
-                    <p className="text-base font-medium text-foreground">{animatedScore}% match — unusually strong alignment</p>
-                    <p className="mt-1 text-sm text-muted-foreground">This level of compatibility is rare.</p>
+                    <p className="text-base font-medium text-foreground">{matchLabel}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">A curated read on shared pace, openness, and emotional fit.</p>
                   </div>
                   <div className="relative grid h-24 w-24 place-items-center rounded-full border border-primary/25 bg-primary/5 shadow-[var(--shadow-soft)]">
                     <span className="text-xl font-semibold text-primary tabular-nums">{animatedScore}%</span>
@@ -194,12 +202,37 @@ function Result() {
 
             {stage >= 5 && (<>
             <section
+              className="mt-6 overflow-hidden rounded-3xl border border-border/60 bg-card/95 shadow-[var(--shadow-card)] animate-[fade-up_700ms_var(--ease-calm)]"
+              style={{ animationDelay: "120ms", animationFillMode: "both" }}
+            >
+              <div className="bg-gradient-to-br from-primary/12 via-accent/10 to-card p-6">
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-background/50 px-3 py-1.5 text-xs font-medium text-primary backdrop-blur-sm">
+                  <MapPin className="h-3.5 w-3.5" />
+                  <span>Selected landscape</span>
+                </div>
+                <h2 className="font-display text-2xl font-light text-foreground md:text-3xl">{destinationPlace}</h2>
+                <p className="mt-2 text-sm uppercase tracking-[0.18em] text-primary/80">{destinationName}</p>
+                <p className="mt-5 max-w-2xl text-sm leading-7 text-muted-foreground">{destinationImage}</p>
+              </div>
+              <div className="grid gap-3 p-6 md:grid-cols-2">
+                <div className="rounded-2xl border border-border/60 bg-card/80 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-primary/80">Emotional theme</p>
+                  <p className="mt-2 text-sm leading-6 text-foreground/90">{emotionalTheme}</p>
+                </div>
+                <div className="rounded-2xl border border-border/60 bg-card/80 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-primary/80">Cohort atmosphere</p>
+                  <p className="mt-2 text-sm leading-6 text-foreground/90">{cohortAtmosphere}</p>
+                </div>
+              </div>
+            </section>
+
+            <section
               className="mt-6 rounded-3xl border border-border/60 bg-card/95 p-6 shadow-[var(--shadow-card)] animate-[fade-up_720ms_var(--ease-calm)]"
               style={{ animationDelay: "160ms", animationFillMode: "both" }}
             >
               <div className="mb-4 flex items-center gap-2 text-primary">
                 <Sparkles className="h-4 w-4" />
-                <h2 className="text-base font-semibold text-foreground">Why this match works for you</h2>
+                <h2 className="text-base font-semibold text-foreground">Why this cohort feels aligned</h2>
               </div>
               <ul className="space-y-3">
                 {matchReasons.map((reason) => (
@@ -274,7 +307,7 @@ function Result() {
               <h2 className="text-base font-semibold text-foreground">Your group (preview)</h2>
             </div>
             <p className="text-sm text-muted-foreground">
-              You've been matched with people who align closely with you.
+              Your cohort preview is shaped first by shared landscape, then by pace and emotional fit.
             </p>
 
             <div className="relative mt-6">
@@ -328,9 +361,9 @@ function Result() {
               <ul className="mt-3 space-y-2">
                 {[
                   "Your actual group members",
+                  "Your shared destination atmosphere",
                   "Your shared group dynamic",
                   "A guided first meetup plan",
-                  "Real conversation prompts",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3 text-sm leading-6 text-muted-foreground">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
@@ -352,19 +385,19 @@ function Result() {
               <h2 className="text-base font-semibold text-foreground">See what your friends get</h2>
             </div>
             <p className="text-sm text-muted-foreground">
-              Everyone gets a different group — compare yours.
+              Everyone gets a different landscape and cohort atmosphere — compare yours.
             </p>
 
             <div className="mt-4 rounded-2xl border border-border/60 bg-card/70 p-4">
               <p className="text-sm leading-6 text-foreground/90">
-                "I just got matched with the '{groupName}' — and this is scarily accurate. Curious what you'll get 👀"
+                I just found my '{groupName}' — a small cohort shaped around {destinationPlace}. Curious where you'll land 👀
               </p>
             </div>
 
             <button
               type="button"
               onClick={async () => {
-                const shareText = `I just got matched with the '${groupName}' on TheOfflineCo — and this is scarily accurate. Curious what you'll get 👀`;
+                const shareText = `I just found my '${groupName}' on TheOfflineCo — a small cohort shaped around ${destinationPlace}. Curious where you'll land 👀`;
                 const shareUrl = typeof window !== "undefined" ? window.location.origin : "";
                 const shareData = { title: "TheOfflineCo", text: shareText, url: shareUrl };
                 try {

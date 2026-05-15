@@ -25,10 +25,10 @@ type MatchResult = {
 };
 
 const ROTATING_MESSAGES = [
-  "Finding people who think like you...",
-  "Analyzing your responses...",
-  "Looking for your kind of people...",
-  "Matching energy and intent...",
+  "Finding people drawn to your landscape...",
+  "Reading the atmosphere you chose...",
+  "Looking for a cohort with the same pull...",
+  "Balancing warmth, pace, and intent...",
   "Almost there...",
 ];
 
@@ -60,7 +60,7 @@ function Loading() {
       const res = await fetch(`${API_BASE}/api/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, answers, age_group, gender, landscape }),
+        body: JSON.stringify({ name, answers, age_group, gender, preferred_destination: landscape }),
       });
       if (!res.ok) throw new Error("Submit failed");
 
