@@ -13,6 +13,7 @@ const CAMPFIRE = "https://images.pexels.com/photos/36729452/pexels-photo-3672945
 const NATURE_DAWN = "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1600&q=80";
 const HANDS = "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=1600&q=80";
 
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -324,31 +325,39 @@ function Landing() {
             {[
               {
                 slug: "forest-silence",
-                label: "🌲 Forest Silence",
-                copy: "Quiet trails, misty mornings, slow conversations.",
-                theme: "Silence · reset · stillness",
-                img: "https://images.unsplash.com/photo-1542317854-5cdaee5b2548?auto=format&fit=crop&w=1600&q=80",
+                label: "Wild Silence",
+                subtitle: "Gorumara, North Bengal",
+                copy: ["Forest immersion.", "Elephant safari.", "Tribal wisdom.", "No signal zones."],
+                theme: "Deep forest calm · mystery · silence · grounding",
+                img: "/wild%20silence.png",
+                fallbackImg: "https://images.unsplash.com/photo-1542317854-5cdaee5b2548?auto=format&fit=crop&w=1600&q=80",
               },
               {
                 slug: "mountains",
-                label: "⛰️ Mountains",
-                copy: "Cold air, sunrise stillness, emotional reset.",
-                theme: "Reflection · slowness · emotional depth",
-                img: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1600&q=80",
+                label: "First Light",
+                subtitle: "Lower Himalayas",
+                copy: ["Mountain sunrise.", "Tea estate walks.", "Campfire folk music.", "Birds before alarms."],
+                theme: "Clarity · reset · emotional openness",
+                img: "/frist%20light.png",
+                fallbackImg: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1600&q=80",
               },
               {
                 slug: "coastline",
-                label: "🌊 Coastline",
-                copy: "Long-table dinners, sea air, slower time.",
-                theme: "Creative softness · grounding · warmth",
-                img: "https://images.unsplash.com/photo-1532375810709-75b1da00537c?auto=format&fit=crop&w=1600&q=80",
+                label: "Salt & Stillness",
+                subtitle: "Odisha Coast",
+                copy: ["The sea at 5am.", "Fishing villages.", "Someone’s grandmother’s recipe.", "Tide as your only notification."],
+                theme: "Warmth · softness · human connection",
+                img: "/salt%26see.png",
+                fallbackImg: "https://images.unsplash.com/photo-1532375810709-75b1da00537c?auto=format&fit=crop&w=1600&q=80",
               },
               {
                 slug: "rivers-wilderness",
-                label: "🛶 Rivers & Wilderness",
-                copy: "Boat lanterns, dark skies, deep presence.",
-                theme: "Awe · detachment · immersion",
-                img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80",
+                label: "The Unhurried Wild",
+                subtitle: "Central India Safari",
+                copy: ["Dawn without a feed.", "Forest sounds.", "A naturalist who reads animals", "better than algorithms."],
+                theme: "Slow wilderness · awe · detachment from digital life",
+                img: "/the%20unhurried%20wild.png",
+                fallbackImg: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80",
               },
             ].map((c, i) => (
               <Reveal key={c.slug} delay={i * 0.08}>
@@ -358,15 +367,26 @@ function Landing() {
                 >
                   <img
                     src={c.img}
-                    alt={c.label}
+                    alt={`${c.label} — ${c.subtitle}`}
                     loading="lazy"
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.06]"
+                    onError={(event) => {
+                      event.currentTarget.onerror = null;
+                      event.currentTarget.src = c.fallbackImg;
+                    }}
+                    className="absolute inset-0 w-full h-full object-cover transition-[transform,filter] duration-[1800ms] ease-out group-hover:scale-[1.07] group-hover:brightness-[1.04]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/10" />
-                  <div className="absolute inset-0 p-7 md:p-10 flex flex-col justify-end">
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/60 to-ink/20" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_18%,rgba(217,119,6,0.20),transparent_32%),radial-gradient(circle_at_50%_50%,transparent_42%,rgba(15,23,42,0.72)_100%)] opacity-85 transition-opacity duration-700 group-hover:opacity-95" />
+                  <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-ink via-ink/35 to-transparent" />
+                  <div className="absolute inset-0 p-7 md:p-10 flex flex-col justify-end transition-transform duration-[1200ms] ease-out group-hover:-translate-y-1">
                     <p className="overline text-paper/55 mb-3">Emotional landscape</p>
                     <h3 className="font-serif text-3xl md:text-4xl text-paper leading-[1.05] text-balance">{c.label}</h3>
-                    <p className="mt-4 text-paper/75 text-sm md:text-base leading-relaxed max-w-md">{c.copy}</p>
+                    <p className="mt-2 text-[0.68rem] tracking-[0.26em] uppercase text-paper/55">{c.subtitle}</p>
+                    <div className="mt-5 space-y-1 text-paper/78 text-sm md:text-base leading-relaxed max-w-md">
+                      {c.copy.map((line) => (
+                        <p key={line}>{line}</p>
+                      ))}
+                    </div>
                     <p className="mt-6 text-[0.65rem] tracking-[0.28em] uppercase text-ember/85">{c.theme}</p>
                   </div>
                 </a>
