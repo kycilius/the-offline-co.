@@ -150,34 +150,37 @@ function Loading() {
   }
 
   return (
-    <main className="relative flex min-h-screen flex-col" style={{ background: "var(--gradient-warm)" }}>
-      <header className="mx-auto flex w-full max-w-3xl items-center justify-between px-6 py-6">
+    <main className="relative flex min-h-screen flex-col overflow-hidden" style={{ background: "var(--gradient-warm)" }}>
+      <div className="pointer-events-none absolute -left-32 top-10 h-[28rem] w-[28rem] rounded-full bg-primary/10 blur-3xl animate-[float_11s_ease-in-out_infinite]" />
+      <div className="pointer-events-none absolute -right-40 bottom-0 h-[32rem] w-[32rem] rounded-full bg-accent/10 blur-3xl animate-[float_14s_ease-in-out_infinite_1.5s]" />
+
+      <header className="relative z-10 mx-auto flex w-full max-w-3xl items-center justify-between px-6 py-6">
         <Logo />
         <ThemeToggle />
       </header>
 
-      <section className="flex flex-1 flex-col items-center justify-center px-6 text-center">
-        <div className="relative mb-12 h-32 w-32">
-          <div className="absolute inset-0 rounded-full border border-primary/30 animate-[pulse-soft_2.4s_ease-in-out_infinite]" />
-          <div className="absolute inset-3 rounded-full border border-primary/40 animate-[pulse-soft_2.4s_ease-in-out_infinite_0.3s]" />
-          <div className="absolute inset-6 rounded-full bg-gradient-to-br from-primary to-primary-glow animate-[pulse-soft_2.4s_ease-in-out_infinite_0.6s]" />
+      <section className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 text-center">
+        <div className="relative mb-14 h-36 w-36">
+          <div className="absolute inset-0 rounded-full border border-primary/25 animate-[pulse-soft_3.2s_ease-in-out_infinite] will-change-transform" />
+          <div className="absolute inset-4 rounded-full border border-primary/35 animate-[pulse-soft_3.2s_ease-in-out_infinite_0.5s] will-change-transform" />
+          <div className="absolute inset-8 rounded-full bg-gradient-to-br from-primary to-primary-glow animate-[pulse-soft_3.2s_ease-in-out_infinite_1s] will-change-transform" />
         </div>
 
         <h2
           key={messageIndex}
-          className="font-display text-2xl font-light text-foreground md:text-4xl animate-[fade-up_0.6s_ease-out] min-h-[3rem]"
+          className="font-display text-2xl font-light text-foreground md:text-4xl animate-[fade-up_900ms_var(--ease-calm)] min-h-[3.25rem] will-change-[opacity,transform]"
         >
           {ROTATING_MESSAGES[messageIndex]}
         </h2>
 
-        <div className="mt-10 w-full max-w-xs">
-          <Progress value={progress} className="h-1.5 bg-primary/15" />
-          <p className="mt-3 text-xs font-light tracking-wide text-muted-foreground/70">
-            {progress}%
+        <div className="mt-12 w-full max-w-xs">
+          <Progress value={progress} className="h-[3px] bg-primary/15 transition-none" />
+          <p className="mt-3 text-[11px] font-light tracking-[0.22em] uppercase text-muted-foreground/70 tabular-nums">
+            {progress.toString().padStart(3, "0")}%
           </p>
         </div>
 
-        <p className="mt-8 max-w-md text-sm font-light text-muted-foreground">
+        <p className="mt-10 max-w-md text-sm font-light italic text-muted-foreground/80">
           Crafting something meaningful, just for you.
         </p>
       </section>
