@@ -413,22 +413,29 @@ function Result() {
         </section>
 
         <div
-          className="mt-8 animate-[fade-up_950ms_var(--ease-calm)]"
+          className="mt-10 animate-[fade-up_950ms_var(--ease-calm)]"
           style={{ animationDelay: "420ms", animationFillMode: "both" }}
         >
-          <p className="mb-4 text-xs uppercase tracking-[0.2em] text-primary/80">
-            This match won't stay available forever.
-          </p>
-          <Link
-            to="/plan"
-            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-[var(--shadow-soft)] transition-all duration-500 hover:scale-[1.02] hover:shadow-[var(--shadow-glow)]"
-          >
-            <Lock className="h-4 w-4" />
-            <span>Meet your group — ₹99</span>
-          </Link>
-          <p className="mt-3 text-xs text-muted-foreground">
-            One-time unlock. Reveal your members and full experience.
-          </p>
+          <div className="rounded-3xl border border-primary/25 bg-gradient-to-br from-primary/8 via-card/95 to-accent/10 p-7 shadow-[var(--shadow-card)]">
+            <p className="text-xs uppercase tracking-[0.22em] text-primary/85">— A small intentional step</p>
+            <h3 className="mt-3 font-display text-2xl font-light text-foreground md:text-3xl">
+              We found a potential cohort for you.
+            </h3>
+            <p className="mt-3 max-w-lg text-sm leading-relaxed text-muted-foreground">
+              To keep each experience intentional and intimate, we ask for a small commitment
+              before revealing your cohort and available dates.
+            </p>
+            <Link
+              to="/plan"
+              className="mt-6 inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-soft)] transition-all duration-500 hover:scale-[1.015] hover:shadow-[var(--shadow-glow)]"
+            >
+              <Lock className="h-4 w-4" />
+              <span>Continue with ₹99</span>
+            </Link>
+            <p className="mt-3 text-[11px] uppercase tracking-[0.2em] text-muted-foreground/70">
+              This match won't stay available forever.
+            </p>
+          </div>
         </div>
       </section>
     </main>
