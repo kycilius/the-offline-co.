@@ -54,12 +54,13 @@ function Loading() {
       const answers = JSON.parse(savedAnswers) as number[];
       const age_group = sessionStorage.getItem("selectedAge") ?? "unknown";
       const gender = sessionStorage.getItem("selectedGender") ?? "unknown";
+      const landscape = sessionStorage.getItem("selectedLandscape") ?? "open";
       const name = localStorage.getItem("user_name")?.trim() || null;
 
       const res = await fetch(`${API_BASE}/api/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, answers, age_group, gender }),
+        body: JSON.stringify({ name, answers, age_group, gender, landscape }),
       });
       if (!res.ok) throw new Error("Submit failed");
 
