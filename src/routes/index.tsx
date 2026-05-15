@@ -306,6 +306,100 @@ function Landing() {
         </div>
       </section>
 
+      {/* EXPERIENCE LANDSCAPES */}
+      <section id="landscapes" className="relative py-32 md:py-44 border-t border-paper/10">
+        <div className="container-page">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-16 md:mb-20">
+            <div className="md:col-span-4">
+              <p className="overline">— Choose your atmosphere</p>
+            </div>
+            <div className="md:col-span-8">
+              <Reveal>
+                <h2 className="font-serif text-4xl md:text-6xl leading-[1.05] kerned text-balance">
+                  Which landscape feels closest to what you need <span className="italic text-paper/80">right now?</span>
+                </h2>
+              </Reveal>
+              <Reveal delay={0.12}>
+                <p className="mt-6 text-paper/65 max-w-2xl text-lg leading-relaxed">
+                  Each cohort unfolds in a different atmosphere. Choose the one that quietly pulls you in.
+                </p>
+              </Reveal>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+            {[
+              {
+                slug: "birbhum",
+                region: "Birbhum, West Bengal",
+                place: "Shantiniketan & the Khoai",
+                copy: "Red earth paths. Baul songs after dusk. Long conversations under sal trees.",
+                theme: "Creative softness · grounding · warmth",
+                img: "https://images.unsplash.com/photo-1532375810709-75b1da00537c?auto=format&fit=crop&w=1600&q=80",
+              },
+              {
+                slug: "dooars",
+                region: "Jalpaiguri, North Bengal",
+                place: "The Dooars, near Gorumara",
+                copy: "Tea-garden silence. Morning mist. Forest air that slows your thoughts down.",
+                theme: "Silence · reset · stillness",
+                img: "https://images.unsplash.com/photo-1542317854-5cdaee5b2548?auto=format&fit=crop&w=1600&q=80",
+              },
+              {
+                slug: "kandhamal",
+                region: "Kandhamal, Odisha",
+                place: "Daringbadi pine country",
+                copy: "Pine smoke. Coffee estates. Cold evenings and stories that linger.",
+                theme: "Reflection · slowness · emotional depth",
+                img: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1600&q=80",
+              },
+              {
+                slug: "angul",
+                region: "Angul, Odisha",
+                place: "Satkosia gorge, Mahanadi",
+                copy: "River shadows. Boat lanterns. A sky untouched by city light.",
+                theme: "Awe · detachment · immersion",
+                img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80",
+              },
+            ].map((c, i) => (
+              <Reveal key={c.slug} delay={i * 0.08}>
+                <a
+                  href={`/questionnaire?landscape=${c.slug}`}
+                  className="group relative block aspect-[4/5] md:aspect-[5/6] overflow-hidden border border-paper/10"
+                >
+                  <img
+                    src={c.img}
+                    alt={c.place}
+                    loading="lazy"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.06]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/10" />
+                  <div className="absolute inset-0 p-7 md:p-10 flex flex-col justify-end">
+                    <p className="overline text-paper/55 mb-3">{c.region}</p>
+                    <h3 className="font-serif text-3xl md:text-4xl text-paper leading-[1.05] text-balance">{c.place}</h3>
+                    <p className="mt-4 text-paper/75 text-sm md:text-base leading-relaxed max-w-md">{c.copy}</p>
+                    <p className="mt-6 text-[0.65rem] tracking-[0.28em] uppercase text-ember/85">{c.theme}</p>
+                  </div>
+                </a>
+              </Reveal>
+            ))}
+          </div>
+
+          <Reveal delay={0.4}>
+            <a
+              href="/questionnaire?landscape=open"
+              className="group mt-8 md:mt-10 block border border-paper/15 hover:border-ember/60 transition-colors duration-500 p-8 md:p-10 text-center"
+            >
+              <p className="overline text-paper/55 mb-3">— A fifth path</p>
+              <h3 className="font-serif italic text-2xl md:text-3xl text-paper">
+                I'm open to wherever feels right.
+              </h3>
+              <p className="mt-3 text-paper/55 text-sm">Let us read your answers and choose the landscape for you.</p>
+            </a>
+          </Reveal>
+        </div>
+      </section>
+
       {/* PRICING */}
       <section id="pricing" className="relative py-32 md:py-44 border-t border-paper/10">
         <div className="container-page grid grid-cols-1 md:grid-cols-12 gap-10">
