@@ -10,7 +10,7 @@ from supabase import Client, create_client
 
 from models import GroupInfo, MatchResponse, Plan, ResultResponse, SubmitRequest, SubmitResponse
 
-app = FastAPI(title="Social Detox MVP API", version="0.3.0")
+app = FastAPI(title="TheOfflineCo Reconnection API", version="0.4.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -44,7 +44,7 @@ DESTINATION_PROFILES: dict[str, dict[str, str]] = {
     "birbhum": {
         "name": "Birbhum, West Bengal",
         "place": "Shantiniketan & the Khoai",
-        "cohort_name": "Birbhum Red Earth Cohort",
+        "cohort_name": "Coastline Table Cohort",
         "image": "Warm red earth paths, wide skies, baul songs, and the quiet creative pulse of Khoai.",
         "theme": "Slow creativity and grounded conversation",
         "atmosphere": "Earthy, artistic, unhurried, and made for people who soften into honest dialogue.",
@@ -52,7 +52,7 @@ DESTINATION_PROFILES: dict[str, dict[str, str]] = {
     "dooars": {
         "name": "Jalpaiguri, North Bengal",
         "place": "The Dooars, near Gorumara",
-        "cohort_name": "The Dooars Cohort",
+        "cohort_name": "Forest Silence Cohort",
         "image": "Tea-green edges, forest roads, river mist, and the hush around Gorumara.",
         "theme": "Forest calm and open-hearted discovery",
         "atmosphere": "Fresh, spacious, quietly adventurous, and held by the rhythm of the wild north.",
@@ -60,7 +60,7 @@ DESTINATION_PROFILES: dict[str, dict[str, str]] = {
     "kandhamal": {
         "name": "Kandhamal, Odisha",
         "place": "Daringbadi pine country",
-        "cohort_name": "Daringbadi Pine Cohort",
+        "cohort_name": "Mountain Stillness Cohort",
         "image": "Pine shade, cool hill air, coffee blooms, and soft mornings in Daringbadi.",
         "theme": "Gentle reflection and hill-country stillness",
         "atmosphere": "Soft, reflective, restorative, and suited to people who want a quieter kind of closeness.",
@@ -68,7 +68,7 @@ DESTINATION_PROFILES: dict[str, dict[str, str]] = {
     "satkosia": {
         "name": "Angul, Odisha",
         "place": "Satkosia gorge, Mahanadi",
-        "cohort_name": "Satkosia River Cohort",
+        "cohort_name": "River Wilderness Cohort",
         "image": "A deep river gorge, stone bends, evening light, and the patient flow of the Mahanadi.",
         "theme": "River depth and meaningful presence",
         "atmosphere": "Deep, steady, intimate, and shaped for conversations that move at river pace.",
@@ -87,6 +87,10 @@ DESTINATION_ALIASES = {
     "angul": "satkosia",
     "daringbadi": "kandhamal",
     "jalpaiguri": "dooars",
+    "forest-silence": "dooars",
+    "mountains": "kandhamal",
+    "coastline": "birbhum",
+    "rivers-wilderness": "satkosia",
 }
 
 

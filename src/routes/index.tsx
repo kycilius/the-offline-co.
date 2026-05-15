@@ -1,13 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowUpRight, ArrowDown, Phone, Flame, Mountain, Users, BookOpen, MapPin } from "lucide-react";
+import { ArrowUpRight, ArrowDown, Flame, Mountain, Users, BookOpen, MapPin, WifiOff } from "lucide-react";
 import type { ReactNode } from "react";
 import Reveal from "@/components/site/Reveal";
 import Nav from "@/components/site/Nav";
 import Footer from "@/components/site/Footer";
 
 const HERO_IMG = "https://static.prod-images.emergentagent.com/jobs/8233dccd-e10a-45ac-93c0-5e1ff12eeb81/images/a442b8b5c46dd5c0aba75a7f85fe0c41e8bcc4d39a1b435c00a324223d2b7479.png";
-const PHONE_RITUAL = "https://static.prod-images.emergentagent.com/jobs/8233dccd-e10a-45ac-93c0-5e1ff12eeb81/images/4b65994cf91868d468e35ac4e28e488f09dff70c4c7489de85745a1102237673.png";
+const OFFLINE_RITUAL = "https://static.prod-images.emergentagent.com/jobs/8233dccd-e10a-45ac-93c0-5e1ff12eeb81/images/4b65994cf91868d468e35ac4e28e488f09dff70c4c7489de85745a1102237673.png";
 const CABIN_DINNER = "https://static.prod-images.emergentagent.com/jobs/8233dccd-e10a-45ac-93c0-5e1ff12eeb81/images/ad52708b4197fa2c641d5ec311ef1555a5b05fc0692a51bf181899fb1e1927ba.png";
 const CAMPFIRE = "https://images.pexels.com/photos/36729452/pexels-photo-36729452.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=900&w=1400";
 const NATURE_DAWN = "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1600&q=80";
@@ -123,26 +123,26 @@ function Landing() {
           <Reveal className="md:col-span-6 order-2 md:order-1">
             <p className="overline">02 — The ritual</p>
             <h2 className="font-serif text-4xl md:text-6xl mt-4 leading-[1.05] kerned text-balance">
-              It begins with a simple exchange.
+              It begins when the outside world goes quiet.
             </h2>
             <div className="mt-8 space-y-5 text-paper/75 text-lg leading-relaxed">
-              <p>You hand over your smartphone.</p>
-              <p>You receive a button phone.</p>
+              <p>For 48 hours, your phone stays offline.</p>
+              <p>No feeds. No notifications. No performance.</p>
               <p className="text-paper">From that moment, something shifts.</p>
               <p>Attention returns. Conversations deepen. Time slows down.</p>
             </div>
             <div className="mt-10 flex items-center gap-4 text-paper/55">
-              <Phone size={18} className="text-ember" />
-              <span className="text-xs tracking-[0.24em] uppercase">One ritual. Two days. A different person.</span>
+              <WifiOff size={18} className="text-ember" />
+              <span className="text-xs tracking-[0.24em] uppercase">One intention. Two days. A different pace.</span>
             </div>
           </Reveal>
           <Reveal delay={0.2} className="md:col-span-6 order-1 md:order-2">
             <div className="relative aspect-[4/5] overflow-hidden">
-              <img src={PHONE_RITUAL} alt="Smartphone being exchanged for a button phone" className="w-full h-full object-cover" />
+              <img src={OFFLINE_RITUAL} alt="A quiet offline moment before the weekend begins" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent" />
               <div className="absolute bottom-6 left-6 text-paper/85">
-                <p className="overline mb-2">The exchange</p>
-                <p className="font-serif text-2xl">Glass for plastic. Noise for silence.</p>
+                <p className="overline mb-2">The offline threshold</p>
+                <p className="font-serif text-2xl">Noise softens. Presence begins.</p>
               </div>
             </div>
           </Reveal>
@@ -174,52 +174,45 @@ function Landing() {
         </div>
       </section>
 
-      {/* WHERE WE GO */}
+      {/* EMOTIONAL ITINERARY */}
       <section id="where" className="relative py-32 md:py-44 border-t border-paper/10">
         <div className="container-page">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-16">
             <div className="md:col-span-4">
-              <p className="overline">04 — Where we go</p>
+              <p className="overline">04 — The weekend arc</p>
             </div>
             <div className="md:col-span-8">
               <Reveal>
                 <h2 className="font-serif text-4xl md:text-6xl leading-[1.05] kerned text-balance">
-                  Two states. Four villages. <span className="italic text-paper/80">Zero signal.</span>
+                  A general rhythm — enough to feel it, not enough to over-plan it.
                 </h2>
               </Reveal>
               <Reveal delay={0.15}>
                 <p className="mt-8 text-paper/65 max-w-2xl text-lg leading-relaxed">
-                  We work only in places we've walked ourselves — partnered with the families, the singers, the boatmen, the potters who already live the unhurried life. No resorts. No staged authenticity.
+                  Before you reserve, we show the emotional shape of the weekend only. Exact stay details, weather, packing notes, and the specific schedule arrive after the reveal window opens.
                 </p>
               </Reveal>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-2 border-t border-paper/10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-paper/10 pt-8">
             {[
-              { region: "Birbhum, West Bengal", place: "Shantiniketan & the Khoai", note: "Red earth, Baul singers, mud-floor suppers." },
-              { region: "Jalpaiguri, North Bengal", place: "The Dooars, near Gorumara", note: "Sal forests, tea-garden silence, Lepcha kitchens." },
-              { region: "Kandhamal, Odisha", place: "Daringbadi pine country", note: "Pine smoke, coffee estates, Kondh folk song." },
-              { region: "Angul, Odisha", place: "Satkosia gorge, Mahanadi", note: "Dugout boats, gorge shadows, stars without lamps." },
-            ].map((row, i) => (
-              <Reveal key={row.place} delay={i * 0.06}>
-                <div className="flex items-baseline gap-6 md:gap-8 border-b border-paper/10 py-7 md:py-8">
-                  <span className="num-display text-ember text-sm pt-1 w-10 shrink-0">/0{i + 1}</span>
-                  <div className="flex-1">
-                    <p className="overline text-paper/50">{row.region}</p>
-                    <h3 className="font-serif text-2xl md:text-3xl mt-2 text-paper text-balance">{row.place}</h3>
-                    <p className="mt-2 text-paper/60 text-sm md:text-base leading-relaxed">{row.note}</p>
-                  </div>
-                </div>
+              { day: "Day 1", items: ["Arrival", "Offline transition", "Shared dinner", "Slow introductions"] },
+              { day: "Day 2", items: ["Sunrise activity", "Local experiences", "Long-table meals", "Stories under open skies"] },
+              { day: "Day 3", items: ["Quiet morning", "Return journey", "Back online — differently"] },
+            ].map((day, i) => (
+              <Reveal key={day.day} delay={i * 0.08}>
+                <article className="h-full border border-paper/10 bg-paper/[0.03] p-7 md:p-8">
+                  <p className="num-display text-ember text-sm tracking-[0.18em]">{day.day}</p>
+                  <ul className="mt-6 space-y-4 text-paper/70">
+                    {day.items.map((item) => (
+                      <li key={item} className="font-serif text-xl text-paper/85">{item}</li>
+                    ))}
+                  </ul>
+                </article>
               </Reveal>
             ))}
           </div>
-
-          <Reveal delay={0.2}>
-            <p className="mt-10 text-xs tracking-[0.28em] uppercase text-paper/40 max-w-xl leading-relaxed">
-              Specific villages and addresses are sealed until 24 hours before your weekend begins. The waiting is part of the weekend.
-            </p>
-          </Reveal>
         </div>
       </section>
 
@@ -282,17 +275,17 @@ function Landing() {
             </div>
             <div className="md:col-span-8">
               <h2 className="font-serif text-4xl md:text-6xl leading-[1.05] kerned text-balance">
-                Five steps. Most of them, you don't decide.
+                Apply. Match. Reserve. Then let anticipation do its work.
               </h2>
             </div>
           </div>
           <ol className="grid grid-cols-1 md:grid-cols-5 gap-0 border-t border-paper/10">
             {[
-              { t: "Apply anonymously", d: "An honest paragraph. No résumé." },
-              { t: "Get selected", d: "We curate the cohort like a dinner party." },
-              { t: "Location reveal", d: "Address arrives 24 hours before." },
-              { t: "Phone swap", d: "Glass for plastic at the meetpoint." },
-              { t: "48 hours of real", d: "What happens, stays unphotographed." },
+              { t: "Apply", d: "Choose the atmosphere you’re drawn to, then answer honestly." },
+              { t: "Match", d: "Landscape preference meets emotional compatibility." },
+              { t: "Curated cohort", d: "We shape the group like a calm dinner table." },
+              { t: "Reserve seat", d: "Confirm the ₹14K booking only after the match feels right." },
+              { t: "Reveal", d: "Exact destination details arrive 24 hours before departure." },
             ].map((s, i) => (
               <Reveal key={i} delay={i * 0.06}>
                 <li className="border-b md:border-b-0 md:border-r border-paper/10 last:border-r-0 p-6 md:p-8 h-full">
@@ -330,53 +323,49 @@ function Landing() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {[
               {
-                slug: "birbhum",
-                region: "Birbhum, West Bengal",
-                place: "Shantiniketan & the Khoai",
-                copy: "Red earth paths. Baul songs after dusk. Long conversations under sal trees.",
-                theme: "Creative softness · grounding · warmth",
-                img: "https://images.unsplash.com/photo-1532375810709-75b1da00537c?auto=format&fit=crop&w=1600&q=80",
-              },
-              {
-                slug: "dooars",
-                region: "Jalpaiguri, North Bengal",
-                place: "The Dooars, near Gorumara",
-                copy: "Tea-garden silence. Morning mist. Forest air that slows your thoughts down.",
+                slug: "forest-silence",
+                label: "🌲 Forest Silence",
+                copy: "Quiet trails, misty mornings, slow conversations.",
                 theme: "Silence · reset · stillness",
                 img: "https://images.unsplash.com/photo-1542317854-5cdaee5b2548?auto=format&fit=crop&w=1600&q=80",
               },
               {
-                slug: "kandhamal",
-                region: "Kandhamal, Odisha",
-                place: "Daringbadi pine country",
-                copy: "Pine smoke. Coffee estates. Cold evenings and stories that linger.",
+                slug: "mountains",
+                label: "⛰️ Mountains",
+                copy: "Cold air, sunrise stillness, emotional reset.",
                 theme: "Reflection · slowness · emotional depth",
                 img: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1600&q=80",
               },
               {
-                slug: "angul",
-                region: "Angul, Odisha",
-                place: "Satkosia gorge, Mahanadi",
-                copy: "River shadows. Boat lanterns. A sky untouched by city light.",
+                slug: "coastline",
+                label: "🌊 Coastline",
+                copy: "Long-table dinners, sea air, slower time.",
+                theme: "Creative softness · grounding · warmth",
+                img: "https://images.unsplash.com/photo-1532375810709-75b1da00537c?auto=format&fit=crop&w=1600&q=80",
+              },
+              {
+                slug: "rivers-wilderness",
+                label: "🛶 Rivers & Wilderness",
+                copy: "Boat lanterns, dark skies, deep presence.",
                 theme: "Awe · detachment · immersion",
                 img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80",
               },
             ].map((c, i) => (
               <Reveal key={c.slug} delay={i * 0.08}>
                 <a
-                  href={`/questionnaire?landscape=${c.slug}`}
+                  href={`/questionnaire?atmosphere=${c.slug}`}
                   className="group relative block aspect-[4/5] md:aspect-[5/6] overflow-hidden border border-paper/10"
                 >
                   <img
                     src={c.img}
-                    alt={c.place}
+                    alt={c.label}
                     loading="lazy"
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.06]"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/10" />
                   <div className="absolute inset-0 p-7 md:p-10 flex flex-col justify-end">
-                    <p className="overline text-paper/55 mb-3">{c.region}</p>
-                    <h3 className="font-serif text-3xl md:text-4xl text-paper leading-[1.05] text-balance">{c.place}</h3>
+                    <p className="overline text-paper/55 mb-3">Emotional landscape</p>
+                    <h3 className="font-serif text-3xl md:text-4xl text-paper leading-[1.05] text-balance">{c.label}</h3>
                     <p className="mt-4 text-paper/75 text-sm md:text-base leading-relaxed max-w-md">{c.copy}</p>
                     <p className="mt-6 text-[0.65rem] tracking-[0.28em] uppercase text-ember/85">{c.theme}</p>
                   </div>
@@ -387,7 +376,7 @@ function Landing() {
 
           <Reveal delay={0.4}>
             <a
-              href="/questionnaire?landscape=open"
+              href="/questionnaire?atmosphere=open"
               className="group mt-8 md:mt-10 block border border-paper/15 hover:border-ember/60 transition-colors duration-500 p-8 md:p-10 text-center"
             >
               <p className="overline text-paper/55 mb-3">— A fifth path</p>
@@ -412,9 +401,7 @@ function Landing() {
           <div className="md:col-span-7">
             <Reveal>
               <div className="num-display text-7xl md:text-9xl text-paper kerned">
-                ₹12<span className="text-paper/40">k</span>
-                <span className="text-paper/30 mx-3">—</span>
-                ₹18<span className="text-paper/40">k</span>
+                ₹14<span className="text-paper/40">k</span>
               </div>
             </Reveal>
             <Reveal delay={0.1}>
@@ -426,7 +413,7 @@ function Landing() {
               <ul className="mt-8 space-y-3 text-paper/70">
                 {[
                   "All accommodation, food, and travel within the experience",
-                  "A button phone for 48 hours (yours to keep)",
+                  "48 hours intentionally offline — no feeds, notifications, or performance",
                   "Hand-written letter from a fellow participant",
                   "Locally-led workshop — Baul song, dokra craft, or river cooking",
                 ].map((x, i) => (
@@ -443,7 +430,7 @@ function Landing() {
                   Apply for the next experience
                   <ArrowUpRight size={16} />
                 </Link>
-                <span className="text-xs text-paper/40 tracking-[0.22em] uppercase">No deposit until you're selected.</span>
+                <span className="text-xs text-paper/40 tracking-[0.22em] uppercase">Apply → Match → Reserve Seat → ₹14K booking.</span>
               </div>
             </Reveal>
           </div>
@@ -461,15 +448,15 @@ function Landing() {
           <div className="md:col-span-7">
             <p className="overline mb-5">Next reveal</p>
             <h2 className="font-serif text-3xl md:text-5xl leading-[1.1] text-balance">
-              The location is sealed until 24 hours before.
+              Your exact destination is revealed 24 hours before departure.
             </h2>
             <p className="mt-5 text-paper/65 max-w-md leading-relaxed">
-              When the clock hits zero, twelve people receive the address. Until then, all you have is the wait — and the wait is part of it.
+              After you reserve, a countdown begins. Until then, the anticipation is part of the experience.
             </p>
           </div>
           <div className="md:col-span-5 flex items-center gap-3 text-paper/55 text-xs tracking-[0.22em] uppercase">
             <MapPin size={14} className="text-ember" />
-            <span>Location revealed 24h before</span>
+            <span>Exact destination revealed 24h before</span>
             <span className="ml-auto">12 seats remaining</span>
           </div>
         </div>
@@ -493,7 +480,7 @@ function Landing() {
           <Reveal delay={0.2}>
             <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-5">
               <Link to="/questionnaire" className="ember-button">
-                Reserve your spot
+                Reserve your seat
                 <ArrowUpRight size={16} />
               </Link>
               <span className="text-xs text-paper/45 tracking-[0.22em] uppercase">12 seats. One weekend. No second chances this round.</span>
