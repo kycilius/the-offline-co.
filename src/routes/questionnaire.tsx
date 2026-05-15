@@ -32,6 +32,14 @@ const QUESTIONS = [
 
 const SCALE = ["Disagree", "", "Neutral", "", "Agree"];
 
+const LANDSCAPES = [
+  { slug: "birbhum",   region: "Birbhum, West Bengal",     place: "Shantiniketan & the Khoai" },
+  { slug: "dooars",    region: "Jalpaiguri, North Bengal", place: "The Dooars, near Gorumara" },
+  { slug: "kandhamal", region: "Kandhamal, Odisha",        place: "Daringbadi pine country"   },
+  { slug: "angul",     region: "Angul, Odisha",            place: "Satkosia gorge, Mahanadi"  },
+  { slug: "open",      region: "Anywhere",                 place: "I'm open to wherever feels right" },
+];
+
 function Questionnaire() {
   const navigate = useNavigate();
   const [index, setIndex] = useState(0);
@@ -39,22 +47,30 @@ function Questionnaire() {
   const [transitioning, setTransitioning] = useState(false);
   const [selected, setSelected] = useState<number | null>(null);
   const [started, setStarted] = useState(false);
-  const [step, setStep] = useState<"name" | "age" | "gender">("name");
+  const [step, setStep] = useState<"name" | "age" | "gender" | "landscape">("name");
   const [name, setName] = useState("");
   const [ageGroup, setAgeGroup] = useState<string>("");
   const [gender, setGender] = useState<string>("");
+  const [landscape, setLandscape] = useState<string>("");
 
   const AGE_OPTIONS = ["18–22", "23–27", "28–35", "35+"];
   const GENDER_OPTIONS = ["Male", "Female", "Prefer not to say"];
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const ls = params.get("landscape");
+    if (ls && LANDSCAPES.some((l) => l.slug === ls)) {
+      sessionStorage.setItem("selectedLandscape", ls);
+      setLandscape(ls);
+    }
+  }, []);
+
   const handleNameSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = name.trim();
-    if (trimmed) {
-      localStorage.setItem("user_name", trimmed);
-    } else {
-      localStorage.removeItem("user_name");
-    }
+    if (trimmed) localStorage.setItem("user_name", trimmed);
+    else localStorage.removeItem("user_name");
     setStep("age");
   };
 
@@ -67,7 +83,13 @@ function Questionnaire() {
   const handleGenderSelect = (value: string) => {
     setGender(value);
     sessionStorage.setItem("selectedGender", value);
-    setTimeout(() => setStarted(true), 280);
+    setTimeout(() => setStep("landscape"), 280);
+  };
+
+  const handleLandscapeSelect = (slug: string) => {
+    setLandscape(slug);
+    sessionStorage.setItem("selectedLandscape", slug);
+    setTimeout(() => setStarted(true), 320);
   };
 
   const skipName = () => {
@@ -77,6 +99,11 @@ function Questionnaire() {
 
   const skipGender = () => {
     sessionStorage.setItem("selectedGender", "unknown");
+    setStep("landscape");
+  };
+
+  const skipLandscape = () => {
+    sessionStorage.setItem("selectedLandscape", "open");
     setStarted(true);
   };
 
@@ -228,6 +255,52 @@ function Questionnaire() {
               <button
                 type="button"
                 onClick={skipGender}
+                className="mt-8 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Skip
+              </button>
+            </div>
+          )}
+
+          {step === "landscape" && (
+            <div key="landscape" className="w-full animate-[fade-up_700ms_var(--ease-calm)]">
+              <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-primary">Your atmosphere</p>
+              <h2 className="font-display text-3xl font-light leading-snug text-foreground md:text-4xl">
+                Which experience calls to you most?
+              </h2>
+              <p className="mt-3 text-sm text-muted-foreground">
+                Choose the landscape that quietly pulls you in.
+              </p>
+
+              <div className="mt-10 grid grid-cols-1 gap-3 text-left">
+                {LANDSCAPES.map((opt) => {
+                  const isSelected = landscape === opt.slug;
+                  return (
+                    <button
+                      key={opt.slug}
+                      type="button"
+                      onClick={() => handleLandscapeSelect(opt.slug)}
+                      className={`group rounded-2xl border px-5 py-4 transition-all duration-500 ${
+                        isSelected
+                          ? "border-primary bg-primary/10 shadow-[var(--shadow-glow)]"
+                          : "border-border/60 bg-background/40 hover:border-primary/50 hover:bg-background/60"
+                      }`}
+                    >
+                      <div className="flex items-baseline justify-between gap-4">
+                        <div>
+                          <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-primary/80">{opt.region}</p>
+                          <p className="mt-1 font-display text-lg text-foreground">{opt.place}</p>
+                        </div>
+                        <span className={`text-xs transition-opacity ${isSelected ? "opacity-100 text-primary" : "opacity-40"}`}>→</span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                type="button"
+                onClick={skipLandscape}
                 className="mt-8 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
                 Skip
