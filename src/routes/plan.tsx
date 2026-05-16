@@ -4,6 +4,10 @@ import { motion } from "framer-motion";
 import { MapPin, Users, Calendar, Sparkles, ArrowRight, Check, Clock, CloudSun, Backpack } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import wildSilence from "@/assets/landscapes/wild-silence.png";
+import firstLight from "@/assets/landscapes/first-light.png";
+import saltStillness from "@/assets/landscapes/salt-stillness.png";
+import unhurriedWild from "@/assets/landscapes/unhurried-wild.png";
 
 export const Route = createFileRoute("/plan")({
   head: () => ({
@@ -28,7 +32,7 @@ const LANDSCAPE_DETAILS: Record<
     stay: string;
     weather: string;
     pack: string[];
-    img: string;
+    image: string;
     schedule: string[];
   }
 > = {
@@ -38,7 +42,7 @@ const LANDSCAPE_DETAILS: Record<
     stay: "A restored village homestay with shaded courtyards and shared long-table meals.",
     weather: "Warm afternoons, soft evenings, and dry red-earth trails.",
     pack: ["Light cotton layers", "Walking sandals", "A notebook", "One warm shawl for late dinners"],
-    img: "https://images.unsplash.com/photo-1532375810709-75b1da00537c?auto=format&fit=crop&w=1600&q=80",
+    image: saltStillness,
     schedule: [
       "Arrival and offline transition at the homestay courtyard",
       "Baul-led evening meal and slow introductions",
@@ -53,7 +57,7 @@ const LANDSCAPE_DETAILS: Record<
     stay: "A forest-edge lodge run with local guides, simple rooms, and misty morning paths.",
     weather: "Humid forest air, cooler mornings, and possible passing showers.",
     pack: ["Breathable layers", "Closed walking shoes", "Light rain shell", "Insect repellent"],
-    img: "https://images.unsplash.com/photo-1542317854-5cdaee5b2548?auto=format&fit=crop&w=1600&q=80",
+    image: wildSilence,
     schedule: [
       "Arrival beside the forest edge and offline transition",
       "Shared dinner around tea-garden stories",
@@ -68,7 +72,7 @@ const LANDSCAPE_DETAILS: Record<
     stay: "A hill-country guesthouse close to pine walks, coffee estates, and cold evening air.",
     weather: "Cool mornings, crisp evenings, and bright hill light through the day.",
     pack: ["Warm layer", "Comfortable walking shoes", "Socks for cold evenings", "Reusable water bottle"],
-    img: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1600&q=80",
+    image: firstLight,
     schedule: [
       "Arrival into the hills and offline transition",
       "Pine-fire dinner with gentle first conversations",
@@ -83,7 +87,7 @@ const LANDSCAPE_DETAILS: Record<
     stay: "A riverside eco-stay with simple rooms, local meals, and dark-sky evenings.",
     weather: "Warm river days, cooler nights, and open skies after dusk.",
     pack: ["Quick-dry layers", "Sandals with grip", "A light jacket", "Torch or headlamp"],
-    img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80",
+    image: unhurriedWild,
     schedule: [
       "Arrival by the river and offline transition",
       "Lantern dinner and slow introductions",
@@ -98,7 +102,7 @@ const LANDSCAPE_DETAILS: Record<
     stay: "Stay details will be matched to the final cohort and shared at the reveal window.",
     weather: "Weather notes arrive with the reveal so you can pack without overthinking.",
     pack: ["Two comfortable outfits", "Walking shoes", "A warm layer", "Any personal essentials"],
-    img: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1600&q=80",
+    image: wildSilence,
     schedule: [
       "Arrival and offline transition",
       "Shared dinner and slow introductions",
@@ -128,18 +132,30 @@ function formatCountdown(ms: number) {
   return { days, hours, minutes, seconds };
 }
 
+const LANDSCAPE_NORMALIZATION: Record<string, string> = {
+  angul: "satkosia",
+  jalpaiguri: "dooars",
+  daringbadi: "kandhamal",
+};
+
+function normalizeLandscape(value: string | null) {
+  if (!value) return "dooars";
+  const normalized = value.toLowerCase().trim();
+  return LANDSCAPE_NORMALIZATION[normalized] ?? normalized;
+}
+
 function Plan() {
   const [stage, setStage] = useState(0);
   const [selectedDate, setSelectedDate] = useState(DATES[0]);
   const [now, setNow] = useState(() => Date.now());
 
-  const landscape = useMemo(() => {
-    if (typeof window === "undefined") return "open";
-    return sessionStorage.getItem("selectedLandscape") || "open";
+  const selectedLandscape = useMemo(() => {
+    if (typeof window === "undefined") return "dooars";
+    return normalizeLandscape(sessionStorage.getItem("selectedLandscape"));
   }, []);
 
-  const detail = LANDSCAPE_DETAILS[landscape] ?? LANDSCAPE_DETAILS.open;
-  const atmosphere = ATMOSPHERES[landscape] ?? ATMOSPHERES.open;
+  const detail = LANDSCAPE_DETAILS[selectedLandscape] ?? LANDSCAPE_DETAILS.dooars;
+  const atmosphere = ATMOSPHERES[selectedLandscape] ?? ATMOSPHERES.dooars;
   const revealDate = getRevealDate(selectedDate.departure);
   const countdown = formatCountdown(revealDate.getTime() - now);
   const isRevealed = now >= revealDate.getTime();
@@ -182,7 +198,7 @@ function Plan() {
           className="mt-10 overflow-hidden rounded-3xl border border-border/60 bg-card/95 shadow-[var(--shadow-card)]"
         >
           <div className="relative aspect-[16/10] overflow-hidden">
-            <img src={detail.img} alt={atmosphere.label} loading="eager" className="h-full w-full object-cover" />
+            <img src={detail.image} alt={atmosphere.label} loading="eager" className="h-full w-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
               <p className="text-[11px] uppercase tracking-[0.25em] text-primary/90">Landscape preference</p>
