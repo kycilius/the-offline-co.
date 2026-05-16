@@ -1,4 +1,4 @@
-# The Offline Co.
+# TheOfflineCo
 
 ## Backend (FastAPI) - Deployment Ready
 
