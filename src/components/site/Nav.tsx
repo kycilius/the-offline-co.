@@ -28,7 +28,6 @@ export default function Nav() {
       <div className="container-page flex items-center justify-between py-5 md:py-6">
         <Link to="/" className="flex items-baseline gap-2 group">
           <span className="font-serif text-xl md:text-2xl text-paper">The Ofline Co.</span>
-          <span className="hidden md:inline overline">Est. 2025</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-10">

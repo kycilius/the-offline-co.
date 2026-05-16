@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="md:col-span-5">
           <p className="overline">A premium offline experience</p>
           <h3 className="font-serif text-3xl md:text-4xl mt-3 text-balance">The Ofline Co.</h3>
-          <p className="mt-3 text-xs text-paper/45 tracking-[0.24em] uppercase">Bengal × Odisha · Est. 2025</p>
+          <p className="mt-3 text-xs text-paper/45 tracking-[0.24em] uppercase">Bengal × Odisha</p>
           <p className="mt-5 text-paper/60 max-w-md leading-relaxed">
             We don't make content. We make weekends you remember without a single photo — held in red-earth villages, Dooars forests, and Odisha's quiet hills.
           </p>
