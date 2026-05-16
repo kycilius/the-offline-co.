@@ -222,7 +222,7 @@ function Questionnaire() {
         sessionStorage.setItem("answers", JSON.stringify(next));
         sessionStorage.removeItem("matchResult");
         sessionStorage.removeItem("groupId");
-        navigate({ to: "/loading" });
+        setShowContact(true);
       } else {
         setIndex((prev) => prev + 1);
         setSelected(null);
@@ -230,6 +230,40 @@ function Questionnaire() {
 
       setTransitioning(false); // ALWAYS RESET
     }, 480);
+  };
+
+  const [showContact, setShowContact] = useState(false);
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactWhatsapp, setContactWhatsapp] = useState("");
+  const [contactSubmitting, setContactSubmitting] = useState(false);
+  const [contactError, setContactError] = useState<string | null>(null);
+
+  const submitContact = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setContactError(null);
+    if (!/^\S+@\S+\.\S+$/.test(contactEmail) || contactWhatsapp.replace(/\D/g, "").length < 7) {
+      setContactError("Please share a valid email and WhatsApp number.");
+      return;
+    }
+    setContactSubmitting(true);
+    sessionStorage.setItem("contactEmail", contactEmail.trim());
+    sessionStorage.setItem("contactWhatsapp", contactWhatsapp.trim());
+    try {
+      await fetch(`${API_BASE}/api/waitlist`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: localStorage.getItem("user_name") || null,
+          email: contactEmail.trim(),
+          whatsapp: contactWhatsapp.trim(),
+          source: "questionnaire_reveal",
+          atmosphere: sessionStorage.getItem("selectedAtmosphere") || null,
+        }),
+      }).catch(() => null);
+    } catch {
+      // best-effort
+    }
+    navigate({ to: "/loading" });
   };
 
   const handleBack = () => {
