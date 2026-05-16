@@ -2,6 +2,11 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { API_BASE } from "@/config";
+import wildSilenceImg from "@/assets/landscapes/wild-silence.png";
+import firstLightImg from "@/assets/landscapes/first-light.png";
+import saltStillnessImg from "@/assets/landscapes/salt-stillness.png";
+import unhurriedWildImg from "@/assets/landscapes/unhurried-wild.png";
 
 export const Route = createFileRoute("/questionnaire")({
   head: () => ({
@@ -34,67 +39,72 @@ const SCALE = ["Disagree", "", "Neutral", "", "Agree"];
 
 const LANDSCAPES = [
   {
-    slug: "forest-silence",
+    slug: "wild-silence",
     destination: "dooars",
-    icon: "🌲",
-    title: "Forest Silence",
-    description: "Quiet trails, misty mornings, slow conversations.",
-    transitionTitle: "forests",
+    title: "Wild Silence",
+    subtitle: "Gorumara, North Bengal",
+    description: "Forest immersion. Elephant safari. No signal zones.",
+    image: wildSilenceImg,
+    transitionTitle: "wild silence",
     transitionLines: [
-      "Maybe you’re looking for quiet.",
-      "Maybe you’re looking for distance from noise.",
-      "Maybe you just want to slow down.",
+      "Maybe you're looking for the kind of quiet only forests hold.",
+      "Maybe distance from noise feels like medicine right now.",
+      "Maybe you just want to slow down without explaining why.",
     ],
   },
   {
-    slug: "mountains",
+    slug: "first-light",
     destination: "kandhamal",
-    icon: "⛰️",
-    title: "Mountains",
-    description: "Cold air, sunrise stillness, emotional reset.",
-    transitionTitle: "mountains",
+    title: "First Light",
+    subtitle: "Lower Himalayas",
+    description: "Mountain sunrise. Tea estate walks. Birds before alarms.",
+    image: firstLightImg,
+    transitionTitle: "first light",
     transitionLines: [
-      "Maybe you’re looking for a higher kind of quiet.",
-      "Maybe the cold air feels like a reset.",
-      "Maybe stillness is what your body remembers needing.",
+      "Maybe you're looking for a higher kind of clarity.",
+      "Maybe the cold mountain air feels like a reset.",
+      "Maybe you want to wake to birdsong instead of a feed.",
     ],
   },
   {
-    slug: "coastline",
+    slug: "salt-stillness",
     destination: "birbhum",
-    icon: "🌊",
-    title: "Coastline",
-    description: "Long-table dinners, sea air, slower time.",
-    transitionTitle: "coastlines",
+    title: "Salt & Stillness",
+    subtitle: "Odisha Coast",
+    description: "The sea at 5am. Fishing villages. Tide as your only notification.",
+    image: saltStillnessImg,
+    transitionTitle: "salt & stillness",
     transitionLines: [
-      "Maybe you’re drawn to softness.",
+      "Maybe you're drawn to softness, salt air, and slow mornings.",
       "Maybe you want meals that stretch into stories.",
-      "Maybe slower time is the luxury you miss most.",
+      "Maybe slower time is the luxury you've been quietly craving.",
     ],
   },
   {
-    slug: "rivers-wilderness",
+    slug: "unhurried-wild",
     destination: "satkosia",
-    icon: "🛶",
-    title: "Rivers & Wilderness",
-    description: "Boat lanterns, dark skies, deep presence.",
-    transitionTitle: "rivers",
+    title: "The Unhurried Wild",
+    subtitle: "Central India Safari",
+    description: "Dawn without a feed. Forest sounds. A naturalist who reads animals better than algorithms.",
+    image: unhurriedWildImg,
+    transitionTitle: "the unhurried wild",
     transitionLines: [
       "Maybe you want to feel small in the best way.",
-      "Maybe dark skies make it easier to be honest.",
-      "Maybe presence feels different beside moving water.",
+      "Maybe you'd rather hear a forest than a notification.",
+      "Maybe presence feels different beside something genuinely wild.",
     ],
   },
   {
     slug: "open",
     destination: "open",
-    icon: "🌾",
     title: "Open to Wherever Feels Right",
+    subtitle: "Let the experience choose you",
     description: "Let the experience choose you.",
+    image: null as string | null,
     transitionTitle: "openness",
     transitionLines: [
-      "Maybe you’re practicing trust.",
-      "Maybe you don’t need to know the shape yet.",
+      "Maybe you're practicing trust.",
+      "Maybe you don't need to know the shape yet.",
       "Maybe the right atmosphere can find you.",
     ],
   },
