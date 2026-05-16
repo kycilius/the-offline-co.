@@ -471,6 +471,69 @@ function Questionnaire() {
     );
   }
 
+  if (showContact) {
+    return (
+      <main className="relative min-h-screen overflow-hidden" style={{ background: "var(--gradient-warm)" }}>
+        <div className="pointer-events-none absolute -left-32 top-10 h-[28rem] w-[28rem] rounded-full bg-primary/10 blur-3xl" />
+        <div className="pointer-events-none absolute -right-40 bottom-0 h-[32rem] w-[32rem] rounded-full bg-primary/10 blur-3xl" />
+        <header className="relative z-10 mx-auto flex max-w-3xl items-center justify-between px-6 py-6">
+          <Logo />
+          <ThemeToggle />
+        </header>
+        <section className="relative z-10 mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-6 text-center">
+          <div className="w-full animate-[fade-up_700ms_var(--ease-calm)]">
+            <p className="mb-4 text-xs font-medium uppercase tracking-[0.22em] text-primary">A quiet detail</p>
+            <h2 className="font-display text-3xl font-light leading-snug text-foreground md:text-4xl">
+              Where should we send your cohort reveal?
+            </h2>
+            <p className="mt-3 text-sm text-muted-foreground">
+              Personal. Anticipatory. Never spam.
+            </p>
+            <form onSubmit={submitContact} className="mt-10 space-y-5 text-left">
+              <label className="block">
+                <span className="block text-[0.65rem] tracking-[0.26em] uppercase text-paper/55 mb-2">Email</span>
+                <input
+                  type="email"
+                  value={contactEmail}
+                  onChange={(e) => setContactEmail(e.target.value)}
+                  placeholder="quiet@inbox.com"
+                  autoComplete="email"
+                  className="w-full bg-transparent border-b border-paper/15 focus:border-primary/70 outline-none py-3 text-paper text-base md:text-lg placeholder:text-paper/30 transition-colors"
+                />
+              </label>
+              <label className="block">
+                <span className="block text-[0.65rem] tracking-[0.26em] uppercase text-paper/55 mb-2">WhatsApp number</span>
+                <input
+                  type="tel"
+                  value={contactWhatsapp}
+                  onChange={(e) => setContactWhatsapp(e.target.value)}
+                  placeholder="+91 ·· ····· ····"
+                  autoComplete="tel"
+                  className="w-full bg-transparent border-b border-paper/15 focus:border-primary/70 outline-none py-3 text-paper text-base md:text-lg placeholder:text-paper/30 transition-colors"
+                />
+              </label>
+              {contactError && (
+                <p className="text-xs tracking-[0.18em] uppercase text-red-300/80">{contactError}</p>
+              )}
+              <div className="pt-3 flex flex-col items-center gap-3">
+                <button
+                  type="submit"
+                  disabled={contactSubmitting}
+                  className="ember-button disabled:opacity-60"
+                >
+                  {contactSubmitting ? "Sending…" : "Reveal my cohort"}
+                </button>
+                <span className="text-[0.65rem] tracking-[0.24em] uppercase text-paper/45">
+                  Used only for your reveal — nothing more.
+                </span>
+              </div>
+            </form>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="relative min-h-screen" style={{ background: "var(--gradient-warm)" }}>
       <header className="relative z-10 pointer-events-auto mx-auto flex max-w-3xl items-center justify-between px-6 py-6">
