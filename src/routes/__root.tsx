@@ -27,10 +27,10 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "TheOfflineCo — Find Your Perfect Social Group" },
+      { title: "The Offline Co. — Find Your Perfect Social Group" },
       { name: "description", content: "Step away from feeds. Step into a human-centered offline reconnection experience." },
-      { name: "author", content: "TheOfflineCo" },
-      { property: "og:title", content: "TheOfflineCo — Offline Reconnection" },
+      { name: "author", content: "The Offline Co." },
+      { property: "og:title", content: "The Offline Co. — Offline Reconnection" },
       { property: "og:description", content: "Step away from screens. Step into real connections." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

@@ -7,7 +7,7 @@ import { API_BASE } from "../config";
 
 export const Route = createFileRoute("/loading")({
   head: () => ({
-    meta: [{ title: "Finding your group — TheOfflineCo" }],
+    meta: [{ title: "Finding your group — The Offline Co." }],
   }),
   component: Loading,
 });

@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 
 export const Route = createFileRoute("/result")({
   head: () => ({
-    meta: [{ title: "Your group — TheOfflineCo" }],
+    meta: [{ title: "Your group — The Offline Co." }],
   }),
   component: Result,
 });
@@ -425,9 +425,9 @@ function Result() {
             <button
               type="button"
               onClick={async () => {
-                const shareText = `I just found my '${groupName}' on TheOfflineCo — a small cohort shaped around ${landscapeCopy.title}. Curious where you'll land.`;
+                const shareText = `I just found my '${groupName}' on The Offline Co. — a small cohort shaped around ${landscapeCopy.title}. Curious where you'll land.`;
                 const shareUrl = typeof window !== "undefined" ? window.location.origin : "";
-                const shareData = { title: "TheOfflineCo", text: shareText, url: shareUrl };
+                const shareData = { title: "The Offline Co.", text: shareText, url: shareUrl };
                 try {
                   if (typeof navigator !== "undefined" && navigator.share) {
                     await navigator.share(shareData);

@@ -11,7 +11,7 @@ import unhurriedWildImg from "@/assets/landscapes/unhurried-wild.png";
 export const Route = createFileRoute("/questionnaire")({
   head: () => ({
     meta: [
-      { title: "Questionnaire — TheOfflineCo" },
+      { title: "Questionnaire — The Offline Co." },
       { name: "description", content: "A few thoughtful questions to find your group." },
     ],
   }),

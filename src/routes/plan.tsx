@@ -11,7 +11,7 @@ import unhurriedWild from "@/assets/landscapes/unhurried-wild.png";
 
 export const Route = createFileRoute("/plan")({
   head: () => ({
-    meta: [{ title: "Reserve your seat — TheOfflineCo" }],
+    meta: [{ title: "Reserve your seat — The Offline Co." }],
   }),
   component: Plan,
 });

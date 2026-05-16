@@ -21,9 +21,9 @@ const HANDS = "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "The Ofline Co. — Log out. Show up." },
+      { title: "The Offline Co. — Log out. Show up." },
       { name: "description", content: "A weekend in the red-earth villages of Bengal and the quiet hills of Odisha — where strangers become real, and life feels like it used to." },
-      { property: "og:title", content: "The Ofline Co. — Log out. Show up." },
+      { property: "og:title", content: "The Offline Co. — Log out. Show up." },
       { property: "og:description", content: "48 hours offline. 12 seats. Application only." },
       { property: "og:image", content: HERO_IMG },
     ],

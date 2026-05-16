@@ -6,7 +6,7 @@ export function Logo({ className = "" }: { className?: string }) {
     <Link
       to="/"
       className={`group inline-flex items-center gap-2.5 ${className}`}
-      aria-label="TheOfflineCo home"
+      aria-label="The Offline Co. home"
     >
       <img
         src={logo}
