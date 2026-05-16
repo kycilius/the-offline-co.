@@ -138,7 +138,7 @@ const LANDSCAPE_NORMALIZATION: Record<string, string> = {
   daringbadi: "kandhamal",
 };
 
-function normalizeLandscape(value: string | null) {
+function normalizeLandscapeKey(value: string | null) {
   if (!value) return "dooars";
   const normalized = value.toLowerCase().trim();
   return LANDSCAPE_NORMALIZATION[normalized] ?? normalized;
@@ -151,7 +151,7 @@ function Plan() {
 
   const selectedLandscape = useMemo(() => {
     if (typeof window === "undefined") return "dooars";
-    return normalizeLandscape(sessionStorage.getItem("selectedLandscape"));
+    return normalizeLandscapeKey(sessionStorage.getItem("selectedLandscape"));
   }, []);
 
   const detail = LANDSCAPE_DETAILS[selectedLandscape] ?? LANDSCAPE_DETAILS.dooars;
