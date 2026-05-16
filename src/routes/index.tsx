@@ -5,6 +5,11 @@ import type { ReactNode } from "react";
 import Reveal from "@/components/site/Reveal";
 import Nav from "@/components/site/Nav";
 import Footer from "@/components/site/Footer";
+import Waitlist from "@/components/site/Waitlist";
+import wildSilenceImg from "@/assets/landscapes/wild-silence.png";
+import firstLightImg from "@/assets/landscapes/first-light.png";
+import saltStillnessImg from "@/assets/landscapes/salt-stillness.png";
+import unhurriedWildImg from "@/assets/landscapes/unhurried-wild.png";
 
 const HERO_IMG = "https://static.prod-images.emergentagent.com/jobs/8233dccd-e10a-45ac-93c0-5e1ff12eeb81/images/a442b8b5c46dd5c0aba75a7f85fe0c41e8bcc4d39a1b435c00a324223d2b7479.png";
 const OFFLINE_RITUAL = "https://static.prod-images.emergentagent.com/jobs/8233dccd-e10a-45ac-93c0-5e1ff12eeb81/images/4b65994cf91868d468e35ac4e28e488f09dff70c4c7489de85745a1102237673.png";
@@ -323,51 +328,56 @@ function Landing() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {[
               {
-                slug: "forest-silence",
-                label: "🌲 Forest Silence",
-                copy: "Quiet trails, misty mornings, slow conversations.",
-                theme: "Silence · reset · stillness",
-                img: "https://images.unsplash.com/photo-1542317854-5cdaee5b2548?auto=format&fit=crop&w=1600&q=80",
+                slug: "wild-silence",
+                title: "Wild Silence",
+                subtitle: "Gorumara, North Bengal",
+                copy: "Forest immersion. Elephant safari. Tribal wisdom. No signal zones.",
+                theme: "Deep forest calm · silence · grounding",
+                img: wildSilenceImg,
               },
               {
-                slug: "mountains",
-                label: "⛰️ Mountains",
-                copy: "Cold air, sunrise stillness, emotional reset.",
-                theme: "Reflection · slowness · emotional depth",
-                img: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1600&q=80",
+                slug: "first-light",
+                title: "First Light",
+                subtitle: "Lower Himalayas",
+                copy: "Mountain sunrise. Tea estate walks. Campfire folk music. Birds before alarms.",
+                theme: "Clarity · reset · emotional openness",
+                img: firstLightImg,
               },
               {
-                slug: "coastline",
-                label: "🌊 Coastline",
-                copy: "Long-table dinners, sea air, slower time.",
-                theme: "Creative softness · grounding · warmth",
-                img: "https://images.unsplash.com/photo-1532375810709-75b1da00537c?auto=format&fit=crop&w=1600&q=80",
+                slug: "salt-stillness",
+                title: "Salt & Stillness",
+                subtitle: "Odisha Coast",
+                copy: "The sea at 5am. Fishing villages. Someone's grandmother's recipe. Tide as your only notification.",
+                theme: "Warmth · softness · human connection",
+                img: saltStillnessImg,
               },
               {
-                slug: "rivers-wilderness",
-                label: "🛶 Rivers & Wilderness",
-                copy: "Boat lanterns, dark skies, deep presence.",
-                theme: "Awe · detachment · immersion",
-                img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80",
+                slug: "unhurried-wild",
+                title: "The Unhurried Wild",
+                subtitle: "Central India Safari",
+                copy: "Dawn without a feed. Forest sounds. A naturalist who reads animals better than algorithms.",
+                theme: "Slow wilderness · awe · detachment",
+                img: unhurriedWildImg,
               },
             ].map((c, i) => (
               <Reveal key={c.slug} delay={i * 0.08}>
                 <a
                   href={`/questionnaire?atmosphere=${c.slug}`}
-                  className="group relative block aspect-[4/5] md:aspect-[5/6] overflow-hidden border border-paper/10"
+                  className="group relative block aspect-[4/5] md:aspect-[5/6] overflow-hidden border border-paper/10 hover:border-primary/40 transition-colors duration-700"
                 >
                   <img
                     src={c.img}
-                    alt={c.label}
+                    alt={c.title}
                     loading="lazy"
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.06]"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1600ms] ease-out group-hover:scale-[1.06]"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/10" />
+                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(55,201,120,0.18),transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                   <div className="absolute inset-0 p-7 md:p-10 flex flex-col justify-end">
-                    <p className="overline text-paper/55 mb-3">Emotional landscape</p>
-                    <h3 className="font-serif text-3xl md:text-4xl text-paper leading-[1.05] text-balance">{c.label}</h3>
+                    <p className="overline text-paper/60 mb-3">{c.subtitle}</p>
+                    <h3 className="font-serif text-3xl md:text-4xl text-paper leading-[1.05] text-balance">{c.title}</h3>
                     <p className="mt-4 text-paper/75 text-sm md:text-base leading-relaxed max-w-md">{c.copy}</p>
-                    <p className="mt-6 text-[0.65rem] tracking-[0.28em] uppercase text-ember/85">{c.theme}</p>
+                    <p className="mt-6 text-[0.65rem] tracking-[0.28em] uppercase text-primary/85">{c.theme}</p>
                   </div>
                 </a>
               </Reveal>
@@ -377,7 +387,7 @@ function Landing() {
           <Reveal delay={0.4}>
             <a
               href="/questionnaire?atmosphere=open"
-              className="group mt-8 md:mt-10 block border border-paper/15 hover:border-ember/60 transition-colors duration-500 p-8 md:p-10 text-center"
+              className="group mt-8 md:mt-10 block border border-paper/15 hover:border-primary/60 transition-colors duration-500 p-8 md:p-10 text-center"
             >
               <p className="overline text-paper/55 mb-3">— A fifth path</p>
               <h3 className="font-serif italic text-2xl md:text-3xl text-paper">
@@ -388,6 +398,9 @@ function Landing() {
           </Reveal>
         </div>
       </section>
+
+      {/* WAITLIST */}
+      <Waitlist />
 
       {/* PRICING */}
       <section id="pricing" className="relative py-32 md:py-44 border-t border-paper/10">

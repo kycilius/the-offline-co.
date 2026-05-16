@@ -2,6 +2,11 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { API_BASE } from "@/config";
+import wildSilenceImg from "@/assets/landscapes/wild-silence.png";
+import firstLightImg from "@/assets/landscapes/first-light.png";
+import saltStillnessImg from "@/assets/landscapes/salt-stillness.png";
+import unhurriedWildImg from "@/assets/landscapes/unhurried-wild.png";
 
 export const Route = createFileRoute("/questionnaire")({
   head: () => ({
@@ -34,67 +39,72 @@ const SCALE = ["Disagree", "", "Neutral", "", "Agree"];
 
 const LANDSCAPES = [
   {
-    slug: "forest-silence",
+    slug: "wild-silence",
     destination: "dooars",
-    icon: "🌲",
-    title: "Forest Silence",
-    description: "Quiet trails, misty mornings, slow conversations.",
-    transitionTitle: "forests",
+    title: "Wild Silence",
+    subtitle: "Gorumara, North Bengal",
+    description: "Forest immersion. Elephant safari. No signal zones.",
+    image: wildSilenceImg,
+    transitionTitle: "wild silence",
     transitionLines: [
-      "Maybe you’re looking for quiet.",
-      "Maybe you’re looking for distance from noise.",
-      "Maybe you just want to slow down.",
+      "Maybe you're looking for the kind of quiet only forests hold.",
+      "Maybe distance from noise feels like medicine right now.",
+      "Maybe you just want to slow down without explaining why.",
     ],
   },
   {
-    slug: "mountains",
+    slug: "first-light",
     destination: "kandhamal",
-    icon: "⛰️",
-    title: "Mountains",
-    description: "Cold air, sunrise stillness, emotional reset.",
-    transitionTitle: "mountains",
+    title: "First Light",
+    subtitle: "Lower Himalayas",
+    description: "Mountain sunrise. Tea estate walks. Birds before alarms.",
+    image: firstLightImg,
+    transitionTitle: "first light",
     transitionLines: [
-      "Maybe you’re looking for a higher kind of quiet.",
-      "Maybe the cold air feels like a reset.",
-      "Maybe stillness is what your body remembers needing.",
+      "Maybe you're looking for a higher kind of clarity.",
+      "Maybe the cold mountain air feels like a reset.",
+      "Maybe you want to wake to birdsong instead of a feed.",
     ],
   },
   {
-    slug: "coastline",
+    slug: "salt-stillness",
     destination: "birbhum",
-    icon: "🌊",
-    title: "Coastline",
-    description: "Long-table dinners, sea air, slower time.",
-    transitionTitle: "coastlines",
+    title: "Salt & Stillness",
+    subtitle: "Odisha Coast",
+    description: "The sea at 5am. Fishing villages. Tide as your only notification.",
+    image: saltStillnessImg,
+    transitionTitle: "salt & stillness",
     transitionLines: [
-      "Maybe you’re drawn to softness.",
+      "Maybe you're drawn to softness, salt air, and slow mornings.",
       "Maybe you want meals that stretch into stories.",
-      "Maybe slower time is the luxury you miss most.",
+      "Maybe slower time is the luxury you've been quietly craving.",
     ],
   },
   {
-    slug: "rivers-wilderness",
+    slug: "unhurried-wild",
     destination: "satkosia",
-    icon: "🛶",
-    title: "Rivers & Wilderness",
-    description: "Boat lanterns, dark skies, deep presence.",
-    transitionTitle: "rivers",
+    title: "The Unhurried Wild",
+    subtitle: "Central India Safari",
+    description: "Dawn without a feed. Forest sounds. A naturalist who reads animals better than algorithms.",
+    image: unhurriedWildImg,
+    transitionTitle: "the unhurried wild",
     transitionLines: [
       "Maybe you want to feel small in the best way.",
-      "Maybe dark skies make it easier to be honest.",
-      "Maybe presence feels different beside moving water.",
+      "Maybe you'd rather hear a forest than a notification.",
+      "Maybe presence feels different beside something genuinely wild.",
     ],
   },
   {
     slug: "open",
     destination: "open",
-    icon: "🌾",
     title: "Open to Wherever Feels Right",
+    subtitle: "Let the experience choose you",
     description: "Let the experience choose you.",
+    image: null as string | null,
     transitionTitle: "openness",
     transitionLines: [
-      "Maybe you’re practicing trust.",
-      "Maybe you don’t need to know the shape yet.",
+      "Maybe you're practicing trust.",
+      "Maybe you don't need to know the shape yet.",
       "Maybe the right atmosphere can find you.",
     ],
   },
@@ -120,7 +130,19 @@ function Questionnaire() {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
     const ls = params.get("landscape") ?? params.get("atmosphere");
-    const aliases: Record<string, string> = { angul: "satkosia", dooars: "forest-silence", kandhamal: "mountains", birbhum: "coastline", satkosia: "rivers-wilderness" };
+    const aliases: Record<string, string> = {
+      // legacy → new
+      "forest-silence": "wild-silence",
+      mountains: "first-light",
+      coastline: "salt-stillness",
+      "rivers-wilderness": "unhurried-wild",
+      // destination → new
+      angul: "unhurried-wild",
+      satkosia: "unhurried-wild",
+      dooars: "wild-silence",
+      kandhamal: "first-light",
+      birbhum: "salt-stillness",
+    };
     const normalizedAtmosphere = aliases[ls ?? ""] ?? ls;
     const selectedOption = LANDSCAPES.find((l) => l.slug === normalizedAtmosphere);
     if (selectedOption) {
@@ -200,7 +222,7 @@ function Questionnaire() {
         sessionStorage.setItem("answers", JSON.stringify(next));
         sessionStorage.removeItem("matchResult");
         sessionStorage.removeItem("groupId");
-        navigate({ to: "/loading" });
+        setShowContact(true);
       } else {
         setIndex((prev) => prev + 1);
         setSelected(null);
@@ -208,6 +230,40 @@ function Questionnaire() {
 
       setTransitioning(false); // ALWAYS RESET
     }, 480);
+  };
+
+  const [showContact, setShowContact] = useState(false);
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactWhatsapp, setContactWhatsapp] = useState("");
+  const [contactSubmitting, setContactSubmitting] = useState(false);
+  const [contactError, setContactError] = useState<string | null>(null);
+
+  const submitContact = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setContactError(null);
+    if (!/^\S+@\S+\.\S+$/.test(contactEmail) || contactWhatsapp.replace(/\D/g, "").length < 7) {
+      setContactError("Please share a valid email and WhatsApp number.");
+      return;
+    }
+    setContactSubmitting(true);
+    sessionStorage.setItem("contactEmail", contactEmail.trim());
+    sessionStorage.setItem("contactWhatsapp", contactWhatsapp.trim());
+    try {
+      await fetch(`${API_BASE}/api/waitlist`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: localStorage.getItem("user_name") || null,
+          email: contactEmail.trim(),
+          whatsapp: contactWhatsapp.trim(),
+          source: "questionnaire_reveal",
+          atmosphere: sessionStorage.getItem("selectedAtmosphere") || null,
+        }),
+      }).catch(() => null);
+    } catch {
+      // best-effort
+    }
+    navigate({ to: "/loading" });
   };
 
   const handleBack = () => {
@@ -334,35 +390,46 @@ function Questionnaire() {
             <div key="landscape" className="w-full animate-[fade-up_700ms_var(--ease-calm)]">
               <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-primary">First, the atmosphere</p>
               <h2 className="font-display text-3xl font-light leading-snug text-foreground md:text-4xl">
-                Choose the atmosphere you’re drawn to.
+                Choose the atmosphere you're drawn to.
               </h2>
               <p className="mt-3 text-sm text-muted-foreground">
-                We’ll use this quietly to shape where you may belong.
+                We'll use this quietly to shape where you may belong.
               </p>
 
-              <div className="mt-10 grid grid-cols-1 gap-3 text-left">
-                {LANDSCAPES.map((opt) => {
+              <div className="mt-10 grid grid-cols-1 gap-4 text-left">
+                {LANDSCAPES.filter((l) => l.image).map((opt) => {
                   const isSelected = atmosphere === opt.slug;
                   return (
                     <button
                       key={opt.slug}
                       type="button"
                       onClick={() => handleLandscapeSelect(opt.slug)}
-                      className={`group rounded-2xl border px-5 py-4 transition-all duration-500 ${
+                      className={`group relative block aspect-[16/9] sm:aspect-[5/3] overflow-hidden rounded-xl border transition-all duration-700 ${
                         isSelected
-                          ? "border-primary bg-primary/10 shadow-[var(--shadow-glow)]"
-                          : "border-border/60 bg-background/40 hover:border-primary/50 hover:bg-background/60"
+                          ? "border-primary scale-[1.01] shadow-[0_0_40px_-8px_color-mix(in_oklab,var(--primary-glow)_70%,transparent)]"
+                          : "border-border/40 hover:border-primary/50"
                       }`}
                     >
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex items-start gap-4">
-                          <span className="text-2xl" aria-hidden="true">{opt.icon}</span>
-                          <div>
-                            <p className="font-display text-lg text-foreground">{opt.title}</p>
-                            <p className="mt-1 text-sm leading-6 text-muted-foreground">{opt.description}</p>
-                          </div>
-                        </div>
-                        <span className={`pt-1 text-xs transition-opacity ${isSelected ? "opacity-100 text-primary" : "opacity-40"}`}>→</span>
+                      <img
+                        src={opt.image as string}
+                        alt={opt.title}
+                        loading="lazy"
+                        className={`absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-out ${
+                          isSelected ? "scale-[1.04]" : "group-hover:scale-[1.05]"
+                        }`}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#07110F] via-[#07110F]/60 to-[#07110F]/10" />
+                      <div className={`absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(55,201,120,0.22),transparent_65%)] transition-opacity duration-700 ${isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-90"}`} />
+                      <div className="absolute inset-0 p-5 sm:p-6 flex flex-col justify-end text-left">
+                        <p className="text-[0.6rem] sm:text-[0.65rem] tracking-[0.26em] uppercase text-paper/65 mb-2">
+                          {opt.subtitle}
+                        </p>
+                        <h3 className="font-display text-2xl sm:text-3xl text-paper leading-tight">
+                          {opt.title}
+                        </h3>
+                        <p className="mt-2 text-xs sm:text-sm text-paper/75 leading-relaxed max-w-md">
+                          {opt.description}
+                        </p>
                       </div>
                     </button>
                   );
@@ -374,7 +441,7 @@ function Questionnaire() {
                 onClick={skipLandscape}
                 className="mt-8 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
-                I’m open
+                I'm open to wherever feels right →
               </button>
             </div>
           )}
@@ -399,6 +466,69 @@ function Questionnaire() {
               </button>
             </div>
           )}
+        </section>
+      </main>
+    );
+  }
+
+  if (showContact) {
+    return (
+      <main className="relative min-h-screen overflow-hidden" style={{ background: "var(--gradient-warm)" }}>
+        <div className="pointer-events-none absolute -left-32 top-10 h-[28rem] w-[28rem] rounded-full bg-primary/10 blur-3xl" />
+        <div className="pointer-events-none absolute -right-40 bottom-0 h-[32rem] w-[32rem] rounded-full bg-primary/10 blur-3xl" />
+        <header className="relative z-10 mx-auto flex max-w-3xl items-center justify-between px-6 py-6">
+          <Logo />
+          <ThemeToggle />
+        </header>
+        <section className="relative z-10 mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-6 text-center">
+          <div className="w-full animate-[fade-up_700ms_var(--ease-calm)]">
+            <p className="mb-4 text-xs font-medium uppercase tracking-[0.22em] text-primary">A quiet detail</p>
+            <h2 className="font-display text-3xl font-light leading-snug text-foreground md:text-4xl">
+              Where should we send your cohort reveal?
+            </h2>
+            <p className="mt-3 text-sm text-muted-foreground">
+              Personal. Anticipatory. Never spam.
+            </p>
+            <form onSubmit={submitContact} className="mt-10 space-y-5 text-left">
+              <label className="block">
+                <span className="block text-[0.65rem] tracking-[0.26em] uppercase text-paper/55 mb-2">Email</span>
+                <input
+                  type="email"
+                  value={contactEmail}
+                  onChange={(e) => setContactEmail(e.target.value)}
+                  placeholder="quiet@inbox.com"
+                  autoComplete="email"
+                  className="w-full bg-transparent border-b border-paper/15 focus:border-primary/70 outline-none py-3 text-paper text-base md:text-lg placeholder:text-paper/30 transition-colors"
+                />
+              </label>
+              <label className="block">
+                <span className="block text-[0.65rem] tracking-[0.26em] uppercase text-paper/55 mb-2">WhatsApp number</span>
+                <input
+                  type="tel"
+                  value={contactWhatsapp}
+                  onChange={(e) => setContactWhatsapp(e.target.value)}
+                  placeholder="+91 ·· ····· ····"
+                  autoComplete="tel"
+                  className="w-full bg-transparent border-b border-paper/15 focus:border-primary/70 outline-none py-3 text-paper text-base md:text-lg placeholder:text-paper/30 transition-colors"
+                />
+              </label>
+              {contactError && (
+                <p className="text-xs tracking-[0.18em] uppercase text-red-300/80">{contactError}</p>
+              )}
+              <div className="pt-3 flex flex-col items-center gap-3">
+                <button
+                  type="submit"
+                  disabled={contactSubmitting}
+                  className="ember-button disabled:opacity-60"
+                >
+                  {contactSubmitting ? "Sending…" : "Reveal my cohort"}
+                </button>
+                <span className="text-[0.65rem] tracking-[0.24em] uppercase text-paper/45">
+                  Used only for your reveal — nothing more.
+                </span>
+              </div>
+            </form>
+          </div>
         </section>
       </main>
     );
