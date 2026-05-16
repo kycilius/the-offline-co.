@@ -130,7 +130,19 @@ function Questionnaire() {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
     const ls = params.get("landscape") ?? params.get("atmosphere");
-    const aliases: Record<string, string> = { angul: "satkosia", dooars: "forest-silence", kandhamal: "mountains", birbhum: "coastline", satkosia: "rivers-wilderness" };
+    const aliases: Record<string, string> = {
+      // legacy → new
+      "forest-silence": "wild-silence",
+      mountains: "first-light",
+      coastline: "salt-stillness",
+      "rivers-wilderness": "unhurried-wild",
+      // destination → new
+      angul: "unhurried-wild",
+      satkosia: "unhurried-wild",
+      dooars: "wild-silence",
+      kandhamal: "first-light",
+      birbhum: "salt-stillness",
+    };
     const normalizedAtmosphere = aliases[ls ?? ""] ?? ls;
     const selectedOption = LANDSCAPES.find((l) => l.slug === normalizedAtmosphere);
     if (selectedOption) {
