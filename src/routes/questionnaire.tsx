@@ -356,35 +356,46 @@ function Questionnaire() {
             <div key="landscape" className="w-full animate-[fade-up_700ms_var(--ease-calm)]">
               <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-primary">First, the atmosphere</p>
               <h2 className="font-display text-3xl font-light leading-snug text-foreground md:text-4xl">
-                Choose the atmosphere you’re drawn to.
+                Choose the atmosphere you're drawn to.
               </h2>
               <p className="mt-3 text-sm text-muted-foreground">
-                We’ll use this quietly to shape where you may belong.
+                We'll use this quietly to shape where you may belong.
               </p>
 
-              <div className="mt-10 grid grid-cols-1 gap-3 text-left">
-                {LANDSCAPES.map((opt) => {
+              <div className="mt-10 grid grid-cols-1 gap-4 text-left">
+                {LANDSCAPES.filter((l) => l.image).map((opt) => {
                   const isSelected = atmosphere === opt.slug;
                   return (
                     <button
                       key={opt.slug}
                       type="button"
                       onClick={() => handleLandscapeSelect(opt.slug)}
-                      className={`group rounded-2xl border px-5 py-4 transition-all duration-500 ${
+                      className={`group relative block aspect-[16/9] sm:aspect-[5/3] overflow-hidden rounded-xl border transition-all duration-700 ${
                         isSelected
-                          ? "border-primary bg-primary/10 shadow-[var(--shadow-glow)]"
-                          : "border-border/60 bg-background/40 hover:border-primary/50 hover:bg-background/60"
+                          ? "border-primary scale-[1.01] shadow-[0_0_40px_-8px_color-mix(in_oklab,var(--primary-glow)_70%,transparent)]"
+                          : "border-border/40 hover:border-primary/50"
                       }`}
                     >
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex items-start gap-4">
-                          <span className="text-2xl" aria-hidden="true">{opt.icon}</span>
-                          <div>
-                            <p className="font-display text-lg text-foreground">{opt.title}</p>
-                            <p className="mt-1 text-sm leading-6 text-muted-foreground">{opt.description}</p>
-                          </div>
-                        </div>
-                        <span className={`pt-1 text-xs transition-opacity ${isSelected ? "opacity-100 text-primary" : "opacity-40"}`}>→</span>
+                      <img
+                        src={opt.image as string}
+                        alt={opt.title}
+                        loading="lazy"
+                        className={`absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-out ${
+                          isSelected ? "scale-[1.04]" : "group-hover:scale-[1.05]"
+                        }`}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#07110F] via-[#07110F]/60 to-[#07110F]/10" />
+                      <div className={`absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(55,201,120,0.22),transparent_65%)] transition-opacity duration-700 ${isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-90"}`} />
+                      <div className="absolute inset-0 p-5 sm:p-6 flex flex-col justify-end text-left">
+                        <p className="text-[0.6rem] sm:text-[0.65rem] tracking-[0.26em] uppercase text-paper/65 mb-2">
+                          {opt.subtitle}
+                        </p>
+                        <h3 className="font-display text-2xl sm:text-3xl text-paper leading-tight">
+                          {opt.title}
+                        </h3>
+                        <p className="mt-2 text-xs sm:text-sm text-paper/75 leading-relaxed max-w-md">
+                          {opt.description}
+                        </p>
                       </div>
                     </button>
                   );
@@ -396,7 +407,7 @@ function Questionnaire() {
                 onClick={skipLandscape}
                 className="mt-8 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
-                I’m open
+                I'm open to wherever feels right →
               </button>
             </div>
           )}
